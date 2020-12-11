@@ -1,14 +1,12 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 
 import Colors from "constants/Colors";
+import FemaleCategories from "constants/FemaleCategories";
+import MaleCategories from "constants/MaleCategories";
+import DefaultText from "components/DefaultText";
+import DropDown from "components/DropDown";
 
 const UploadScreen = (props) => {
   return (
@@ -27,24 +25,25 @@ const UploadScreen = (props) => {
       </View>
       <View style={styles.formContainer}>
         <View style={styles.formBoxContainer}>
-          <Text style={styles.inputHeader}>Title</Text>
+          <DefaultText style={styles.inputHeader}>Title</DefaultText>
           <TextInput style={styles.titleInput} />
         </View>
         <View style={styles.formBoxContainer}>
-          <Text style={styles.inputHeader}>Description</Text>
+          <DefaultText style={styles.inputHeader}>Description</DefaultText>
           <TextInput style={styles.descriptionInput} multiline={true} />
         </View>
         <View style={styles.formBoxContainer}>
-          <Text style={styles.inputHeader}>Price Range</Text>
+          <DefaultText style={styles.inputHeader}>Price Range</DefaultText>
           <View style={styles.priceRangeContainer}>
             <TextInput style={styles.priceRangeInput} />
-            <Text style={styles.toText}>to</Text>
+            <DefaultText style={styles.toText}>to</DefaultText>
             <TextInput style={styles.priceRangeInput} />
           </View>
         </View>
         <View style={styles.formBoxContainer}>
-          <Text style={styles.inputHeader}>Category</Text>
-          {/*Insert Drop Down Menu Here */}
+          <DefaultText style={styles.inputHeader}>Category</DefaultText>
+          <DropDown placeholder="Male" items={MaleCategories} />
+          <DropDown placeholder="Female" items={FemaleCategories} />
         </View>
       </View>
     </View>
@@ -81,7 +80,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   inputHeader: {
-    color: Colors.primary,
     marginVertical: 6,
   },
   titleInput: {
