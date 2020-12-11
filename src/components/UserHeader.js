@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
   },
   rating: {
     color: Colors.accent,
+    textDecorationLine: "underline",
   },
   descriptionContainer: {
     marginBottom: 20,
