@@ -4,11 +4,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign } from "@expo/vector-icons";
 
 import Colors from "constants/Colors";
-
 import HomeScreen from "screens/HomeScreen";
 import UploadScreen from "screens/UploadScreen";
 import AlertsScreen from "screens/AlertsScreen";
-import ProfileScreen from "screens/ProfileScreen";
+import UserProfileNavigator from "navigation/UserProfileNavigator";
 
 // Icons for the bottom tab navigator
 const DefaultIcon = (props) => {
@@ -61,7 +60,7 @@ const BottomTabNavigator = () => {
       <BottomTab.Screen name="Home" component={HomeScreen} />
       <BottomTab.Screen name="Upload" component={UploadScreen} />
       <BottomTab.Screen name="Alerts" component={AlertsScreen} />
-      <BottomTab.Screen name="Profile" component={ProfileScreen} />
+      <BottomTab.Screen name="Profile" component={UserProfileNavigator} />
     </BottomTab.Navigator>
   );
 };
