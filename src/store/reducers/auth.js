@@ -1,3 +1,5 @@
+import { AUTHENTICATE, LOGOUT, UPDATEUSER } from "store/actions/auth";
+
 const initialState = {
   isAuth: false,
   user: null,
@@ -17,7 +19,7 @@ export default (state = initialState, action) => {
       return {
         isAuth: false,
         user: null,
-        jwtToken: null
+        jwtToken: null,
       };
     case UPDATEUSER:
       return {

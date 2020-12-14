@@ -27,7 +27,7 @@ const SignupScreen = () => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <MainButton style={styles.button}>Register</MainButton>
+        <MainButton>Register</MainButton>
       </View>
       <View style={styles.signInContainer}>
         <DefaultText style={styles.signInText}>
@@ -74,9 +74,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingTop: 15,
-  },
-  button: {
-    backgroundColor: "#B18197",
   },
   signInContainer: {
     paddingTop: 10,
