@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import ReduxThunk from "redux-thunk";
 import * as Font from "expo-font";
 import { AppLoading } from "expo";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 import BottomTabNavigator from "navigation/BottomTabNavigator";
 import authReducer from "store/reducers/auth";
@@ -38,10 +39,12 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <BottomTabNavigator />
-        <StatusBar style="auto" />
-      </NavigationContainer>
+      <ActionSheetProvider>
+        <NavigationContainer>
+          <BottomTabNavigator />
+          <StatusBar style="auto" />
+        </NavigationContainer>
+      </ActionSheetProvider>
     </Provider>
   );
 }
