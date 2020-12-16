@@ -2,13 +2,13 @@ import React from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 
 import Colors from "constants/Colors";
-import GlassTextInput from "components/GlassTextInput";
 import DefaultText from "components/DefaultText";
+import GlassTextInput from "components/GlassTextInput";
 import MainButton from "components/MainButton";
 
-const SignupScreen = (props) => {
-  const loginHandler = () => {
-    props.navigation.navigate("Login");
+const LoginScreen = (props) => {
+  const signupHandler = () => {
+    props.navigation.navigate("Signup");
   };
 
   return (
@@ -19,44 +19,45 @@ const SignupScreen = (props) => {
           source={require("assets/logo/white-on-transparent.png")}
         />
       </View>
-      <GlassTextInput>Username</GlassTextInput>
-      <GlassTextInput>Email</GlassTextInput>
-      <GlassTextInput>Password</GlassTextInput>
-      <GlassTextInput>Re-enter Password</GlassTextInput>
+      <View style={styles.welcomeTextContainer}>
+        <DefaultText style={styles.welcomeText}>Welcome Back!</DefaultText>
+      </View>
+      <View style={styles.inputContainer}>
+        <GlassTextInput>Username</GlassTextInput>
+        <GlassTextInput>Password</GlassTextInput>
+      </View>
       <View style={styles.emailContainer}>
-        <DefaultText style={styles.emailText}>Signup using gmail: </DefaultText>
+        <DefaultText style={styles.emailText}>Login using gmail: </DefaultText>
         <Image
           style={styles.gmailLogo}
           source={require("assets/logo/gmail-logo.png")}
         />
       </View>
       <View style={styles.buttonContainer}>
-        <MainButton style={styles.button}>Register</MainButton>
+        <MainButton style={styles.button}>Login</MainButton>
       </View>
-      <View style={styles.signInContainer}>
-        <DefaultText style={styles.signInText}>
-          Already have an account?{" "}
+      <View style={styles.signupContainer}>
+        <DefaultText style={styles.signupText}>
+          Don't have an account?{" "}
         </DefaultText>
-        <TouchableOpacity onPress={loginHandler}>
-          <DefaultText style={styles.signInTextAccent}>Sign in!</DefaultText>
+        <TouchableOpacity onPress={signupHandler}>
+          <DefaultText style={styles.signupTextAccent}>Sign Up!</DefaultText>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-export default SignupScreen;
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   screen: {
     backgroundColor: Colors.primary,
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
   logoContainer: {
     width: "100%",
-    height: "20%",
+    height: "30%",
     alignItems: "center",
     justifyContent: "flex-end",
     paddingBottom: 30,
@@ -65,9 +66,22 @@ const styles = StyleSheet.create({
     width: 170,
     height: 45,
   },
+  welcomeTextContainer: {
+    alignItems: "center",
+    padding: 10,
+  },
+  welcomeText: {
+    color: Colors.accent,
+    fontFamily: "latoBold",
+    fontSize: 16,
+  },
+  inputContainer: {
+    alignItems: "center",
+  },
   emailContainer: {
     paddingTop: 30,
     flexDirection: "row",
+    justifyContent: "center",
   },
   emailText: {
     paddingTop: 10,
@@ -80,19 +94,21 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingTop: 15,
+    alignItems: "center",
   },
   button: {
     backgroundColor: "#B18197",
   },
-  signInContainer: {
+  signupContainer: {
     paddingTop: 10,
     flexDirection: "row",
+    justifyContent: "center",
   },
-  signInText: {
+  signupText: {
     color: "white",
     fontSize: 14,
   },
-  signInTextAccent: {
+  signupTextAccent: {
     color: Colors.accent,
     fontSize: 14,
     textDecorationLine: "underline",
