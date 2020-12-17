@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { useForm, Controller } from "react-hook-form";
 
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
@@ -7,6 +8,11 @@ import GlassTextInput from "components/GlassTextInput";
 import MainButton from "components/MainButton";
 
 const LoginScreen = (props) => {
+  const { control, handleSubmit, errors } = useForm();
+  const submitHandler = (d) => {
+    console.log(d);
+  };
+
   const signupHandler = () => {
     props.navigation.navigate("Signup");
   };
@@ -23,8 +29,38 @@ const LoginScreen = (props) => {
         <DefaultText style={styles.welcomeText}>Welcome Back!</DefaultText>
       </View>
       <View style={styles.inputContainer}>
-        <GlassTextInput>Username</GlassTextInput>
-        <GlassTextInput>Password</GlassTextInput>
+        <Controller
+          name="username"
+          defaultValue=""
+          control={control}
+          rules={{ required: "This is required." }}
+          render={(props) => (
+            <GlassTextInput
+              {...props}
+              onChangeText={(value) => {
+                props.onChange(value);
+              }}
+            >
+              Username
+            </GlassTextInput>
+          )}
+        />
+        <Controller
+          name="password"
+          defaultValue=""
+          control={control}
+          rules={{ required: "This is required." }}
+          render={(props) => (
+            <GlassTextInput
+              {...props}
+              onChangeText={(value) => {
+                props.onChange(value);
+              }}
+            >
+              Password
+            </GlassTextInput>
+          )}
+        />
       </View>
       <View style={styles.emailContainer}>
         <DefaultText style={styles.emailText}>Login using gmail: </DefaultText>
@@ -34,7 +70,9 @@ const LoginScreen = (props) => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <MainButton style={styles.button}>Login</MainButton>
+        <MainButton style={styles.button} onPress={handleSubmit(submitHandler)}>
+          Login
+        </MainButton>
       </View>
       <View style={styles.signupContainer}>
         <DefaultText style={styles.signupText}>

@@ -10,6 +10,7 @@ import { AppLoading } from "expo";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 import BottomTabNavigator from "navigation/BottomTabNavigator";
+import AuthNavigator from "navigation/AuthNavigator";
 import authReducer from "store/reducers/auth";
 
 const fetchFonts = () => {
@@ -41,7 +42,7 @@ export default function App() {
     <Provider store={store}>
       <ActionSheetProvider>
         <NavigationContainer>
-          <BottomTabNavigator />
+          <AuthNavigator />
           <StatusBar style="auto" />
         </NavigationContainer>
       </ActionSheetProvider>
