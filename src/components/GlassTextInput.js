@@ -7,7 +7,9 @@ const GlassTextInput = (props) => {
   return (
     <View opacity={0.3} style={styles.container}>
       <TextInput
+        value={props.value}
         style={styles.textInput}
+        onChangeText={props.onChangeText}
         placeholder={props.children}
         placeholderTextColor="white"
       />

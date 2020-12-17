@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import { useForm, Controller } from "react-hook-form";
 
 import Colors from "constants/Colors";
@@ -34,11 +40,11 @@ const LoginScreen = (props) => {
           defaultValue=""
           control={control}
           rules={{ required: "This is required." }}
-          render={(props) => (
+          render={({ onChange, onBlur, value }) => (
             <GlassTextInput
-              {...props}
+              value={value}
               onChangeText={(value) => {
-                props.onChange(value);
+                onChange(value);
               }}
             >
               Username
@@ -50,11 +56,11 @@ const LoginScreen = (props) => {
           defaultValue=""
           control={control}
           rules={{ required: "This is required." }}
-          render={(props) => (
+          render={({ onChange, onBlur, value }) => (
             <GlassTextInput
-              {...props}
+              value={value}
               onChangeText={(value) => {
-                props.onChange(value);
+                onChange(value);
               }}
             >
               Password
