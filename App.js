@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { NavigationContainer } from "@react-navigation/native";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import ReduxThunk from "redux-thunk";
@@ -9,8 +8,7 @@ import * as Font from "expo-font";
 import { AppLoading } from "expo";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
-import BottomTabNavigator from "navigation/BottomTabNavigator";
-import AuthNavigator from "navigation/AuthNavigator";
+import AppNavigator from "navigation/AppNavigator";
 import authReducer from "store/reducers/auth";
 
 const fetchFonts = () => {
@@ -41,10 +39,10 @@ export default function App() {
   return (
     <Provider store={store}>
       <ActionSheetProvider>
-        <NavigationContainer>
-          <AuthNavigator />
+        <>
+          <AppNavigator />
           <StatusBar style="auto" />
-        </NavigationContainer>
+        </>
       </ActionSheetProvider>
     </Provider>
   );
