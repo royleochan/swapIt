@@ -7,11 +7,13 @@ const GlassTextInput = (props) => {
   return (
     <View opacity={0.3} style={styles.container}>
       <TextInput
+        secureTextEntry={props.secureTextEntry}
+        autoCapitalize="none"
         value={props.value}
         style={styles.textInput}
         onChangeText={props.onChangeText}
         placeholder={props.children}
-        placeholderTextColor="white"
+        placeholderTextColor={Colors.glass}
       />
     </View>
   );
@@ -26,6 +28,8 @@ const styles = StyleSheet.create({
   },
   textInput: {
     backgroundColor: Colors.glass,
+    backgroundColor: "#00000070",
+    color: Colors.background,
     fontFamily: "lato",
     fontSize: 16,
     borderRadius: 30,
