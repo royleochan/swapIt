@@ -4,19 +4,29 @@ import {
   View,
   Image,
   TouchableOpacity,
-  TextInput,
+  Text,
+  Alert,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import GlassTextInput from "components/GlassTextInput";
 import MainButton from "components/MainButton";
+import * as authActions from "store/actions/auth";
 
 const LoginScreen = (props) => {
+  const dispatch = useDispatch();
   const { control, handleSubmit, errors } = useForm();
-  const submitHandler = (d) => {
-    console.log(d);
+
+  const loginHandler = async (data) => {
+    try {
+      await dispatch(authActions.authenticate(data.username, data.password));
+    } catch (err) {
+      Alert.alert("Login failed!", `${err}`, [{ text: "Okay" }]);
+      console.log(err);
+    }
   };
 
   const signupHandler = () => {
@@ -39,8 +49,8 @@ const LoginScreen = (props) => {
           name="username"
           defaultValue=""
           control={control}
-          rules={{ required: "This is required." }}
-          render={({ onChange, onBlur, value }) => (
+          rules={{ required: true }}
+          render={({ onChange, value }) => (
             <GlassTextInput
               value={value}
               onChangeText={(value) => {
@@ -51,13 +61,17 @@ const LoginScreen = (props) => {
             </GlassTextInput>
           )}
         />
+        {errors.username && (
+          <Text style={styles.errorText}>Required field cannot be empty.</Text>
+        )}
         <Controller
           name="password"
           defaultValue=""
           control={control}
-          rules={{ required: "This is required." }}
-          render={({ onChange, onBlur, value }) => (
+          rules={{ required: true }}
+          render={({ onChange, value }) => (
             <GlassTextInput
+              secureTextEntry={true}
               value={value}
               onChangeText={(value) => {
                 onChange(value);
@@ -67,6 +81,9 @@ const LoginScreen = (props) => {
             </GlassTextInput>
           )}
         />
+        {errors.password && (
+          <Text style={styles.errorText}>Required field cannot be empty.</Text>
+        )}
       </View>
       <View style={styles.emailContainer}>
         <DefaultText style={styles.emailText}>Login using gmail: </DefaultText>
@@ -76,7 +93,7 @@ const LoginScreen = (props) => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <MainButton style={styles.button} onPress={handleSubmit(submitHandler)}>
+        <MainButton style={styles.button} onPress={handleSubmit(loginHandler)}>
           Login
         </MainButton>
       </View>
@@ -121,6 +138,10 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     alignItems: "center",
+  },
+  errorText: {
+    marginTop: 10,
+    color: Colors.darkPink,
   },
   emailContainer: {
     paddingTop: 30,

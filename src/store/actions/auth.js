@@ -2,6 +2,8 @@ export const AUTHENTICATE = "AUTHENTICATE";
 export const LOGOUT = "LOGOUT";
 export const UPDATEUSER = "UPDATEUSER";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import request from "utils/request";
 
 export const authenticate = (username, password) => {
@@ -27,7 +29,7 @@ export const authenticate = (username, password) => {
       const resData = res.data;
 
       await AsyncStorage.setItem(
-        "authentication_data",
+        "authenticationData",
         JSON.stringify({
           jwtToken: resData.token,
           user: resData.user,
@@ -43,6 +45,16 @@ export const authenticate = (username, password) => {
       console.log(err);
       throw err;
     }
+  };
+};
+
+export const relogin = (token, user) => {
+  return (dispatch) => {
+    dispatch({
+      type: RELOGIN,
+      user,
+      token,
+    });
   };
 };
 
