@@ -7,10 +7,13 @@ const GlassTextInput = (props) => {
   return (
     <View opacity={0.3} style={styles.container}>
       <TextInput
+        textContentType="oneTimeCode"
+        autoCorrect={false}
+        multiline={props.multiline}
         secureTextEntry={props.secureTextEntry}
         autoCapitalize="none"
         value={props.value}
-        style={styles.textInput}
+        style={{ ...styles.textInput, ...props.style }}
         onChangeText={props.onChangeText}
         placeholder={props.children}
         placeholderTextColor={Colors.glass}

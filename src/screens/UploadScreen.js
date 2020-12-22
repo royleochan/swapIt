@@ -4,7 +4,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Button,
   Image,
 } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
@@ -50,10 +49,7 @@ const UploadScreen = (props) => {
       <View style={styles.imageContainer}>
         <View style={styles.imagePreview}>
           {pickedImage === undefined ? (
-            <TouchableOpacity
-              style={styles.iconContainer}
-              onPress={showActionSheet}
-            >
+            <TouchableOpacity onPress={showActionSheet}>
               <AntDesign name="plussquareo" size={24} color={Colors.primary} />
             </TouchableOpacity>
           ) : (
@@ -106,7 +102,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     height: "40%",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   imagePreview: {
     width: 200,
