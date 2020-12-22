@@ -12,7 +12,7 @@ const UserHeader = (props) => {
     <View style={styles.container}>
       <View style={styles.profilePictureContainer}>
         <Image
-          source={{ uri: selectedUser.profilePicture }}
+          source={{ uri: selectedUser.profilePic }}
           style={styles.profilePicture}
         />
       </View>

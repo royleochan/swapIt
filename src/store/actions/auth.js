@@ -2,6 +2,8 @@ export const AUTHENTICATE = "AUTHENTICATE";
 export const LOGOUT = "LOGOUT";
 export const UPDATEUSER = "UPDATEUSER";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import request from "utils/request";
 
 export const authenticate = (username, password) => {
@@ -27,7 +29,7 @@ export const authenticate = (username, password) => {
       const resData = res.data;
 
       await AsyncStorage.setItem(
-        "authentication_data",
+        "authenticationData",
         JSON.stringify({
           jwtToken: resData.token,
           user: resData.user,
@@ -39,9 +41,46 @@ export const authenticate = (username, password) => {
         user: resData.user,
         jwtToken: resData.token,
       });
-    } catch (err) {
-      console.log(err);
-      throw err;
+    } catch (e) {
+      throw new Error(e);
+    }
+  };
+};
+
+export const relogin = (token, user) => {
+  return (dispatch) => {
+    dispatch({
+      type: RELOGIN,
+      user,
+      token,
+    });
+  };
+};
+
+export const signup = (signupCredentials) => {
+  return async (dispatch) => {
+    try {
+      const response = await request.post(
+        `/api/users/signup`,
+        signupCredentials
+      );
+      const resData = response.data;
+
+      await AsyncStorage.setItem(
+        "authenticationData",
+        JSON.stringify({
+          jwtToken: resData.token,
+          user: resData.user,
+        })
+      );
+
+      dispatch({
+        type: AUTHENTICATE,
+        user: resData.user,
+        jwtToken: resData.token,
+      });
+    } catch (e) {
+      throw new Error(e);
     }
   };
 };

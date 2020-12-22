@@ -1,21 +1,18 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
 
 import UserHeader from "components/UserHeader";
 
 const ProfileScreen = (props) => {
-  const user = {
-    username: "DestineeOw32",
-    following: 1,
-    followers: 22,
-    listings: 30,
-    rating: 4,
-    description:
-      "Remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    profilePicture:
-      "https://res.cloudinary.com/dey8rgnvh/image/upload/v1597938408/qtdgn69johypeadagidn.jpg",
-    location: "Bedok North Avenue 7",
-  };
+  let user = useSelector((state) => state.auth.user);
+  user.listings = user.products.length;
+
+  // temporary (remove once data is fixed)
+  user.followers = 22;
+  user.following = 1;
+  user.rating = 4;
+
   return (
     <View style={styles.screenContainer}>
       <UserHeader selectedUser={user} />
