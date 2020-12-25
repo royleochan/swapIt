@@ -18,7 +18,7 @@ import MainButton from "components/MainButton";
 const SignupScreenTwo = (props) => {
   const formData = props.route.params;
   const dispatch = useDispatch();
-  const { control, handleSubmit, errors } = useForm();
+  const { control, handleSubmit } = useForm();
   const { showActionSheetWithOptions } = useActionSheet();
   const [pickedImage, setPickedImage] = useState();
 

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
   Alert,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 
@@ -40,130 +41,135 @@ const SignupScreen = (props) => {
           source={require("assets/logo/white-on-transparent.png")}
         />
       </View>
-      <Controller
-        name="name"
-        defaultValue=""
-        control={control}
-        rules={{ required: true }}
-        render={({ onChange, value }) => (
-          <GlassTextInput
-            value={value}
-            onChangeText={(value) => {
-              onChange(value);
-            }}
-          >
-            Name
-          </GlassTextInput>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        style={styles.keyboard}
+      >
+        <Controller
+          name="name"
+          defaultValue=""
+          control={control}
+          rules={{ required: true }}
+          render={({ onChange, value }) => (
+            <GlassTextInput
+              value={value}
+              onChangeText={(value) => {
+                onChange(value);
+              }}
+            >
+              Name
+            </GlassTextInput>
+          )}
+        />
+        {errors.name && (
+          <Text style={styles.errorText}>Required field cannot be empty.</Text>
         )}
-      />
-      {errors.name && (
-        <Text style={styles.errorText}>Required field cannot be empty.</Text>
-      )}
-      <Controller
-        name="username"
-        defaultValue=""
-        control={control}
-        rules={{ required: true }}
-        render={({ onChange, value }) => (
-          <GlassTextInput
-            value={value}
-            onChangeText={(value) => {
-              onChange(value);
-            }}
-          >
-            Username
-          </GlassTextInput>
+        <Controller
+          name="username"
+          defaultValue=""
+          control={control}
+          rules={{ required: true }}
+          render={({ onChange, value }) => (
+            <GlassTextInput
+              value={value}
+              onChangeText={(value) => {
+                onChange(value);
+              }}
+            >
+              Username
+            </GlassTextInput>
+          )}
+        />
+        {errors.username && (
+          <Text style={styles.errorText}>Required field cannot be empty.</Text>
         )}
-      />
-      {errors.username && (
-        <Text style={styles.errorText}>Required field cannot be empty.</Text>
-      )}
-      <Controller
-        name="email"
-        defaultValue=""
-        control={control}
-        rules={{
-          required: {
-            value: true,
-            message: "Required field cannot be empty",
-          },
-          pattern: {
-            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: "Please enter valid email.",
-          },
-        }}
-        render={({ onChange, value }) => (
-          <GlassTextInput
-            value={value}
-            onChangeText={(value) => {
-              onChange(value);
-            }}
-          >
-            Email
-          </GlassTextInput>
+        <Controller
+          name="email"
+          defaultValue=""
+          control={control}
+          rules={{
+            required: {
+              value: true,
+              message: "Required field cannot be empty",
+            },
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: "Please enter valid email.",
+            },
+          }}
+          render={({ onChange, value }) => (
+            <GlassTextInput
+              value={value}
+              onChangeText={(value) => {
+                onChange(value);
+              }}
+            >
+              Email
+            </GlassTextInput>
+          )}
+        />
+        {errors.email && (
+          <Text style={styles.errorText}>{errors.email.message}</Text>
         )}
-      />
-      {errors.email && (
-        <Text style={styles.errorText}>{errors.email.message}</Text>
-      )}
-      <Controller
-        name="password"
-        defaultValue=""
-        control={control}
-        rules={{
-          required: {
-            value: true,
-            message: "Required field cannot be empty.",
-          },
-          minLength: {
-            value: 8,
-            message: "Password must be at least 8 characters",
-          },
-        }}
-        render={({ onChange, value }) => (
-          <GlassTextInput
-            secureTextEntry={true}
-            value={value}
-            onChangeText={(value) => {
-              onChange(value);
-            }}
-          >
-            Password
-          </GlassTextInput>
+        <Controller
+          name="password"
+          defaultValue=""
+          control={control}
+          rules={{
+            required: {
+              value: true,
+              message: "Required field cannot be empty.",
+            },
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters",
+            },
+          }}
+          render={({ onChange, value }) => (
+            <GlassTextInput
+              secureTextEntry={true}
+              value={value}
+              onChangeText={(value) => {
+                onChange(value);
+              }}
+            >
+              Password
+            </GlassTextInput>
+          )}
+        />
+        {errors.password && (
+          <Text style={styles.errorText}>{errors.password.message}</Text>
         )}
-      />
-      {errors.password && (
-        <Text style={styles.errorText}>{errors.password.message}</Text>
-      )}
-      <Controller
-        name="confirmPassword"
-        defaultValue=""
-        control={control}
-        rules={{
-          required: {
-            value: true,
-            message: "Required field cannot be empty",
-          },
-          minLength: {
-            value: 8,
-            message: "Password must be at least 8 characters",
-          },
-        }}
-        render={({ onChange, value }) => (
-          <GlassTextInput
-            secureTextEntry={true}
-            value={value}
-            onChangeText={(value) => {
-              onChange(value);
-            }}
-          >
-            Password
-          </GlassTextInput>
+        <Controller
+          name="confirmPassword"
+          defaultValue=""
+          control={control}
+          rules={{
+            required: {
+              value: true,
+              message: "Required field cannot be empty",
+            },
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters",
+            },
+          }}
+          render={({ onChange, value }) => (
+            <GlassTextInput
+              secureTextEntry={true}
+              value={value}
+              onChangeText={(value) => {
+                onChange(value);
+              }}
+            >
+              Password
+            </GlassTextInput>
+          )}
+        />
+        {errors.confirmPassword && (
+          <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
         )}
-      />
-      {errors.confirmPassword && (
-        <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
-      )}
+      </KeyboardAvoidingView>
       <View style={styles.emailContainer}>
         <DefaultText style={styles.emailText}>Signup using gmail: </DefaultText>
         <Image
@@ -206,9 +212,13 @@ const styles = StyleSheet.create({
     width: 170,
     height: 45,
   },
+  keyboard: {
+    width: "100%",
+    alignItems: "center",
+  },
   errorText: {
-    marginTop: 10,
     color: Colors.darkPink,
+    fontSize: 12,
   },
   emailContainer: {
     paddingTop: 30,

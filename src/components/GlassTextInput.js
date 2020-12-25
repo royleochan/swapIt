@@ -26,7 +26,7 @@ export default GlassTextInput;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 25,
+    paddingTop: 20,
     width: "80%",
   },
   textInput: {
@@ -34,9 +34,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#00000070",
     color: Colors.background,
     fontFamily: "lato",
-    fontSize: 16,
+    fontSize: 14,
     borderRadius: 30,
-    height: 45,
+    height: 40,
     paddingLeft: 10,
   },
 });
