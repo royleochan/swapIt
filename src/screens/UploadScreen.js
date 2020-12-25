@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   TextInput,
   Image,
+  Text,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import { useForm, Controller } from "react-hook-form";
+import { AntDesign } from "@expo/vector-icons";
 
-import { takeImage, chooseFromLibrary } from "utils/imagePicker";
+import {
+  takeImage,
+  chooseFromLibrary,
+  uploadImageHandler,
+} from "utils/imagePicker";
+import request from "utils/request";
 import Colors from "constants/Colors";
 import FemaleCategories from "constants/FemaleCategories";
 import MaleCategories from "constants/MaleCategories";
@@ -18,9 +30,18 @@ import DropDown from "components/DropDown";
 import MainButton from "components/MainButton";
 
 const UploadScreen = (props) => {
+  const user = useSelector((state) => state.auth.user);
   const { showActionSheetWithOptions } = useActionSheet();
   const [pickedImage, setPickedImage] = useState();
 
+  // form states
+  const { control, handleSubmit, errors, watch, reset } = useForm();
+  const watchMinPrice = watch("minPrice");
+  const watchMaxPrice = watch("maxPrice");
+  const [maleCategory, setMaleCategory] = useState(null);
+  const [femaleCategory, setFemaleCategory] = useState(null);
+
+  // action sheet handler
   const showActionSheet = () => {
     const options = ["Take Photo", "Choose From Library", "Cancel"];
     const cancelButtonIndex = 2;
@@ -44,8 +65,96 @@ const UploadScreen = (props) => {
     );
   };
 
+  // image validation
+  const isValidImage = () => {
+    return pickedImage !== undefined;
+  };
+
+  // category validation
+  const isValidCategory = () => {
+    if (maleCategory === null && femaleCategory === null) {
+      return false;
+    } else if (maleCategory !== null && femaleCategory !== null) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  // price validation
+  const isValidPriceRange = () => {
+    const minPrice = parseInt(watchMinPrice, 10);
+    const maxPrice = parseInt(watchMaxPrice, 10);
+    if (isNaN(minPrice) || isNaN(maxPrice)) {
+      return false;
+    } else if (minPrice > maxPrice) {
+      return false;
+    } else if (maxPrice < minPrice) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const uploadHandler = async (data) => {
+    if (!isValidPriceRange) {
+      Alert.alert(
+        "Upload failed!",
+        "Please ensure prices are whole numbers and min price is less than max price",
+        [{ text: "Okay" }]
+      );
+      return;
+    }
+    if (!isValidCategory()) {
+      Alert.alert("Upload failed!", "Please select exactly one category.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+    if (!isValidImage()) {
+      Alert.alert("Upload failed!", "Please select an image for your item.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+
+    const imageUrl = await uploadImageHandler(pickedImage);
+    data.imageUrl = imageUrl;
+    data.minPrice = parseInt(watchMinPrice, 10);
+    data.maxPrice = parseInt(watchMaxPrice, 10);
+    data.category = maleCategory !== null ? maleCategory : femaleCategory;
+    data.creator = user.id;
+
+    try {
+      await request.post("/api/products/", data);
+      setPickedImage(undefined);
+      reset({ title: "", description: "", minPrice: "", maxPrice: "" });
+      setMaleCategory(null);
+      setFemaleCategory(null);
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
+
+  // header upload button
+  useLayoutEffect(() => {
+    props.navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={{ paddingRight: 16 }}
+          onPress={handleSubmit(uploadHandler)}
+        >
+          <AntDesign name="upload" size={22} color={Colors.primary} />
+        </TouchableOpacity>
+      ),
+    });
+  }, [props.navigation, maleCategory, femaleCategory, pickedImage]);
+
   return (
-    <View style={styles.screenContainer}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={styles.screenContainer}
+    >
       <View style={styles.imageContainer}>
         <View style={styles.imagePreview}>
           {pickedImage === undefined ? (
@@ -65,30 +174,126 @@ const UploadScreen = (props) => {
           </MainButton>
         )}
       </View>
-      <View style={styles.formContainer}>
+      <ScrollView style={styles.formContainer}>
         <View style={styles.formBoxContainer}>
           <DefaultText style={styles.inputHeader}>Title</DefaultText>
-          <TextInput style={styles.titleInput} />
+          <Controller
+            name="title"
+            defaultValue=""
+            rules={{ required: true }}
+            control={control}
+            render={({ onChange, value }) => (
+              <TextInput
+                value={value}
+                onChangeText={(value) => {
+                  onChange(value);
+                }}
+                style={styles.titleInput}
+              />
+            )}
+          />
+          {errors.title && (
+            <Text style={styles.errorText}>
+              Required field cannot be empty.
+            </Text>
+          )}
         </View>
         <View style={styles.formBoxContainer}>
           <DefaultText style={styles.inputHeader}>Description</DefaultText>
-          <TextInput style={styles.descriptionInput} multiline={true} />
+          <Controller
+            name="description"
+            defaultValue=""
+            rules={{ required: true }}
+            control={control}
+            render={({ onChange, value }) => (
+              <TextInput
+                value={value}
+                onChangeText={(value) => {
+                  onChange(value);
+                }}
+                style={styles.descriptionInput}
+                multiline={true}
+              />
+            )}
+          />
+          {errors.description && (
+            <Text style={styles.errorText}>
+              Required field cannot be empty.
+            </Text>
+          )}
         </View>
         <View style={styles.formBoxContainer}>
           <DefaultText style={styles.inputHeader}>Price Range</DefaultText>
           <View style={styles.priceRangeContainer}>
-            <TextInput style={styles.priceRangeInput} />
+            <Controller
+              name="minPrice"
+              defaultValue=""
+              rules={{
+                required: {
+                  value: true,
+                  message: "Minimum price range cannot be empty.",
+                },
+              }}
+              control={control}
+              render={({ onChange, value }) => (
+                <TextInput
+                  value={value}
+                  onChangeText={(value) => {
+                    onChange(value);
+                  }}
+                  style={styles.priceRangeInput}
+                  keyboardType="numeric"
+                />
+              )}
+            />
             <DefaultText style={styles.toText}>to</DefaultText>
-            <TextInput style={styles.priceRangeInput} />
+            <Controller
+              name="maxPrice"
+              defaultValue=""
+              rules={{
+                required: {
+                  value: true,
+                  message: "Minimum price range cannot be empty.",
+                },
+              }}
+              control={control}
+              render={({ onChange, value }) => (
+                <TextInput
+                  value={value}
+                  onChangeText={(value) => {
+                    onChange(value);
+                  }}
+                  style={styles.priceRangeInput}
+                  keyboardType="decimal-pad"
+                />
+              )}
+            />
+            <View style={styles.priceErrorContainer}>
+              {errors.minPrice && (
+                <Text style={styles.errorText}>{errors.minPrice.message}</Text>
+              )}
+              {errors.maxPrice && (
+                <Text style={styles.errorText}>{errors.maxPrice.message}</Text>
+              )}
+            </View>
           </View>
         </View>
         <View style={styles.formBoxContainer}>
           <DefaultText style={styles.inputHeader}>Category</DefaultText>
-          <DropDown placeholder="Male" items={MaleCategories} />
-          <DropDown placeholder="Female" items={FemaleCategories} />
+          <DropDown
+            functions={[maleCategory, setMaleCategory]}
+            placeholder="Male"
+            items={MaleCategories}
+          />
+          <DropDown
+            functions={[femaleCategory, setFemaleCategory]}
+            placeholder="Female"
+            items={FemaleCategories}
+          />
         </View>
-      </View>
-    </View>
+        <View style={styles.space}></View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -123,13 +328,19 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   formContainer: {
-    height: "65%",
+    height: "10%",
     width: "100%",
     backgroundColor: Colors.gray,
     padding: 26,
   },
+  errorText: {
+    marginVertical: 5,
+    fontSize: 10,
+    color: Colors.darkPink,
+  },
   formBoxContainer: {
     marginVertical: 10,
+    width: "100%",
   },
   inputHeader: {
     marginVertical: 6,
@@ -162,7 +373,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.glass,
     opacity: 0.3,
   },
+  priceErrorContainer: {
+    marginLeft: 12,
+    width: "70%",
+  },
   toText: {
     marginHorizontal: 10,
+  },
+  space: {
+    height: 40,
   },
 });
