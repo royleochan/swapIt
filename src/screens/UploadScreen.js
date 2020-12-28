@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect, useRef } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -28,11 +28,13 @@ import MaleCategories from "constants/MaleCategories";
 import DefaultText from "components/DefaultText";
 import DropDown from "components/DropDown";
 import MainButton from "components/MainButton";
+import Loader from "components/Loader";
 
 const UploadScreen = (props) => {
   const user = useSelector((state) => state.auth.user);
   const { showActionSheetWithOptions } = useActionSheet();
   const [pickedImage, setPickedImage] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   // form states
   const { control, handleSubmit, errors, watch, reset } = useForm();
@@ -118,6 +120,7 @@ const UploadScreen = (props) => {
       return;
     }
 
+    setIsLoading(true);
     const imageUrl = await uploadImageHandler(pickedImage);
     data.imageUrl = imageUrl;
     data.minPrice = parseInt(watchMinPrice, 10);
@@ -131,6 +134,7 @@ const UploadScreen = (props) => {
       reset({ title: "", description: "", minPrice: "", maxPrice: "" });
       setMaleCategory(null);
       setFemaleCategory(null);
+      setIsLoading(false);
     } catch (err) {
       throw new Error(err);
     }
@@ -155,6 +159,7 @@ const UploadScreen = (props) => {
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={styles.screenContainer}
     >
+      {isLoading && <Loader isLoading={true} />}
       <View style={styles.imageContainer}>
         <View style={styles.imagePreview}>
           {pickedImage === undefined ? (
