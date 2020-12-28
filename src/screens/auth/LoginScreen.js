@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -14,18 +14,22 @@ import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import GlassTextInput from "components/GlassTextInput";
 import MainButton from "components/MainButton";
+import Loader from "components/Loader";
 import * as authActions from "store/actions/auth";
 
 const LoginScreen = (props) => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, errors } = useForm();
 
   const loginHandler = async (data) => {
+    setIsLoading(true);
     try {
       await dispatch(authActions.authenticate(data.username, data.password));
     } catch (err) {
-      Alert.alert("Login failed!", `${err}`, [{ text: "Okay" }]);
-      console.log(err);
+      Alert.alert("Login failed!", `${err}`, [
+        { text: "Okay", onPress: () => setIsLoading(false) },
+      ]);
     }
   };
 
@@ -33,8 +37,13 @@ const LoginScreen = (props) => {
     props.navigation.navigate("Signup");
   };
 
+  useEffect(() => {
+    return () => setIsLoading(false);
+  }, []);
+
   return (
     <View style={styles.screen}>
+      {isLoading && <Loader isLoading={true} />}
       <View style={styles.logoContainer}>
         <Image
           style={styles.logo}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, Image, Text } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useActionSheet } from "@expo/react-native-action-sheet";
@@ -14,6 +14,7 @@ import * as authActions from "store/actions/auth";
 import Colors from "constants/Colors";
 import GlassTextInput from "components/GlassTextInput";
 import MainButton from "components/MainButton";
+import Loader from "components/Loader";
 
 const SignupScreenTwo = (props) => {
   const formData = props.route.params;
@@ -21,6 +22,7 @@ const SignupScreenTwo = (props) => {
   const { control, handleSubmit } = useForm();
   const { showActionSheetWithOptions } = useActionSheet();
   const [pickedImage, setPickedImage] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   const showActionSheet = () => {
     const options = [
@@ -54,17 +56,24 @@ const SignupScreenTwo = (props) => {
   };
 
   const submitHandler = async (data) => {
+    setIsLoading(true);
     const imageUrl = await uploadImageHandler(pickedImage);
     const formState = { ...data, ...formData, profilePic: imageUrl };
     try {
       await dispatch(authActions.signup(formState));
     } catch (err) {
       throw new Error(err);
+      setIsLoading(false);
     }
   };
 
+  useEffect(() => {
+    return () => setIsLoading(false);
+  }, []);
+
   return (
     <View style={styles.screen}>
+      {isLoading && <Loader isLoading={true} />}
       <TouchableOpacity
         style={styles.skipButton}
         onPress={handleSubmit(submitHandler)}
