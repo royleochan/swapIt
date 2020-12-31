@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -7,16 +7,14 @@ import UserHeader from "components/UserHeader";
 import ProductBox from "components/ProductBox";
 
 const ProfileScreen = (props) => {
-  let user = useSelector((state) => state.auth.user);
-  user.listings = user.products.length;
-
-  // temporary (remove once data is fixed)
-  user.followers = 22;
-  user.following = 1;
-  user.rating = 4;
-
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [userProducts, setUserProducts] = useState([]);
+
+  let user = useSelector((state) => state.auth.user);
+
+  const navigateToProductDetails = (productData) => {
+    props.navigation.navigate("Product", productData);
+  };
 
   const loadProducts = async () => {
     setIsRefreshing(true);
@@ -26,10 +24,7 @@ const ProfileScreen = (props) => {
         .catch((error) => {
           throw new Error(error.response.data.message);
         });
-      console.log("blah");
-      console.log(response);
-      const res = response.data;
-      const resData = res.products;
+      const resData = response.data.products;
       setUserProducts(resData);
       setIsRefreshing(false);
     } catch (err) {
@@ -37,6 +32,10 @@ const ProfileScreen = (props) => {
       setIsRefreshing(false);
     }
   };
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
   return (
     <View style={styles.screenContainer}>
@@ -50,7 +49,13 @@ const ProfileScreen = (props) => {
         numColumns={2}
         keyExtractor={(item) => item.id}
         renderItem={(itemData) => (
-          <ProductBox productCreator={user} item={itemData.item} />
+          <ProductBox
+            productCreator={user}
+            item={itemData.item}
+            navigate={() =>
+              navigateToProductDetails({ ...itemData.item, user })
+            }
+          />
         )}
       />
     </View>

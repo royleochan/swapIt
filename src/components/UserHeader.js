@@ -17,9 +17,9 @@ const UserHeader = (props) => {
         />
       </View>
       <View style={styles.userStatisticsContainer}>
-        <UserStatistic value={selectedUser.listings}> Listings</UserStatistic>
-        <UserStatistic value={selectedUser.followers}> Followers</UserStatistic>
-        <UserStatistic value={selectedUser.following}> Following</UserStatistic>
+        <UserStatistic value={selectedUser.products.length}> Listings</UserStatistic>
+        <UserStatistic value={selectedUser.followers.length}> Followers</UserStatistic>
+        <UserStatistic value={selectedUser.following.length}> Following</UserStatistic>
       </View>
       <View style={styles.userInformationContainer}>
         <DefaultText style={styles.username}>

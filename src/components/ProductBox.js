@@ -1,14 +1,16 @@
 import React from "react";
-import { StyleSheet, Image, View } from "react-native";
+import { StyleSheet, Image, View, TouchableOpacity } from "react-native";
 import MaterialCommunity from "react-native-vector-icons/MaterialCommunityIcons";
 
 import DefaultText from "./DefaultText";
 
 const ProductBox = (props) => {
-  const { item, productCreator } = props;
+  const { item, productCreator, navigate } = props;
   return (
     <View style={styles.container}>
-      <Image style={styles.itemImage} source={{ uri: item.imageUrl }} />
+      <TouchableOpacity onPress={navigate}>
+        <Image style={styles.itemImage} source={{ uri: item.imageUrl }} />
+      </TouchableOpacity>
       <View style={styles.likesContainer}>
         <MaterialCommunity name={"heart-outline"} size={14} color={"#d50101"} />
         <DefaultText style={styles.likesText}>
@@ -21,8 +23,11 @@ const ProductBox = (props) => {
         $: {item.minPrice} - {item.maxPrice}
       </DefaultText>
       <View style={styles.userDetailsContainer}>
-      <Image style={styles.profilePicture} source={{ uri: item.imageUrl }} />
-      <DefaultText style={styles.username}>  @{productCreator.username}</DefaultText>
+        <Image style={styles.profilePicture} source={{ uri: item.imageUrl }} />
+        <DefaultText style={styles.username}>
+          {" "}
+          @{productCreator.username}
+        </DefaultText>
       </View>
     </View>
   );
