@@ -18,6 +18,5 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: "lato",
     color: Colors.primary,
-    marginVertical: 4,
   },
 });

@@ -18,7 +18,7 @@ const UserProfileNavigator = () => {
       <Stack.Screen
         name="Product"
         component={ProductDetailsScreen}
-        options={DefaultNavOptions}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
