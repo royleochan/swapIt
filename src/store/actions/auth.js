@@ -80,7 +80,7 @@ export const signup = (signupCredentials) => {
         jwtToken: resData.token,
       });
     } catch (e) {
-      throw new Error(e);
+      throw new Error(e.response.data.message);
     }
   };
 };

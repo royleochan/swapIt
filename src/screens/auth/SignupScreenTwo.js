@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, TouchableOpacity, Image, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Text,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Alert,
+} from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useForm, Controller } from "react-hook-form";
@@ -62,8 +71,9 @@ const SignupScreenTwo = (props) => {
     try {
       await dispatch(authActions.signup(formState));
     } catch (err) {
-      throw new Error(err);
-      setIsLoading(false);
+      Alert.alert("Signup failed!", `${err}`, [
+        { text: "Okay", onPress: () => setIsLoading(false) },
+      ]);
     }
   };
 
@@ -72,70 +82,72 @@ const SignupScreenTwo = (props) => {
   }, []);
 
   return (
-    <View style={styles.screen}>
-      {isLoading && <Loader isLoading={true} />}
-      <TouchableOpacity
-        style={styles.skipButton}
-        onPress={handleSubmit(submitHandler)}
-      >
-        <Text style={styles.skipText}>Skip</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={showActionSheet}>
-        <View style={styles.imageContainer}>
-          {pickedImage === undefined ? (
-            <AntDesign name="camerao" size={26} color={Colors.glass} />
-          ) : (
-            <Image style={styles.image} source={{ uri: pickedImage.uri }} />
-          )}
-        </View>
-      </TouchableOpacity>
-      <Controller
-        name="location"
-        defaultValue=""
-        control={control}
-        render={({ onChange, value }) => (
-          <GlassTextInput
-            value={value}
-            onChangeText={(value) => {
-              onChange(value);
-            }}
-          >
-            Location
-          </GlassTextInput>
-        )}
-      />
-      <Controller
-        name="description"
-        defaultValue=""
-        control={control}
-        render={({ onChange, value }) => (
-          <GlassTextInput
-            value={value}
-            onChangeText={(value) => {
-              onChange(value);
-            }}
-            style={styles.descriptionInputArea}
-            multiline={true}
-          >
-            Profile Description
-          </GlassTextInput>
-        )}
-      />
-      <View style={styles.buttonContainer}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.screen}>
+        {isLoading && <Loader isLoading={true} />}
         <TouchableOpacity
-          style={styles.iconContainer}
-          onPress={() => props.navigation.goBack()}
-        >
-          <AntDesign name="arrowleft" size={24} color={Colors.background} />
-        </TouchableOpacity>
-        <MainButton
-          style={styles.confirmButton}
+          style={styles.skipButton}
           onPress={handleSubmit(submitHandler)}
         >
-          Confirm
-        </MainButton>
+          <Text style={styles.skipText}>Skip</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={showActionSheet}>
+          <View style={styles.imageContainer}>
+            {pickedImage === undefined ? (
+              <AntDesign name="camerao" size={26} color={Colors.glass} />
+            ) : (
+              <Image style={styles.image} source={{ uri: pickedImage.uri }} />
+            )}
+          </View>
+        </TouchableOpacity>
+        <Controller
+          name="location"
+          defaultValue=""
+          control={control}
+          render={({ onChange, value }) => (
+            <GlassTextInput
+              value={value}
+              onChangeText={(value) => {
+                onChange(value);
+              }}
+            >
+              Location
+            </GlassTextInput>
+          )}
+        />
+        <Controller
+          name="description"
+          defaultValue=""
+          control={control}
+          render={({ onChange, value }) => (
+            <GlassTextInput
+              value={value}
+              onChangeText={(value) => {
+                onChange(value);
+              }}
+              style={styles.descriptionInputArea}
+              multiline={true}
+            >
+              Profile Description
+            </GlassTextInput>
+          )}
+        />
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => props.navigation.goBack()}
+          >
+            <AntDesign name="arrowleft" size={24} color={Colors.background} />
+          </TouchableOpacity>
+          <MainButton
+            style={styles.confirmButton}
+            onPress={handleSubmit(submitHandler)}
+          >
+            Confirm
+          </MainButton>
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
