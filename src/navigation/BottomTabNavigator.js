@@ -4,8 +4,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign } from "@expo/vector-icons";
 
 import Colors from "constants/Colors";
-import HomeScreen from "screens/HomeScreen";
 import AlertsScreen from "screens/AlertsScreen";
+import HomeNavigator from "navigation/HomeNavigator";
 import UploadNavigator from "navigation/UploadNavigator";
 import UserProfileNavigator from "navigation/UserProfileNavigator";
 
@@ -57,7 +57,7 @@ const BottomTabNavigator = () => {
         },
       })}
     >
-      <BottomTab.Screen name="Home" component={HomeScreen} />
+      <BottomTab.Screen name="Home" component={HomeNavigator} />
       <BottomTab.Screen name="Upload" component={UploadNavigator} />
       <BottomTab.Screen name="Alerts" component={AlertsScreen} />
       <BottomTab.Screen name="Profile" component={UserProfileNavigator} />
