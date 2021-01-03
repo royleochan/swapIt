@@ -17,7 +17,7 @@ import DefaultText from "components/DefaultText";
 import ProductBox from "components/ProductBox";
 import CategoryRow from "components/CategoryRow";
 
-const HomeScreen = () => {
+const HomeScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [products, setProducts] = useState([]);
   const [gridMode, setGridMode] = useState(true);
@@ -43,6 +43,10 @@ const HomeScreen = () => {
 
   const toggleGridMode = () => {
     setGridMode(!gridMode);
+  };
+
+  const navigateToProductDetails = (productData) => {
+    props.navigation.navigate("Product", productData);
   };
 
   return (
