@@ -4,5 +4,6 @@ export default {
   accent: "#FFA6B4", // Flamingo Pink
   glass: "#C4C4C4", // Opacity 20%, add drop shadow
   gray: "#E8E8E8", // Opacity 30%
+  lightGray: "#F8F8F8",
   darkPink: "#B18197",
 };
