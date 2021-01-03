@@ -10,7 +10,7 @@ const ProfileScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [userProducts, setUserProducts] = useState([]);
 
-  let user = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
 
   const navigateToProductDetails = (productData) => {
     props.navigation.navigate("Product", productData);
@@ -36,6 +36,13 @@ const ProfileScreen = (props) => {
   useEffect(() => {
     loadProducts();
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = props.navigation.addListener("focus", () => {
+      loadProducts();
+    });
+    return unsubscribe;
+  }, [props.navigation]);
 
   return (
     <View style={styles.screenContainer}>

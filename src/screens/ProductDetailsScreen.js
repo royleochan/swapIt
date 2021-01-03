@@ -5,17 +5,22 @@ import {
   Image,
   Platform,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import { useSelector } from "react-redux";
 import { AntDesign } from "@expo/vector-icons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Feather from "react-native-vector-icons/Feather";
 
+import request from "utils/request";
 import InvertedCategories from "constants/InvertedCategories";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 
 const ProductDetailsScreen = (props) => {
   const {
+    _id,
     title,
     imageUrl,
     description,
@@ -26,8 +31,35 @@ const ProductDetailsScreen = (props) => {
     user,
   } = props.route.params;
 
+  const { showActionSheetWithOptions } = useActionSheet();
+  const loggedInUser = useSelector((state) => state.auth.user);
+
   const getCategory = (category) => {
     return InvertedCategories[parseInt(category, 10)];
+  };
+
+  // action sheet handler
+  const showActionSheet = () => {
+    const options = ["Delete Listing", "Edit Listing", "Cancel"];
+    const destructiveButtonIndex = 0;
+    const cancelButtonIndex = 2;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex,
+        tintColor: Colors.primary,
+      },
+      async (buttonIndex) => {
+        if (buttonIndex === 0) {
+          await request.delete(`/api/products/${_id}`);
+          props.navigation.goBack();
+        } else if (buttonIndex === 1) {
+          console.log("edit");
+        }
+      }
+    );
   };
 
   return (
@@ -37,8 +69,23 @@ const ProductDetailsScreen = (props) => {
           style={styles.arrow}
           onPress={() => props.navigation.goBack()}
         >
-          <AntDesign name={"arrowleft"} size={24} color={Colors.primary} />
+          <AntDesign
+            name={"arrowleft"}
+            size={24}
+            color={Colors.background}
+            style={styles.icon}
+          />
         </TouchableOpacity>
+        {loggedInUser._id == user._id && (
+          <TouchableOpacity style={styles.ellipsis} onPress={showActionSheet}>
+            <AntDesign
+              name={"ellipsis1"}
+              size={24}
+              color={Colors.background}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+        )}
         <Image source={{ uri: imageUrl }} style={styles.image} />
         <View style={styles.detailsContainer}>
           <View style={styles.textContainer}>
@@ -82,11 +129,20 @@ const ProductDetailsScreen = (props) => {
 export default ProductDetailsScreen;
 
 const styles = StyleSheet.create({
+  icon: {
+    opacity: 0.5,
+  },
   arrow: {
     zIndex: 10,
     position: "absolute",
     marginTop: 50,
     marginLeft: 10,
+  },
+  ellipsis: {
+    zIndex: 10,
+    position: "absolute",
+    marginTop: 50,
+    marginLeft: Dimensions.get("window").width - 40,
   },
   title: {
     fontSize: 16,
