@@ -56,7 +56,7 @@ const ProductDetailsScreen = (props) => {
           await request.delete(`/api/products/${_id}`);
           props.navigation.goBack();
         } else if (buttonIndex === 1) {
-          console.log("edit");
+          props.navigation.navigate("EditProduct", props.route.params);
         }
       }
     );
