@@ -25,6 +25,7 @@ import MaleCategories from "constants/MaleCategories";
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
 import DropDown from "components/DropDown";
+import Loader from "components/Loader";
 import Colors from "constants/Colors";
 
 const EditProductScreen = (props) => {
@@ -40,6 +41,7 @@ const EditProductScreen = (props) => {
   const [pickedImage, setPickedImage] = useState();
   const [maleCategory, setMaleCategory] = useState(null);
   const [femaleCategory, setFemaleCategory] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const token = useSelector((state) => state.auth.jwtToken);
 
@@ -71,12 +73,13 @@ const EditProductScreen = (props) => {
 
   const saveHandler = async (data) => {
     if (!isValidCategory()) {
-      Alert.alert("Upload failed!", "Please select exactly one category.", [
+      Alert.alert("Edit failed!", "Please select exactly one category.", [
         { text: "Okay" },
       ]);
       return;
     }
 
+    setIsLoading(true);
     if (pickedImage !== undefined) {
       const imageUrl = await uploadImageHandler(pickedImage);
       data.imageUrl = imageUrl;
@@ -93,6 +96,8 @@ const EditProductScreen = (props) => {
       setMaleCategory(null);
       setFemaleCategory(null);
       reset({ title: "", description: "" });
+      setIsLoading(false);
+      props.navigation.navigate("Profile");
     } catch (err) {
       throw new Error(err);
     }
@@ -126,6 +131,7 @@ const EditProductScreen = (props) => {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.screen}>
+        {isLoading && <Loader isLoading={true} />}
         <TouchableOpacity onPress={showActionSheet}>
           <View style={styles.imagePreview}>
             <Image style={styles.image} source={{ uri: displayImage }} />
