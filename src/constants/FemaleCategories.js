@@ -4,5 +4,5 @@ export default [
   { label: "Women's Skirts", value: 22 },
   { label: "Women's Rompers, Dresses & Jumpsuits", value: 23 },
   { label: "Women's Outerwear", value: 24 },
-  { label: "Others", value: 25 },
+  { label: "Others", value: 13 },
 ];

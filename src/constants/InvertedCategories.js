@@ -8,5 +8,4 @@ export default {
   22: "Women's Skirts",
   23: "Women's Rompers, Dresses & Jumpsuits",
   24: "Women's Outerwear",
-  25: "Others",
 };
