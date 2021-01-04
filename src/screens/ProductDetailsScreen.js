@@ -35,7 +35,7 @@ const ProductDetailsScreen = (props) => {
   const loggedInUser = useSelector((state) => state.auth.user);
 
   const getCategory = (category) => {
-    return InvertedCategories[parseInt(category, 10)];
+    return InvertedCategories[category];
   };
 
   // action sheet handler

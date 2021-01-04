@@ -1,5 +1,6 @@
 import React, { useState, useLayoutEffect } from "react";
 import {
+  Alert,
   View,
   Image,
   StyleSheet,
@@ -19,16 +20,26 @@ import {
   uploadImageHandler,
 } from "utils/imagePicker";
 import request from "utils/request";
+import FemaleCategories from "constants/FemaleCategories";
+import MaleCategories from "constants/MaleCategories";
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
+import DropDown from "components/DropDown";
 import Colors from "constants/Colors";
 
 const EditProductScreen = (props) => {
-  const { _id, imageUrl } = props.route.params;
-  const { control, handleSubmit, errors, reset } = useForm();
+  const { _id, imageUrl, title, description } = props.route.params;
+  const { control, handleSubmit, errors, reset } = useForm({
+    defaultValues: {
+      title: title,
+      description: description,
+    },
+  });
   const { showActionSheetWithOptions } = useActionSheet();
   const [displayImage, setDisplayImage] = useState(imageUrl);
   const [pickedImage, setPickedImage] = useState();
+  const [maleCategory, setMaleCategory] = useState(null);
+  const [femaleCategory, setFemaleCategory] = useState(null);
 
   const token = useSelector((state) => state.auth.jwtToken);
 
@@ -48,16 +59,24 @@ const EditProductScreen = (props) => {
         let selectedImage;
         if (buttonIndex === 0) {
           selectedImage = await takeImage();
+          setDisplayImage(selectedImage.uri);
         } else if (buttonIndex === 1) {
           selectedImage = await chooseFromLibrary();
+          setDisplayImage(selectedImage.uri);
         }
-        setDisplayImage(selectedImage.uri);
         setPickedImage(selectedImage);
       }
     );
   };
 
   const saveHandler = async (data) => {
+    if (!isValidCategory()) {
+      Alert.alert("Upload failed!", "Please select exactly one category.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+
     if (pickedImage !== undefined) {
       const imageUrl = await uploadImageHandler(pickedImage);
       data.imageUrl = imageUrl;
@@ -65,13 +84,28 @@ const EditProductScreen = (props) => {
       data.imageUrl = imageUrl;
     }
 
+    data.category = maleCategory !== null ? maleCategory : femaleCategory;
+
     try {
       await request.patch(`/api/products/${_id}`, data, token);
       setPickedImage(undefined);
       setDisplayImage(undefined);
+      setMaleCategory(null);
+      setFemaleCategory(null);
       reset({ title: "", description: "" });
     } catch (err) {
       throw new Error(err);
+    }
+  };
+
+  // category validation
+  const isValidCategory = () => {
+    if (maleCategory === null && femaleCategory === null) {
+      return false;
+    } else if (maleCategory !== null && femaleCategory !== null) {
+      return false;
+    } else {
+      return true;
     }
   };
 
@@ -129,6 +163,7 @@ const EditProductScreen = (props) => {
             control={control}
             render={({ onChange, value }) => (
               <TextInput
+                defaultValue={description}
                 value={value}
                 onChangeText={(value) => {
                   onChange(value);
@@ -143,6 +178,19 @@ const EditProductScreen = (props) => {
               Required field cannot be empty.
             </DefaultText>
           )}
+        </View>
+        <View style={styles.formBoxContainer}>
+          <DefaultText style={styles.inputHeader}>Category</DefaultText>
+          <DropDown
+            functions={[maleCategory, setMaleCategory]}
+            placeholder="Male"
+            items={MaleCategories}
+          />
+          <DropDown
+            functions={[femaleCategory, setFemaleCategory]}
+            placeholder="Female"
+            items={FemaleCategories}
+          />
         </View>
         <MainButton style={styles.button} onPress={handleSubmit(saveHandler)}>
           Confirm
