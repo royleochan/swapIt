@@ -10,7 +10,7 @@ const ProfileScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [userProducts, setUserProducts] = useState([]);
 
-  const user = useSelector((state) => state.auth.user);
+  const loggedInUser = useSelector((state) => state.auth.user);
 
   const navigateToProductDetails = (productData) => {
     props.navigation.navigate("Product", productData);
@@ -20,7 +20,7 @@ const ProfileScreen = (props) => {
     setIsRefreshing(true);
     try {
       const response = await request
-        .get(`/api/products/user/${user.id}`)
+        .get(`/api/products/user/${loggedInUser.id}`)
         .catch((error) => {
           throw new Error(error.response.data.message);
         });
@@ -46,7 +46,7 @@ const ProfileScreen = (props) => {
 
   return (
     <View style={styles.screenContainer}>
-      <UserHeader selectedUser={user} />
+      <UserHeader selectedUser={loggedInUser} />
       <FlatList
         onRefresh={loadProducts}
         refreshing={isRefreshing}
@@ -57,10 +57,10 @@ const ProfileScreen = (props) => {
         keyExtractor={(item) => item.id}
         renderItem={(itemData) => (
           <ProductBox
-            productCreator={user}
+            productCreator={loggedInUser}
             item={itemData.item}
             navigate={() =>
-              navigateToProductDetails({ ...itemData.item, user })
+              navigateToProductDetails({ ...itemData.item, user: loggedInUser })
             }
           />
         )}

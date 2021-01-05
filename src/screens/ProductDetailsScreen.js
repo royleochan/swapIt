@@ -14,7 +14,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Feather from "react-native-vector-icons/Feather";
 
 import request from "utils/request";
-import InvertedCategories from "constants/InvertedCategories";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 
@@ -34,10 +33,6 @@ const ProductDetailsScreen = (props) => {
   const { showActionSheetWithOptions } = useActionSheet();
   const loggedInUser = useSelector((state) => state.auth.user);
 
-  const getCategory = (category) => {
-    return InvertedCategories[parseInt(category, 10)];
-  };
-
   // action sheet handler
   const showActionSheet = () => {
     const options = ["Delete Listing", "Edit Listing", "Cancel"];
@@ -56,7 +51,7 @@ const ProductDetailsScreen = (props) => {
           await request.delete(`/api/products/${_id}`);
           props.navigation.goBack();
         } else if (buttonIndex === 1) {
-          console.log("edit");
+          props.navigation.navigate("EditProduct", props.route.params);
         }
       }
     );
@@ -95,7 +90,7 @@ const ProductDetailsScreen = (props) => {
             <DefaultText>@{user.username}</DefaultText>
           </View>
           <View style={styles.textContainer}>
-            <DefaultText>Category: {getCategory(category)}</DefaultText>
+            <DefaultText>Category: {category}</DefaultText>
           </View>
           <TouchableOpacity
             style={styles.iconTextContainer}

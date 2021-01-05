@@ -17,7 +17,7 @@ import DefaultText from "components/DefaultText";
 import ProductBox from "components/ProductBox";
 import CategoryRow from "components/CategoryRow";
 
-const HomeScreen = () => {
+const HomeScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -57,10 +57,16 @@ const HomeScreen = () => {
     setGridMode(!gridMode);
   };
 
+<<<<<<< HEAD
   useEffect(() => {
     const ten = categoryState["10"];
     console.log(ten);
   }, [categoryState]);
+=======
+  const navigateToProductDetails = (productData) => {
+    props.navigation.navigate("Product", productData);
+  };
+>>>>>>> bac895d6e67bc7e0e1da9ca6cf111f9e250112e3
 
   return (
     <View style={styles.screenContainer}>
