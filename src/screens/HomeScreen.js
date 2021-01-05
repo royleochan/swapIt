@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -20,7 +20,19 @@ import CategoryRow from "components/CategoryRow";
 const HomeScreen = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [gridMode, setGridMode] = useState(true);
+  const [categoryState, setCategoryState] = useState({
+    10: false,
+    11: false,
+    12: false,
+    20: false,
+    21: false,
+    22: false,
+    23: false,
+    24: false,
+    25: false,
+  });
 
   let user = useSelector((state) => state.auth.user);
 
@@ -34,16 +46,21 @@ const HomeScreen = () => {
         });
       const resData = response.data.products;
       setProducts(resData);
-      setIsRefreshing(false);
+      setFilteredProducts(resData);
     } catch (err) {
-      setProducts([]);
-      setIsRefreshing(false);
+      throw new Error(err);
     }
+    setIsRefreshing(false);
   };
 
   const toggleGridMode = () => {
     setGridMode(!gridMode);
   };
+
+  useEffect(() => {
+    const ten = categoryState["10"];
+    console.log(ten);
+  }, [categoryState]);
 
   return (
     <View style={styles.screenContainer}>
@@ -102,7 +119,10 @@ const HomeScreen = () => {
           </View>
         </View>
       </View>
-      <CategoryRow />
+      <CategoryRow
+        filterState={categoryState}
+        setFilterState={setCategoryState}
+      />
       <FlatList
         onRefresh={loadProducts}
         refreshing={isRefreshing}

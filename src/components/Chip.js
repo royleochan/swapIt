@@ -1,14 +1,29 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 
 import DefaultText from "components/DefaultText";
 import Colors from "constants/Colors";
 
 const Chip = (props) => {
+  const { filterState, setFilterState, value } = props;
+
+  const [selected, setSelected] = useState(false);
+
+  const updateState = () => {
+    const result = filterState;
+    result[value] = !filterState[value];
+    setFilterState(result);
+    setSelected(!selected);
+  };
+
   return (
-    <View style={styles.chipContainer}>
-      <DefaultText>{props.text}</DefaultText>
-    </View>
+    <TouchableOpacity onPress={updateState}>
+      <View
+        style={selected ? styles.chipContainerOutline : styles.chipContainer}
+      >
+        <DefaultText>{props.text}</DefaultText>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -21,5 +36,14 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: "center",
     margin: 5,
+  },
+  chipContainerOutline: {
+    paddingHorizontal: 10,
+    backgroundColor: Colors.lightGray,
+    borderRadius: 30,
+    alignItems: "center",
+    margin: 5,
+    borderWidth: 2,
+    borderColor: Colors.primary,
   },
 });
