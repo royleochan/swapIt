@@ -14,7 +14,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Feather from "react-native-vector-icons/Feather";
 
 import request from "utils/request";
-import InvertedCategories from "constants/InvertedCategories";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 
@@ -33,10 +32,6 @@ const ProductDetailsScreen = (props) => {
 
   const { showActionSheetWithOptions } = useActionSheet();
   const loggedInUser = useSelector((state) => state.auth.user);
-
-  const getCategory = (category) => {
-    return InvertedCategories[category];
-  };
 
   // action sheet handler
   const showActionSheet = () => {
@@ -95,7 +90,7 @@ const ProductDetailsScreen = (props) => {
             <DefaultText>@{user.username}</DefaultText>
           </View>
           <View style={styles.textContainer}>
-            <DefaultText>Category: {getCategory(category)}</DefaultText>
+            <DefaultText>Category: {category}</DefaultText>
           </View>
           <TouchableOpacity
             style={styles.iconTextContainer}
