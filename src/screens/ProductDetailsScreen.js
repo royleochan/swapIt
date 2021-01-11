@@ -3,15 +3,13 @@ import {
   StyleSheet,
   View,
   Image,
-  Platform,
   TouchableOpacity,
   Dimensions,
 } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useSelector } from "react-redux";
 import { AntDesign } from "@expo/vector-icons";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Feather from "react-native-vector-icons/Feather";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import request from "utils/request";
 import Colors from "constants/Colors";
@@ -58,7 +56,7 @@ const ProductDetailsScreen = (props) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.screen}>
       <View style={styles.imageContainer}>
         <TouchableOpacity
           style={styles.arrow}
@@ -83,37 +81,40 @@ const ProductDetailsScreen = (props) => {
         )}
         <Image source={{ uri: imageUrl }} style={styles.image} />
         <View style={styles.detailsContainer}>
-          <View style={styles.textContainer}>
-            <DefaultText style={styles.title}>{title}</DefaultText>
-          </View>
-          <View style={styles.textContainer}>
-            <DefaultText>@{user.username}</DefaultText>
-          </View>
-          <View style={styles.textContainer}>
-            <DefaultText>Category: {category}</DefaultText>
-          </View>
           <TouchableOpacity
             style={styles.iconTextContainer}
             onPress={() => console.log("Show users who liked item")}
           >
-            <Ionicons
-              name={
-                Platform.OS === "ios" ? "ios-heart-empty" : "md-heart-empty"
-              }
-              size={16}
+            <MaterialCommunityIcons
+              name={"heart-outline"}
+              size={14}
+              color={"#d50101"}
             />
             <DefaultText>
+              {" "}
               {likes.length} {likes.length === 1 ? "like" : "likes"}
             </DefaultText>
           </TouchableOpacity>
-          <View style={styles.iconTextContainer}>
-            <Feather name="dollar-sign" size={16} />
-            <DefaultText>
+          <View style={styles.textContainer}>
+            <DefaultText style={styles.title}>{title}</DefaultText>
+          </View>
+          <View style={styles.textContainer}>
+            <DefaultText style={styles.smallerGreyText}>By </DefaultText>
+            <DefaultText>@{user.username}</DefaultText>
+          </View>
+          <View style={styles.textContainer}>
+            <DefaultText style={styles.greyText}>In </DefaultText>
+            <DefaultText style={styles.text}>{category}</DefaultText>
+          </View>
+          <View style={styles.textContainer}>
+            <DefaultText style={styles.greyText}>$ </DefaultText>
+            <DefaultText style={styles.text}>
               {minPrice} - {maxPrice}
             </DefaultText>
           </View>
           <View style={styles.textContainer}>
-            <DefaultText>{description}</DefaultText>
+            <DefaultText style={styles.greyText}>Description </DefaultText>
+            <DefaultText style={styles.text}>{description}</DefaultText>
           </View>
         </View>
       </View>
@@ -124,30 +125,9 @@ const ProductDetailsScreen = (props) => {
 export default ProductDetailsScreen;
 
 const styles = StyleSheet.create({
-  icon: {
-    opacity: 0.5,
-  },
-  arrow: {
-    zIndex: 10,
-    position: "absolute",
-    marginTop: 50,
-    marginLeft: 10,
-  },
-  ellipsis: {
-    zIndex: 10,
-    position: "absolute",
-    marginTop: 50,
-    marginLeft: Dimensions.get("window").width - 40,
-  },
-  title: {
-    fontSize: 16,
-    fontFamily: "latoBold",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    borderBottomStartRadius: 30,
-    borderBottomEndRadius: 30,
+  screen: {
+    flex: 1,
+    backgroundColor: "white",
   },
   imageContainer: {
     height: "60%",
@@ -156,17 +136,54 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     zIndex: 1,
   },
+  arrow: {
+    zIndex: 10,
+    position: "absolute",
+    marginTop: 50,
+    marginLeft: 10,
+  },
+  icon: {
+    opacity: 0.5,
+  },
+  ellipsis: {
+    zIndex: 10,
+    position: "absolute",
+    marginTop: 50,
+    marginLeft: Dimensions.get("window").width - 40,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    borderBottomStartRadius: 30,
+    borderBottomEndRadius: 30,
+  },
   detailsContainer: {
     padding: 24,
-  },
-  textContainer: {
-    marginVertical: 3,
   },
   iconTextContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     width: "14%",
     marginVertical: 3,
+  },
+  textContainer: {
+    marginVertical: 3,
+    flexDirection: "row",
+    paddingBottom: 5,
+  },
+  title: {
+    fontSize: 20,
+    fontFamily: "latoBold",
+  },
+  smallerGreyText: {
+    fontSize: 10,
+    color: Colors.glass,
+  },
+  greyText: {
+    fontSize: 14,
+    color: Colors.glass,
+  },
+  text: {
+    fontSize: 14,
   },
 });
