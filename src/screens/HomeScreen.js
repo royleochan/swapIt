@@ -19,19 +19,19 @@ import CategoryRow from "components/CategoryRow";
 
 const HomeScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [products, setProducts] = useState([]);
+  const [availableProducts, setAvailableProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [gridMode, setGridMode] = useState(true);
   const [categoryState, setCategoryState] = useState({
-    10: false,
-    11: false,
-    12: false,
-    20: false,
-    21: false,
-    22: false,
-    23: false,
-    24: false,
-    25: false,
+    isMensTop: false,
+    isMensBottoms: false,
+    isMensOuterwear: false,
+    isWomensTop: false,
+    isWomensBottoms: false,
+    isWomensSkirts: false,
+    isWomensOnePiece: false,
+    isWomensOuterwear: false,
+    isOthers: false,
   });
 
   let user = useSelector((state) => state.auth.user);
@@ -45,7 +45,7 @@ const HomeScreen = (props) => {
           throw new Error(error.response.data.message);
         });
       const resData = response.data.products;
-      setProducts(resData);
+      setAvailableProducts(resData);
       setFilteredProducts(resData);
     } catch (err) {
       throw new Error(err);
@@ -53,20 +53,112 @@ const HomeScreen = (props) => {
     setIsRefreshing(false);
   };
 
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = props.navigation.addListener("focus", () => {
+      loadProducts();
+    });
+    return unsubscribe;
+  }, [props.navigation]);
+
   const toggleGridMode = () => {
     setGridMode(!gridMode);
   };
-
-<<<<<<< HEAD
+  
   useEffect(() => {
-    const ten = categoryState["10"];
-    console.log(ten);
+    const {
+      isMensTop,
+      isMensBottoms,
+      isMensOuterwear,
+      isWomensTop,
+      isWomensBottoms,
+      isWomensSkirts,
+      isWomensOnePiece,
+      isWomensOuterwear,
+      isOthers,
+    } = categoryState;
+    if (
+      !isMensTop &&
+      !isMensBottoms &&
+      !isMensOuterwear &&
+      !isWomensTop &&
+      !isWomensBottoms &&
+      !isWomensSkirts &&
+      !isWomensOnePiece &&
+      !isWomensOuterwear &&
+      !isOthers
+    ) {
+      setFilteredProducts(availableProducts);
+    } else {
+      const updatedFilteredProducts = availableProducts.filter((product) => {
+        let firstFilter = false;
+        let secondFilter = false;
+        let thirdFilter = false;
+        let fourthFilter = false;
+        let fifthFilter = false;
+        let sixthFilter = false;
+        let seventhFilter = false;
+        let eighthFilter = false;
+        let ninthFilter = false;
+
+        if (isMensTop && product.category === "Men's Top") {
+          firstFilter = true;
+        }
+        if (
+          isMensBottoms &&
+          product.category === "Men's Pants, Jeans & Shorts"
+        ) {
+          secondFilter = true;
+        }
+        if (isMensOuterwear && product.category === "Men's Outerwear") {
+          thirdFilter = true;
+        }
+        if (isWomensTop && product.category === "Women's Top") {
+          fourthFilter = true;
+        }
+        if (
+          isWomensBottoms &&
+          product.category === "Women's Pants, Jeans & Shorts"
+        ) {
+          fifthFilter = true;
+        }
+        if (isWomensSkirts && product.category === "Women's Skirts") {
+          sixthFilter = true;
+        }
+        if (
+          isWomensOnePiece &&
+          product.category === "Women's Rompers, Dresses & Jumpsuits"
+        ) {
+          seventhFilter = true;
+        }
+        if (isWomensOuterwear && product.category === "Women's Outerwear") {
+          eighthFilter = true;
+        }
+        if (isOthers && product.category === "Others") {
+          ninthFilter = true;
+        }
+        return (
+          firstFilter ||
+          secondFilter ||
+          thirdFilter ||
+          fourthFilter ||
+          fifthFilter ||
+          sixthFilter ||
+          seventhFilter ||
+          eighthFilter ||
+          ninthFilter
+        );
+      });
+      setFilteredProducts(updatedFilteredProducts);
+    }
   }, [categoryState]);
-=======
+
   const navigateToProductDetails = (productData) => {
     props.navigation.navigate("Product", productData);
   };
->>>>>>> bac895d6e67bc7e0e1da9ca6cf111f9e250112e3
 
   return (
     <View style={styles.screenContainer}>
@@ -133,7 +225,7 @@ const HomeScreen = (props) => {
         onRefresh={loadProducts}
         refreshing={isRefreshing}
         columnWrapperStyle={styles.list}
-        data={products}
+        data={filteredProducts}
         horizontal={false}
         numColumns={2}
         keyExtractor={(item) => item.id}

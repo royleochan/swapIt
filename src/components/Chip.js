@@ -31,14 +31,14 @@ export default Chip;
 
 const styles = StyleSheet.create({
   chipContainer: {
-    paddingHorizontal: 10,
+    padding: 10,
     backgroundColor: Colors.lightGray,
     borderRadius: 30,
     alignItems: "center",
     margin: 5,
   },
   chipContainerOutline: {
-    paddingHorizontal: 10,
+    padding: 10,
     backgroundColor: Colors.lightGray,
     borderRadius: 30,
     alignItems: "center",
