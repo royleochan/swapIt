@@ -1,13 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
 
 import Colors from "constants/Colors";
 import AlertsScreen from "screens/AlertsScreen";
 import HomeNavigator from "navigation/HomeNavigator";
 import UploadNavigator from "navigation/UploadNavigator";
 import UserProfileNavigator from "navigation/UserProfileNavigator";
+import ExploreScreen from "screens/ExploreScreen";
 
 // Icons for the bottom tab navigator
 const DefaultIcon = (props) => {
@@ -17,6 +18,24 @@ const DefaultIcon = (props) => {
     case "Home":
       iconName = "home";
       break;
+    case "Explore":
+      return (
+        <View style={focused ? styles.activeIconContainer : null}>
+          {!focused && (
+            <MaterialCommunityIcons
+              name="compass-outline"
+              size={23}
+              color={Colors.primary}
+            />
+          )}
+          {focused && (
+            <>
+              <Text style={focused ? styles.activeLabel : null}>Explore</Text>
+              <Entypo name="dot-single" size={16} color={Colors.primary} />
+            </>
+          )}
+        </View>
+      );
     case "Upload":
       iconName = "plus";
       break;
@@ -29,13 +48,14 @@ const DefaultIcon = (props) => {
   }
   return (
     <View style={focused ? styles.activeIconContainer : null}>
-      <AntDesign
-        name={iconName}
-        size={23}
-        color={focused ? Colors.background : color}
-      />
+      {!focused && (
+        <AntDesign name={iconName} size={23} color={Colors.primary} />
+      )}
       {focused && (
-        <Text style={focused ? styles.activeLabel : null}>{name}</Text>
+        <>
+          <Text style={focused ? styles.activeLabel : null}>{name}</Text>
+          <Entypo name="dot-single" size={16} color={Colors.primary} />
+        </>
       )}
     </View>
   );
@@ -58,6 +78,7 @@ const BottomTabNavigator = () => {
       })}
     >
       <BottomTab.Screen name="Home" component={HomeNavigator} />
+      <BottomTab.Screen name="Explore" component={ExploreScreen} />
       <BottomTab.Screen name="Upload" component={UploadNavigator} />
       <BottomTab.Screen name="Alerts" component={AlertsScreen} />
       <BottomTab.Screen name="Profile" component={UserProfileNavigator} />
@@ -69,16 +90,13 @@ export default BottomTabNavigator;
 
 const styles = StyleSheet.create({
   activeIconContainer: {
-    flexDirection: "row",
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 20,
+    paddingTop: 12,
     justifyContent: "center",
     alignItems: "center",
   },
   activeLabel: {
-    color: Colors.background,
-    paddingLeft: 6,
+    color: Colors.primary,
+    fontFamily: "latoBold",
+    padding: 0,
   },
 });
