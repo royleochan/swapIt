@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useSelector } from "react-redux";
+import { SearchBar } from "react-native-elements";
+
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -21,6 +23,7 @@ const HomeScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [products, setProducts] = useState([]);
   const [gridMode, setGridMode] = useState(true);
+  const [query, setQuery] = useState("");
 
   let user = useSelector((state) => state.auth.user);
 
@@ -45,19 +48,23 @@ const HomeScreen = (props) => {
     setGridMode(!gridMode);
   };
 
+  const handleSearch = (text) => {
+    setQuery(text);
+  };
+
+  console.log(query);
+
   const navigateToProductDetails = (productData) => {
     props.navigation.navigate("Product", productData);
   };
 
   return (
     <View style={styles.screenContainer}>
-      <View style={styles.searchContainer}>
-        <TextInput
-          placeholder="Search"
-          placeholderTextColor="black"
-          style={styles.searchBar}
-        />
-      </View>
+      <SearchBar
+        placeholder="Search"
+        onChangeText={(queryText) => handleSearch(queryText)}
+        value={query}
+      />
       <View style={styles.mode}>
         <View style={styles.exploreContainer}>
           <DefaultText>What do you wish to view?</DefaultText>
