@@ -5,7 +5,7 @@ import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import ReduxThunk from "redux-thunk";
 import * as Font from "expo-font";
-import { AppLoading } from "expo";
+import AppLoading from "expo-app-loading";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 import AppNavigator from "navigation/AppNavigator";
@@ -32,6 +32,7 @@ export default function App() {
       <AppLoading
         startAsync={fetchFonts}
         onFinish={() => setDataLoaded(true)}
+        onError={console.warn}
       />
     );
   }
