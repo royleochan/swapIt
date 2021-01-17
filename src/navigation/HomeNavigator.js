@@ -3,7 +3,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import HomeScreen from "screens/HomeScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
-import DefaultNavOptions from "navigation/options/DefaultNavOptions";
 
 const Stack = createStackNavigator();
 
@@ -13,7 +12,7 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={DefaultNavOptions}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Product"
