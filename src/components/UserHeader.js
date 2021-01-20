@@ -10,30 +10,35 @@ const UserHeader = (props) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.profilePictureContainer}>
+      <View style={styles.detailsContainer}>
         <Image
           source={{ uri: selectedUser.profilePic }}
           style={styles.profilePicture}
         />
-      </View>
-      <View style={styles.userStatisticsContainer}>
-        <UserStatistic value={selectedUser.products.length}> Listings</UserStatistic>
-        <UserStatistic value={selectedUser.followers.length}> Followers</UserStatistic>
-        <UserStatistic value={selectedUser.following.length}> Following</UserStatistic>
+        <UserStatistic value={selectedUser.products.length}>
+          {" "}
+          Listings
+        </UserStatistic>
+        <UserStatistic value={selectedUser.followers.length}>
+          {" "}
+          Followers
+        </UserStatistic>
+        <UserStatistic value={selectedUser.following.length}>
+          {" "}
+          Following
+        </UserStatistic>
       </View>
       <View style={styles.userInformationContainer}>
         <DefaultText style={styles.username}>
           @{selectedUser.username}
         </DefaultText>
-        <DefaultText style={styles.location}>
+        {/* <DefaultText style={styles.location}>
           {selectedUser.location}
-        </DefaultText>
-        <DefaultText style={styles.rating}>{selectedUser.rating}/5</DefaultText>
+        </DefaultText> */}
       </View>
+      <DefaultText style={styles.rating}>{selectedUser.rating}/5</DefaultText>
       <View style={styles.descriptionContainer}>
-        <DefaultText style={styles.description}>
-          {selectedUser.description}
-        </DefaultText>
+        <DefaultText>{selectedUser.description}</DefaultText>
       </View>
     </View>
   );
@@ -46,33 +51,31 @@ const styles = StyleSheet.create({
     backgroundColor: "#E5E5E5",
     borderTopLeftRadius: 20,
     borderTopEndRadius: 20,
+    paddingHorizontal: "10%",
+    justifyContent: "flex-start",
   },
-  profilePictureContainer: {
+  detailsContainer: {
+    justifyContent: "space-between",
+    flexDirection: "row",
     alignItems: "center",
-    padding: 15,
+    paddingTop: 20,
   },
   profilePicture: {
     width: 75,
     height: 75,
     borderRadius: 35,
   },
-  userStatisticsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingBottom: 15,
-  },
   userStatistics: {
     fontSize: 10,
     color: Colors.primary,
   },
   userInformationContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    paddingBottom: 10,
+    flexDirection: "row",
+    paddingTop: 10,
   },
   username: {
     fontFamily: "latoBold",
-    fontSize: 12,
+    fontSize: 18,
     paddingBottom: 5,
   },
   location: {
@@ -84,9 +87,5 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     marginBottom: 20,
-  },
-  description: {
-    paddingHorizontal: 30,
-    textAlign: "center",
   },
 });

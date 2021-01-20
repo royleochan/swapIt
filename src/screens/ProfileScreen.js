@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
+import Feather from "react-native-vector-icons/Feather";
 
 import request from "utils/request";
+import Colors from "constants/Colors";
 import UserHeader from "components/UserHeader";
 import ProductBox from "components/ProductBox";
 
@@ -43,6 +45,18 @@ const ProfileScreen = (props) => {
     });
     return unsubscribe;
   }, [props.navigation]);
+
+  // settings icon
+  props.navigation.setOptions({
+    headerRight: () => (
+      <TouchableOpacity
+        style={{ paddingRight: 16 }}
+        onPress={() => {props.navigation.navigate("Settings")}}
+      >
+        <Feather name="settings" size={22} color={Colors.primary} />
+      </TouchableOpacity>
+    ),
+  });
 
   return (
     <View style={styles.screenContainer}>
