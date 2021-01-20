@@ -1,5 +1,12 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { View, StyleSheet, ScrollView, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
 import { useSelector } from "react-redux";
 import { AntDesign } from "@expo/vector-icons";
 import { Avatar } from "react-native-elements";
@@ -57,18 +64,10 @@ const HomeScreen = (props) => {
     loadRecommendedUsers();
   }, []);
 
-  return (
-    <View style={styles.screenContainer}>
-      <View style={styles.header}>
-        <CustomSearchBar query={query} handleSearch={handleSearch} />
-        <AntDesign
-          style={styles.messageIcon}
-          name="message1"
-          size={23}
-          color={Colors.primary}
-        />
-      </View>
-      <ScrollView>
+  // List Header Component //
+  const ListHeader = () => {
+    return (
+      <>
         <View style={styles.section}>
           <DefaultText style={styles.subheader}>Categories</DefaultText>
           <ScrollView
@@ -78,7 +77,7 @@ const HomeScreen = (props) => {
           >
             {MaleCategories.map((category) => {
               return (
-                <View style={styles.avatarContainer}>
+                <View style={styles.avatarContainer} key={category.label}>
                   <Avatar
                     rounded
                     size={64}
@@ -95,7 +94,7 @@ const HomeScreen = (props) => {
             })}
             {FemaleCategories.map((category) => {
               return (
-                <View style={styles.avatarContainer}>
+                <View style={styles.avatarContainer} key={category.label}>
                   <Avatar
                     rounded
                     size={64}
@@ -120,7 +119,7 @@ const HomeScreen = (props) => {
             contentContainerStyle={styles.avatarsContainer}
           >
             {recommendedUsers.map((user) => (
-              <View style={styles.avatarContainer}>
+              <View style={styles.avatarContainer} key={user.username}>
                 <Avatar
                   rounded
                   size={96}
@@ -137,31 +136,53 @@ const HomeScreen = (props) => {
         </View>
         <View style={styles.section}>
           <DefaultText style={styles.subheader}>Trending Now</DefaultText>
-          <FlatList
-            onRefresh={loadProducts}
-            refreshing={isRefreshing}
-            columnWrapperStyle={styles.list}
-            data={trendingProducts}
-            horizontal={false}
-            numColumns={2}
-            keyExtractor={(item) => item.id}
-            renderItem={(itemData) => {
-              return (
-                <ProductBox
-                  item={itemData.item}
-                  productCreator={itemData.item.creator}
-                  navigate={() =>
-                    navigateToProductDetails({
-                      ...itemData.item,
-                      user: itemData.item.creator,
-                    })
-                  }
-                />
-              );
-            }}
-          ></FlatList>
         </View>
-      </ScrollView>
+      </>
+    );
+  };
+
+  return (
+    <View style={styles.screenContainer}>
+      <View style={styles.header}>
+        <CustomSearchBar
+          query={query}
+          handleSearch={handleSearch}
+          style={styles.searchBar}
+        />
+        <TouchableOpacity onPress={() => props.navigation.navigate("Messages")}>
+          <AntDesign
+            style={styles.messageIcon}
+            name="message1"
+            size={23}
+            color={Colors.primary}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <FlatList
+        ListHeaderComponent={<ListHeader />}
+        onRefresh={loadProducts}
+        refreshing={isRefreshing}
+        columnWrapperStyle={styles.list}
+        data={trendingProducts}
+        horizontal={false}
+        numColumns={2}
+        keyExtractor={(item) => item.id}
+        renderItem={(itemData) => {
+          return (
+            <ProductBox
+              item={itemData.item}
+              productCreator={itemData.item.creator}
+              navigate={() =>
+                navigateToProductDetails({
+                  ...itemData.item,
+                  user: itemData.item.creator,
+                })
+              }
+            />
+          );
+        }}
+      ></FlatList>
     </View>
   );
 };
@@ -176,6 +197,10 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  searchBar: {
+    marginTop: 46,
+    width: "90%",
   },
   messageIcon: {
     marginTop: 40,
