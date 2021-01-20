@@ -27,9 +27,8 @@ const ProductBox = (props) => {
         $: {item.minPrice} - {item.maxPrice}
       </DefaultText>
       <View style={styles.userDetailsContainer}>
-        <Image style={styles.profilePicture} source={{ uri: item.imageUrl }} />
+        <Image style={styles.profilePicture} source={{ uri: productCreator.profilePic }} />
         <DefaultText style={styles.username}>
-          {" "}
           @{productCreator.username}
         </DefaultText>
       </View>
@@ -76,5 +75,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
+    marginRight: 6
   },
 });
