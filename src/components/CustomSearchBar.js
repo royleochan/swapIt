@@ -5,7 +5,7 @@ import { SearchBar } from "react-native-elements";
 import Colors from "constants/Colors";
 
 const CustomSearchBar = (props) => {
-  const { query, handleSearch } = props;
+  const { query, handleSearch, style } = props;
 
   return (
     <SearchBar
@@ -13,11 +13,13 @@ const CustomSearchBar = (props) => {
       onChangeText={(queryText) => handleSearch(queryText)}
       value={query}
       platform={Platform.OS === "ios" ? "ios" : "android"}
-      containerStyle={styles.searchBarContainer}
+      containerStyle={style}
       inputContainerStyle={styles.inputContainerStyle}
       inputStyle={styles.inputStyle}
       style={{ fontSize: 14 }}
-      cancelButtonProps={{ buttonTextStyle: { color: Colors.darkPink, fontSize: 14 } }}
+      cancelButtonProps={{
+        buttonTextStyle: { color: Colors.darkPink, fontSize: 14 },
+      }}
     />
   );
 };
@@ -25,10 +27,6 @@ const CustomSearchBar = (props) => {
 export default CustomSearchBar;
 
 const styles = StyleSheet.create({
-  searchBarContainer: {
-    marginTop: 46,
-    width: "90%",
-  },
   inputContainerStyle: {
     height: 20,
     backgroundColor: Colors.background,
