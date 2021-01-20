@@ -5,7 +5,6 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { AntDesign } from "@expo/vector-icons";

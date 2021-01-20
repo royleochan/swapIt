@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "screens/HomeScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
 import MessagesScreen from "screens/MessagesScreen";
-import DefaultNavOptions from "navigation/options/DefaultNavOptions";
+import ChatScreen from "screens/ChatScreen";
 
 const Stack = createStackNavigator();
 
@@ -24,7 +24,12 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="Messages"
         component={MessagesScreen}
-        options={DefaultNavOptions}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Chat"
+        component={ChatScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
