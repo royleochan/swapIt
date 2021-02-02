@@ -55,6 +55,7 @@ const MessagesScreen = (props) => {
         {searchedUsers.map((user) => {
           return (
             <TouchableHighlight
+              key={user.username}
               activeOpacity={0.9}
               underlayColor={"#F6F4F4"}
               onPress={() => props.navigation.navigate("Chat")}
@@ -111,6 +112,6 @@ const styles = StyleSheet.create({
   username: {
     fontFamily: "latoBold",
     fontSize: 16,
-    marginLeft: 14
+    marginLeft: 14,
   },
 });

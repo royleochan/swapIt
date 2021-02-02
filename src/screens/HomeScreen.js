@@ -30,8 +30,25 @@ const HomeScreen = (props) => {
     setQuery(text);
   };
 
+  const handleSubmit = () => {
+    const searchQuery = query;
+    setQuery("");
+    props.navigation.navigate("Results", searchQuery);
+  };
+
   const navigateToProductDetails = (productData) => {
     props.navigation.navigate("Product", productData);
+  };
+
+  const navigateToResults = (category) => {
+    props.navigation.navigate("Category", category);
+  };
+
+  const navigateToProfile = (userData) => {
+    props.navigation.navigate("ProfileNavigator", {
+      screen: "Profile",
+      params: userData,
+    });
   };
 
   // Need to change to trending products
@@ -75,25 +92,37 @@ const HomeScreen = (props) => {
             contentContainerStyle={styles.avatarsContainer}
           >
             {MaleCategories.map((category) => {
-              return (
-                <View style={styles.avatarContainer} key={category.label}>
-                  <Avatar
-                    rounded
-                    size={64}
-                    source={{
-                      uri:
-                        "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
-                    }}
-                  />
-                  <DefaultText style={styles.categoryLabel}>
-                    {category.label}
-                  </DefaultText>
-                </View>
-              );
+              if (category.label == "Others") {
+                return;
+              } else {
+                return (
+                  <TouchableOpacity
+                    style={styles.avatarContainer}
+                    key={category.label}
+                    onPress={() => navigateToResults(category)}
+                  >
+                    <Avatar
+                      rounded
+                      size={64}
+                      source={{
+                        uri:
+                          "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
+                      }}
+                    />
+                    <DefaultText style={styles.categoryLabel}>
+                      {category.label}
+                    </DefaultText>
+                  </TouchableOpacity>
+                );
+              }
             })}
             {FemaleCategories.map((category) => {
               return (
-                <View style={styles.avatarContainer} key={category.label}>
+                <TouchableOpacity
+                  style={styles.avatarContainer}
+                  key={category.label}
+                  onPress={() => navigateToResults(category)}
+                >
                   <Avatar
                     rounded
                     size={64}
@@ -105,7 +134,7 @@ const HomeScreen = (props) => {
                   <DefaultText style={styles.categoryLabel}>
                     {category.label}
                   </DefaultText>
-                </View>
+                </TouchableOpacity>
               );
             })}
           </ScrollView>
@@ -117,20 +146,26 @@ const HomeScreen = (props) => {
             horizontal={true}
             contentContainerStyle={styles.avatarsContainer}
           >
-            {recommendedUsers.map((user) => (
-              <View style={styles.avatarContainer} key={user.username}>
-                <Avatar
-                  rounded
-                  size={96}
-                  source={{
-                    uri: user.profilePic,
-                  }}
-                />
-                <DefaultText style={styles.categoryLabel}>
-                  @{user.username}
-                </DefaultText>
-              </View>
-            ))}
+            {recommendedUsers.map((user) => {
+              return (
+                <TouchableOpacity
+                  onPress={() => navigateToProfile(user)}
+                  style={styles.avatarContainer}
+                  key={user.username}
+                >
+                  <Avatar
+                    rounded
+                    size={96}
+                    source={{
+                      uri: user.profilePic,
+                    }}
+                  />
+                  <DefaultText style={styles.categoryLabel}>
+                    @{user.username}
+                  </DefaultText>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
         <View style={styles.section}>
@@ -147,6 +182,7 @@ const HomeScreen = (props) => {
           query={query}
           handleSearch={handleSearch}
           style={styles.searchBar}
+          onSubmit={handleSubmit}
         />
         <TouchableOpacity onPress={() => props.navigation.navigate("Messages")}>
           <AntDesign

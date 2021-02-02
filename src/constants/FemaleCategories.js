@@ -1,5 +1,5 @@
 export default [
-  { label: "Women's Top", value: "Women's Top" },
+  { label: "Women's Tops", value: "Women's Tops" },
   {
     label: "Women's Pants, Jeans & Shorts",
     value: "Women's Pants, Jeans & Shorts",

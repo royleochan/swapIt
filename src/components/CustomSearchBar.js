@@ -5,7 +5,7 @@ import { SearchBar } from "react-native-elements";
 import Colors from "constants/Colors";
 
 const CustomSearchBar = (props) => {
-  const { query, handleSearch, style } = props;
+  const { query, handleSearch, style, onSubmit } = props;
 
   return (
     <SearchBar
@@ -20,6 +20,8 @@ const CustomSearchBar = (props) => {
       cancelButtonProps={{
         buttonTextStyle: { color: Colors.darkPink, fontSize: 14 },
       }}
+      returnKeyType="search"
+      onSubmitEditing={onSubmit}
     />
   );
 };
