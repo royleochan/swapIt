@@ -38,10 +38,10 @@ const ResultsScreen = (props) => {
   );
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      searchHandler(query);
-    }, 1000);
+    // Executes searchHandler after 1000ms, returns a positive integer which uniquely identifies the timer created
+    const timer = setTimeout(() => searchHandler(query), 1000);
 
+    // Cancels the timer given the timer id
     return () => clearTimeout(timer);
   }, [query]);
 
