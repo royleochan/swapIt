@@ -38,8 +38,12 @@ const ResultsScreen = (props) => {
   );
 
   useEffect(() => {
-    searchHandler(query);
-  }, []);
+    const timer = setTimeout(() => {
+      searchHandler(query);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   return (
     <View style={styles.screenContainer}>
