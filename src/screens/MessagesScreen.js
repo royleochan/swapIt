@@ -58,7 +58,7 @@ const MessagesScreen = (props) => {
               key={user.username}
               activeOpacity={0.9}
               underlayColor={"#F6F4F4"}
-              onPress={() => props.navigation.navigate("Chat")}
+              onPress={() => props.navigation.navigate("Chat", user)}
             >
               <View style={styles.userRow}>
                 <View style={styles.avatarTextContainer}>
