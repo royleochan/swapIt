@@ -1,10 +1,13 @@
+import { REACT_APP_BACKEND_URL } from "@env";
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 
 import { useSelector } from "react-redux";
 import request from "utils/request";
+import io from "socket.io-client";
 
 const ChatScreen = (props) => {
+  const [socket, setSocket] = useState();
   const [messages, setMessages] = useState([]);
 
   const loggedInUserId = useSelector((state) => state.auth.user.id);
@@ -37,6 +40,16 @@ const ChatScreen = (props) => {
       setMessages(result.reverse());
     };
     loadMessages();
+  }, []);
+
+  useEffect(() => {
+    const socket = io(`${REACT_APP_BACKEND_URL}/chatSocket`);
+    setSocket(socket);
+    socket.connect();
+    socket.emit("join", "609a8094dec46a7ce23a5e61");
+    socket.on("joined", () => {
+      console.log("hi");
+    });
   }, []);
 
   const onSend = useCallback((messages = []) => {
