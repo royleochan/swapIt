@@ -22,7 +22,10 @@ const ProductBox = (props) => {
         $: {item.minPrice} - {item.maxPrice}
       </DefaultText>
       <View style={styles.userDetailsContainer}>
-        <Image style={styles.profilePicture} source={{ uri: productCreator.profilePic }} />
+        <Image
+          style={styles.profilePicture}
+          source={{ uri: productCreator.profilePic }}
+        />
         <DefaultText style={styles.username}>
           @{productCreator.username}
         </DefaultText>
@@ -49,6 +52,7 @@ const styles = StyleSheet.create({
   likesText: {
     fontSize: 12,
     color: "#d50101",
+    marginLeft: 5,
   },
   titleText: {
     fontSize: 12,
@@ -70,6 +74,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    marginRight: 6
+    marginRight: 6,
   },
 });
