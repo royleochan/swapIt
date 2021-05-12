@@ -52,6 +52,10 @@ const HomeScreen = (props) => {
     });
   };
 
+  const navigateToSearchUser = () => {
+    props.navigation.navigate("Search");
+  };
+
   // Need to change to trending products
   const loadProducts = useCallback(async () => {
     setIsRefreshing(true);
@@ -178,6 +182,7 @@ const HomeScreen = (props) => {
     <View style={styles.screenContainer}>
       <View style={styles.header}>
         <CustomSearchBar
+          placeholder="Search for items"
           query={query}
           handleSearch={handleSearch}
           style={styles.searchBar}
@@ -195,16 +200,12 @@ const HomeScreen = (props) => {
         </TouchableOpacity>
       </View>
       {isFocusSearch && (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigateToSearchUser()}>
           <View style={styles.searchUserContainer}>
             <DefaultText style={styles.searchUserContainer}>
               Search for users instead
             </DefaultText>
-            <AntDesign
-              name="user"
-              size={23}
-              color={Colors.primary}
-            />
+            <AntDesign name="user" size={23} color={Colors.primary} />
           </View>
         </TouchableOpacity>
       )}

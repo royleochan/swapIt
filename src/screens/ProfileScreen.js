@@ -20,7 +20,7 @@ const ProfileScreen = (props) => {
     setIsRefreshing(true);
     try {
       const response = await request
-        .get(`/api/products/user/${user.id}`)
+        .get(`/api/products/user/${user._id}`)
         .catch((error) => {
           throw new Error(error.response.data.message);
         });

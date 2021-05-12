@@ -5,12 +5,12 @@ import { SearchBar } from "react-native-elements";
 import Colors from "constants/Colors";
 
 const CustomSearchBar = (props) => {
-  const { query, handleSearch, style, onSubmit, handleFocus, handleBlur } =
+  const { query, handleSearch, style, onSubmit, handleFocus, handleBlur, placeholder } =
     props;
 
   return (
     <SearchBar
-      placeholder="Search"
+      placeholder={placeholder}
       onChangeText={(queryText) => handleSearch(queryText)}
       value={query}
       platform={Platform.OS === "ios" ? "ios" : "android"}
