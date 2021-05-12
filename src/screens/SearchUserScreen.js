@@ -11,6 +11,7 @@ import { AntDesign } from "@expo/vector-icons";
 
 import Colors from "constants/Colors";
 import request from "utils/request";
+import useDidMountEffect from "hooks/useDidMountEffect";
 import DefaultText from "components/DefaultText";
 import CustomSearchBar from "components/CustomSearchBar";
 
@@ -21,12 +22,10 @@ const SearchUserScreen = (props) => {
 
   const handleSearch = (text) => {
     setQuery(text);
-    searchHandler();
   };
 
   const searchHandler = async () => {
     try {
-      setIsLoading(true);
       const response = await request.get(`/api/users/search/${query}`);
       setSearchedUsers(response.data.users);
       setIsLoading(false);
@@ -35,6 +34,15 @@ const SearchUserScreen = (props) => {
       setIsLoading(false);
     }
   };
+
+  useDidMountEffect(() => {
+    setIsLoading(true);
+    // Executes searchHandler after 1000ms, returns a positive integer which uniquely identifies the timer created
+    const timer = setTimeout(() => searchHandler(query), 1000);
+
+    // Cancels the timer given the timer id
+    return () => clearTimeout(timer);
+  }, [query]);
 
   return (
     <View style={styles.screenContainer}>
