@@ -6,9 +6,10 @@ import HomeScreen from "screens/HomeScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
 import MessagesScreen from "screens/MessagesScreen";
 import ChatScreen from "screens/ChatScreen";
-import ProfileNavigator from "navigation/UserProfileNavigator";
+import ProfileScreen from "screens/ProfileScreen";
 import CategoryScreen from "screens/CategoryScreen";
 import ResultsScreen from "screens/ResultsScreen";
+import SearchUserScreen from "screens/SearchUserScreen";
 
 const Stack = createStackNavigator();
 
@@ -46,8 +47,13 @@ const HomeNavigator = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="ProfileNavigator"
-        component={ProfileNavigator}
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={DefaultNavOptions}
+      />
+      <Stack.Screen
+        name="Search"
+        component={SearchUserScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
