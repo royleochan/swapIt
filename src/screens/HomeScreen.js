@@ -20,6 +20,7 @@ import ProductBox from "components/ProductBox";
 
 const HomeScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isFocusSearch, setIsFocusSearch] = useState(false);
   const [query, setQuery] = useState("");
   const [trendingProducts, setTrendingProducts] = useState([]);
   const [recommendedUsers, setRecommendedUsers] = useState([]);
@@ -105,8 +106,7 @@ const HomeScreen = (props) => {
                       rounded
                       size={64}
                       source={{
-                        uri:
-                          "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
+                        uri: "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
                       }}
                     />
                     <DefaultText style={styles.categoryLabel}>
@@ -127,8 +127,7 @@ const HomeScreen = (props) => {
                     rounded
                     size={64}
                     source={{
-                      uri:
-                        "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
+                      uri: "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
                     }}
                   />
                   <DefaultText style={styles.categoryLabel}>
@@ -183,6 +182,8 @@ const HomeScreen = (props) => {
           handleSearch={handleSearch}
           style={styles.searchBar}
           onSubmit={handleSubmit}
+          handleFocus={() => setIsFocusSearch(true)}
+          handleBlur={() => setIsFocusSearch(false)}
         />
         <TouchableOpacity onPress={() => props.navigation.navigate("Messages")}>
           <AntDesign
@@ -193,31 +194,46 @@ const HomeScreen = (props) => {
           />
         </TouchableOpacity>
       </View>
-
-      <FlatList
-        ListHeaderComponent={<ListHeader />}
-        onRefresh={loadProducts}
-        refreshing={isRefreshing}
-        columnWrapperStyle={styles.list}
-        data={trendingProducts}
-        horizontal={false}
-        numColumns={2}
-        keyExtractor={(item) => item.id}
-        renderItem={(itemData) => {
-          return (
-            <ProductBox
-              item={itemData.item}
-              productCreator={itemData.item.creator}
-              navigate={() =>
-                navigateToProductDetails({
-                  ...itemData.item,
-                  user: itemData.item.creator,
-                })
-              }
+      {isFocusSearch && (
+        <TouchableOpacity>
+          <View style={styles.searchUserContainer}>
+            <DefaultText style={styles.searchUserContainer}>
+              Search for users instead
+            </DefaultText>
+            <AntDesign
+              name="user"
+              size={23}
+              color={Colors.primary}
             />
-          );
-        }}
-      ></FlatList>
+          </View>
+        </TouchableOpacity>
+      )}
+      {!isFocusSearch && (
+        <FlatList
+          ListHeaderComponent={<ListHeader />}
+          onRefresh={loadProducts}
+          refreshing={isRefreshing}
+          columnWrapperStyle={styles.list}
+          data={trendingProducts}
+          horizontal={false}
+          numColumns={2}
+          keyExtractor={(item) => item.id}
+          renderItem={(itemData) => {
+            return (
+              <ProductBox
+                item={itemData.item}
+                productCreator={itemData.item.creator}
+                navigate={() =>
+                  navigateToProductDetails({
+                    ...itemData.item,
+                    user: itemData.item.creator,
+                  })
+                }
+              />
+            );
+          }}
+        ></FlatList>
+      )}
     </View>
   );
 };
@@ -265,5 +281,11 @@ const styles = StyleSheet.create({
   list: {
     justifyContent: "center",
     marginTop: 10,
+  },
+  searchUserContainer: {
+    flexDirection: "row",
+    fontSize: 16,
+    margin: 8,
+    alignItems: "center",
   },
 });

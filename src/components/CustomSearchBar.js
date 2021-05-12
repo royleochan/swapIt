@@ -5,7 +5,8 @@ import { SearchBar } from "react-native-elements";
 import Colors from "constants/Colors";
 
 const CustomSearchBar = (props) => {
-  const { query, handleSearch, style, onSubmit } = props;
+  const { query, handleSearch, style, onSubmit, handleFocus, handleBlur } =
+    props;
 
   return (
     <SearchBar
@@ -22,6 +23,8 @@ const CustomSearchBar = (props) => {
       }}
       returnKeyType="search"
       onSubmitEditing={onSubmit}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
     />
   );
 };
