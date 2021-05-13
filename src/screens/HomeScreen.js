@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useSelector } from "react-redux";
-import { AntDesign } from "@expo/vector-icons";
 import { Avatar } from "react-native-elements";
+import { AntDesign } from "@expo/vector-icons";
 
 import request from "utils/request";
 import Colors from "constants/Colors";
@@ -17,6 +17,7 @@ import FemaleCategories from "constants/FemaleCategories";
 import CustomSearchBar from "components/CustomSearchBar";
 import DefaultText from "components/DefaultText";
 import ProductBox from "components/ProductBox";
+import IconButton from "components/IconButton";
 
 const HomeScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -25,7 +26,7 @@ const HomeScreen = (props) => {
   const [trendingProducts, setTrendingProducts] = useState([]);
   const [recommendedUsers, setRecommendedUsers] = useState([]);
 
-  let user = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
 
   const handleSearch = (text) => {
     setQuery(text);
@@ -190,14 +191,13 @@ const HomeScreen = (props) => {
           handleFocus={() => setIsFocusSearch(true)}
           handleBlur={() => setIsFocusSearch(false)}
         />
-        <TouchableOpacity onPress={() => props.navigation.navigate("Messages")}>
-          <AntDesign
-            style={styles.messageIcon}
-            name="message1"
-            size={23}
-            color={Colors.primary}
-          />
-        </TouchableOpacity>
+        <IconButton
+          style={styles.messageIcon}
+          size={23}
+          color={Colors.primary}
+          name="message1"
+          onPress={() => props.navigation.navigate("Messages")}
+        />
       </View>
       {isFocusSearch && (
         <TouchableOpacity onPress={() => navigateToSearchUser()}>

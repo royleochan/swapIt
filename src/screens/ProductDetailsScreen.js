@@ -3,19 +3,18 @@ import {
   StyleSheet,
   View,
   Image,
-  Platform,
   TouchableOpacity,
   Dimensions,
 } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useSelector } from "react-redux";
-import { AntDesign } from "@expo/vector-icons";
 import MaterialCommunity from "react-native-vector-icons/MaterialCommunityIcons";
 import Feather from "react-native-vector-icons/Feather";
 
 import request from "utils/request";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
+import IconButton from "components/IconButton";
 
 const ProductDetailsScreen = (props) => {
   const {
@@ -60,26 +59,21 @@ const ProductDetailsScreen = (props) => {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.imageContainer}>
-        <TouchableOpacity
+        <IconButton
           style={styles.arrow}
+          size={23}
+          color={Colors.primary}
+          name="arrowleft"
           onPress={() => props.navigation.goBack()}
-        >
-          <AntDesign
-            name={"arrowleft"}
-            size={24}
-            color={Colors.background}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
+        />
         {loggedInUser._id == user._id && (
-          <TouchableOpacity style={styles.ellipsis} onPress={showActionSheet}>
-            <AntDesign
-              name={"ellipsis1"}
-              size={24}
-              color={Colors.background}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
+          <IconButton
+            style={styles.ellipsis}
+            size={23}
+            color={Colors.background}
+            name="ellipsis1"
+            onPress={showActionSheet}
+          />
         )}
         <Image source={{ uri: imageUrl }} style={styles.image} />
         <View style={styles.detailsContainer}>
@@ -123,9 +117,6 @@ const ProductDetailsScreen = (props) => {
 export default ProductDetailsScreen;
 
 const styles = StyleSheet.create({
-  icon: {
-    opacity: 0.5,
-  },
   arrow: {
     zIndex: 10,
     position: "absolute",
