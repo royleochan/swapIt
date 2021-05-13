@@ -10,7 +10,7 @@ import {
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useSelector } from "react-redux";
 import { AntDesign } from "@expo/vector-icons";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunity from "react-native-vector-icons/MaterialCommunityIcons";
 import Feather from "react-native-vector-icons/Feather";
 
 import request from "utils/request";
@@ -96,11 +96,10 @@ const ProductDetailsScreen = (props) => {
             style={styles.iconTextContainer}
             onPress={() => console.log("Show users who liked item")}
           >
-            <Ionicons
-              name={
-                Platform.OS === "ios" ? "ios-heart-empty" : "md-heart-empty"
-              }
+            <MaterialCommunity
+              name={"heart-outline"}
               size={16}
+              color={"#d50101"}
             />
             <DefaultText>
               {likes.length} {likes.length === 1 ? "like" : "likes"}
@@ -140,14 +139,14 @@ const styles = StyleSheet.create({
     marginLeft: Dimensions.get("window").width - 40,
   },
   title: {
-    fontSize: 16,
+    fontSize: 20,
     fontFamily: "latoBold",
   },
   image: {
     width: "100%",
     height: "100%",
-    borderBottomStartRadius: 30,
-    borderBottomEndRadius: 30,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   imageContainer: {
     height: "60%",
@@ -160,7 +159,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   textContainer: {
-    marginVertical: 3,
+    marginVertical: 4,
   },
   iconTextContainer: {
     flexDirection: "row",
