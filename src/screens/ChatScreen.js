@@ -46,6 +46,7 @@ const ChatScreen = (props) => {
   // }, []);
 
   useEffect(() => {
+    console.log("Attempting to connect...");
     socket.connect();
     socket.on("connect", async () => {
       console.log("Received connect, preparing to emit...");
@@ -59,6 +60,18 @@ const ChatScreen = (props) => {
     });
     socket.on("message", (message) => {
       console.log("INCOMING MESSAGE: " + message.content);
+      const newMessage = [{
+        _id: new Date().toDateString(),
+        text: message.content,
+        createdAt: new Date(),
+        user: {
+          _id: message.userId,
+          avatar: userProfilePic,
+        },
+      }];
+      setMessages((previousMessages) =>
+          GiftedChat.append(previousMessages, newMessage)
+      );
     });
     return () => {
       console.log("DISCONNECT");
@@ -72,11 +85,11 @@ const ChatScreen = (props) => {
       socket.emit("message", { userId: loggedInUserId, message: lastSentMessage });
     } else {
       firstUpdate.current = false;
-      console.log("INITIAL RENDER:", lastSentMessage);
     }
   }, [lastSentMessage]);
 
   const onSend = useCallback((newMessage = []) => {
+    console.log(newMessage[0]);
     setLastSentMessage(newMessage[0].text);
     setMessages((previousMessages) =>
         GiftedChat.append(previousMessages, newMessage)
