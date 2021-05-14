@@ -1,17 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 
 import request from "utils/request";
 import Colors from "constants/Colors";
 import ProductBox from "components/ProductBox";
 import CustomSearchBar from "components/CustomSearchBar";
+import IconButton from "components/IconButton";
 
 const ResultsScreen = (props) => {
   const [query, setQuery] = useState(props.route.params);
@@ -55,9 +49,12 @@ const ResultsScreen = (props) => {
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => props.navigation.goBack()}>
-          <AntDesign name={"arrowleft"} size={23} color={Colors.primary} />
-        </TouchableOpacity>
+        <IconButton
+          size={23}
+          color={Colors.primary}
+          name="arrowleft"
+          onPress={() => props.navigation.goBack()}
+        />
         <CustomSearchBar
           query={query}
           handleSearch={handleSearch}

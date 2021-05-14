@@ -2,7 +2,6 @@ import React, { useState, useLayoutEffect } from "react";
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
   TextInput,
   Image,
   Text,
@@ -14,7 +13,6 @@ import {
 import { useSelector } from "react-redux";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useForm, Controller } from "react-hook-form";
-import { AntDesign } from "@expo/vector-icons";
 
 import {
   takeImage,
@@ -29,6 +27,7 @@ import DefaultText from "components/DefaultText";
 import DropDown from "components/DropDown";
 import MainButton from "components/MainButton";
 import Loader from "components/Loader";
+import IconButton from "components/IconButton";
 
 const UploadScreen = (props) => {
   const user = useSelector((state) => state.auth.user);
@@ -144,12 +143,13 @@ const UploadScreen = (props) => {
   useLayoutEffect(() => {
     props.navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity
+        <IconButton
           style={{ paddingRight: 16 }}
+          size={22}
+          color={Colors.primary}
+          name="upload"
           onPress={handleSubmit(uploadHandler)}
-        >
-          <AntDesign name="upload" size={22} color={Colors.primary} />
-        </TouchableOpacity>
+        />
       ),
     });
   }, [props.navigation, maleCategory, femaleCategory, pickedImage]);
@@ -163,9 +163,12 @@ const UploadScreen = (props) => {
       <View style={styles.imageContainer}>
         <View style={styles.imagePreview}>
           {pickedImage === undefined ? (
-            <TouchableOpacity onPress={showActionSheet}>
-              <AntDesign name="plussquareo" size={24} color={Colors.primary} />
-            </TouchableOpacity>
+            <IconButton
+              size={24}
+              color={Colors.primary}
+              name="plussquareo"
+              onPress={showActionSheet}
+            />
           ) : (
             <Image style={styles.image} source={{ uri: pickedImage.uri }} />
           )}

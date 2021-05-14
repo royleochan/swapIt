@@ -2,18 +2,17 @@ import React, { useState } from "react";
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
   TouchableHighlight,
   ActivityIndicator,
 } from "react-native";
 import { Avatar } from "react-native-elements";
-import { AntDesign } from "@expo/vector-icons";
 
 import request from "utils/request";
 import Colors from "constants/Colors";
 import useDidMountEffect from "hooks/useDidMountEffect";
 import DefaultText from "components/DefaultText";
 import CustomSearchBar from "components/CustomSearchBar";
+import IconButton from "components/IconButton";
 
 const MessagesScreen = (props) => {
   const [query, setQuery] = useState("");
@@ -47,9 +46,12 @@ const MessagesScreen = (props) => {
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => props.navigation.goBack()}>
-          <AntDesign name={"arrowleft"} size={23} color={Colors.primary} />
-        </TouchableOpacity>
+        <IconButton
+          size={23}
+          color={Colors.primary}
+          name="arrowleft"
+          onPress={() => props.navigation.goBack()}
+        />
         <CustomSearchBar
           query={query}
           handleSearch={handleSearch}
