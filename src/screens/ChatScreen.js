@@ -14,17 +14,15 @@ const ChatScreen = (props) => {
   );
   const [messages, setMessages] = useState([]);
   const [lastSentMessage, setLastSentMessage] = useState("");
+  // const [isLoading, setIsLoading] = useState(false);
   const firstUpdate = useRef(true);
 
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const userId = props.route.params._id;
   const userProfilePic = props.route.params.profilePic;
 
-  // const getMessages = async () => {
-  //   const response = await request.get(`/api/chats/${loggedInUserId}/${userId}`);
-  // };
-
   const getMessages = async () => {
+    //   const response = await request.get(`/api/chats/${loggedInUserId}/${userId}`);
     const response = await request.get(`/api/chats/609a8094dec46a7ce23a5e61`);
     return response.data.room.messages.map((message) => {
       return {
@@ -39,15 +37,8 @@ const ChatScreen = (props) => {
     });
   };
 
-  // useEffect(() => {
-  //   const loadMessages = async () => {
-  //     const result = await getMessages();
-  //     setMessages(result.reverse());
-  //   };
-  //   loadMessages();
-  // }, []);
-
   useEffect(() => {
+    // setIsLoading(true);
     console.log("Attempting to connect...");
     socket.connect();
     socket.on("connect", async () => {
@@ -57,7 +48,10 @@ const ChatScreen = (props) => {
     socket.on("joined", async (roomId) => {
       console.log("User has joined room %s", roomId);
       await getMessages()
-        .then((response) => setMessages(response.reverse()))
+        .then((response) => {
+          // setIsLoading(false);
+          setMessages(response.reverse());
+        })
         .catch((e) => console.error(e));
     });
     socket.on("message", (message) => {
