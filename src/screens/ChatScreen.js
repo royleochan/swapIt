@@ -1,6 +1,7 @@
 import { REACT_APP_BACKEND_URL } from "@env";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
+import uuid from "react-native-uuid";
 
 import { useSelector } from "react-redux";
 import request from "utils/request";
@@ -8,7 +9,7 @@ import { io } from "socket.io-client";
 
 const ChatScreen = (props) => {
   const [socket] = useState(
-    io(`${REACT_APP_BACKEND_URL}`, {
+    io(`${REACT_APP_BACKEND_URL}/chatSocket`, {
       autoConnect: false,
     })
   );
@@ -58,7 +59,7 @@ const ChatScreen = (props) => {
       console.log("INCOMING MESSAGE: " + message.content);
       const newMessage = [
         {
-          _id: new Date().toDateString(),
+          _id: uuid.v4(),
           text: message.content,
           createdAt: new Date(),
           user: {
