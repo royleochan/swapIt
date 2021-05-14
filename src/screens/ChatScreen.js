@@ -1,11 +1,17 @@
 import { REACT_APP_BACKEND_URL } from "@env";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { GiftedChat } from "react-native-gifted-chat";
+import { Actions, GiftedChat } from "react-native-gifted-chat";
+import {
+  takeImage,
+  chooseFromLibrary,
+  uploadImageHandler,
+} from "utils/imagePicker";
 import uuid from "react-native-uuid";
 
 import { useSelector } from "react-redux";
 import request from "utils/request";
 import { io } from "socket.io-client";
+import {Icon} from "react-native-elements";
 
 const ChatScreen = (props) => {
   const [socket] = useState(
@@ -15,12 +21,37 @@ const ChatScreen = (props) => {
   );
   const [messages, setMessages] = useState([]);
   const [lastSentMessage, setLastSentMessage] = useState("");
+  const [lastSentImage, setLastSentImage] = useState("");
   // const [isLoading, setIsLoading] = useState(false);
   const firstUpdate = useRef(true);
 
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const userId = props.route.params._id;
   const userProfilePic = props.route.params.profilePic;
+
+  //Choose image from image library
+  const handlePickImage = () => {
+  }
+
+  //Take picture
+  const handleLaunchCamera = () => {
+  }
+
+  const renderActions = (props) => {
+    return (
+        <Actions
+            {...props}
+            options={{
+              ['Use camera']: handleLaunchCamera,
+              ['Choose Image']: handlePickImage,
+            }}
+            icon={() => (
+                <Icon name={'attachment'} size={23} color={"black"} />
+            )}
+            onSend={args => console.log(args)}
+        />
+    );
+  };
 
   const getMessages = async () => {
     //   const response = await request.get(`/api/chats/${loggedInUserId}/${userId}`);
@@ -56,7 +87,6 @@ const ChatScreen = (props) => {
         .catch((e) => console.error(e));
     });
     socket.on("message", (message) => {
-      console.log("INCOMING MESSAGE: " + message.content);
       const newMessage = [
         {
           _id: uuid.v4(),
@@ -105,6 +135,8 @@ const ChatScreen = (props) => {
       user={{
         _id: loggedInUserId,
       }}
+      renderActions={renderActions}
+      infiniteScroll
     />
   );
 };
