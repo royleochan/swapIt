@@ -8,7 +8,7 @@ import { io } from "socket.io-client";
 
 const ChatScreen = (props) => {
   const [socket] = useState(
-    io(`${REACT_APP_BACKEND_URL}`, {
+    io(`${REACT_APP_BACKEND_URL}/chatSocket`, {
       autoConnect: false,
     })
   );
