@@ -12,7 +12,6 @@ import {
 import { useSelector } from "react-redux";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useForm, Controller } from "react-hook-form";
-import { AntDesign } from "@expo/vector-icons";
 
 import {
   takeImage,
@@ -26,6 +25,7 @@ import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
 import DropDown from "components/DropDown";
 import Loader from "components/Loader";
+import IconButton from "components/IconButton";
 import Colors from "constants/Colors";
 
 const EditProductScreen = (props) => {
@@ -118,12 +118,13 @@ const EditProductScreen = (props) => {
   useLayoutEffect(() => {
     props.navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity
+        <IconButton
           style={{ paddingLeft: 10 }}
+          size={23}
+          color={Colors.primary}
+          name="arrowleft"
           onPress={() => props.navigation.goBack()}
-        >
-          <AntDesign name="arrowleft" size={23} color={Colors.primary} />
-        </TouchableOpacity>
+        />
       ),
     });
   }, [props.navigation]);

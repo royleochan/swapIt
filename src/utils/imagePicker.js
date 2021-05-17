@@ -3,18 +3,29 @@ import {
   REACT_APP_CLOUDINARY_UPLOAD_PRESET,
 } from "@env";
 import * as ImagePicker from "expo-image-picker";
-import * as Permissions from "expo-permissions";
 import { Alert } from "react-native";
 
 const DUMMY_PROFILE_PIC_URL =
   "https://res.cloudinary.com/dey8rgnvh/image/upload/v1608621412/test_xmobg3.png";
 
-const verifyPermissions = async () => {
-  const result = await Permissions.askAsync(
-    Permissions.CAMERA,
-    Permissions.CAMERA_ROLL
-  );
-  if (result.status !== "granted") {
+const verifyCameraPermissions = async () => {
+  const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
+
+  if (cameraStatus.status !== "granted") {
+    Alert.alert(
+      "Insufficient Permissions!",
+      "You need to grant camera permissions to upload an Image.",
+      [{ text: "Okay" }]
+    );
+    return false;
+  }
+  return true;
+};
+
+const verifyLibraryPermissions = async () => {
+  const mediaStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  if (mediaStatus.status !== "granted") {
     Alert.alert(
       "Insufficient Permissions!",
       "You need to grant camera permissions to upload an Image.",
@@ -26,7 +37,7 @@ const verifyPermissions = async () => {
 };
 
 const takeImage = async () => {
-  const hasPermission = await verifyPermissions();
+  const hasPermission = await verifyCameraPermissions();
   if (!hasPermission) {
     return;
   }
@@ -41,7 +52,7 @@ const takeImage = async () => {
 };
 
 const chooseFromLibrary = async () => {
-  const hasPermission = await verifyPermissions();
+  const hasPermission = await verifyLibraryPermissions();
   if (!hasPermission) {
     return;
   }
@@ -79,4 +90,4 @@ const uploadImageHandler = async (image) => {
   return resData.url;
 };
 
-export { verifyPermissions, takeImage, chooseFromLibrary, uploadImageHandler };
+export { verifyCameraPermissions, verifyLibraryPermissions, takeImage, chooseFromLibrary, uploadImageHandler };

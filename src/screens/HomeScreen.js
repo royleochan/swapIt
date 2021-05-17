@@ -1,31 +1,62 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { View, StyleSheet, ScrollView, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { useSelector } from "react-redux";
-import { AntDesign } from "@expo/vector-icons";
 import { Avatar } from "react-native-elements";
+import { AntDesign } from "@expo/vector-icons";
 
 import request from "utils/request";
+import WomenTop from "assets/svg/WomenTop";
+import MenTop from "assets/svg/MenTop";
 import Colors from "constants/Colors";
 import MaleCategories from "constants/MaleCategories";
 import FemaleCategories from "constants/FemaleCategories";
 import CustomSearchBar from "components/CustomSearchBar";
 import DefaultText from "components/DefaultText";
 import ProductBox from "components/ProductBox";
+import IconButton from "components/IconButton";
 
 const HomeScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isFocusSearch, setIsFocusSearch] = useState(false);
   const [query, setQuery] = useState("");
   const [trendingProducts, setTrendingProducts] = useState([]);
   const [recommendedUsers, setRecommendedUsers] = useState([]);
 
-  let user = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
 
   const handleSearch = (text) => {
     setQuery(text);
   };
 
+  const handleSubmit = () => {
+    const searchQuery = query;
+    setQuery("");
+    props.navigation.navigate("Results", searchQuery);
+  };
+
   const navigateToProductDetails = (productData) => {
     props.navigation.navigate("Product", productData);
+  };
+
+  const navigateToResults = (category) => {
+    props.navigation.navigate("Category", category);
+  };
+
+  const navigateToProfile = (userData) => {
+    props.navigation.navigate("ProfileNavigator", {
+      screen: "Profile",
+      params: userData,
+    });
+  };
+
+  const navigateToSearchUser = () => {
+    props.navigation.navigate("Search");
   };
 
   // Need to change to trending products
@@ -57,18 +88,10 @@ const HomeScreen = (props) => {
     loadRecommendedUsers();
   }, []);
 
-  return (
-    <View style={styles.screenContainer}>
-      <View style={styles.header}>
-        <CustomSearchBar query={query} handleSearch={handleSearch} />
-        <AntDesign
-          style={styles.messageIcon}
-          name="message1"
-          size={23}
-          color={Colors.primary}
-        />
-      </View>
-      <ScrollView>
+  // List Header Component //
+  const ListHeader = () => {
+    return (
+      <>
         <View style={styles.section}>
           <DefaultText style={styles.subheader}>Categories</DefaultText>
           <ScrollView
@@ -77,37 +100,35 @@ const HomeScreen = (props) => {
             contentContainerStyle={styles.avatarsContainer}
           >
             {MaleCategories.map((category) => {
-              return (
-                <View style={styles.avatarContainer}>
-                  <Avatar
-                    rounded
-                    size={64}
-                    source={{
-                      uri:
-                        "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
-                    }}
-                  />
-                  <DefaultText style={styles.categoryLabel}>
-                    {category.label}
-                  </DefaultText>
-                </View>
-              );
+              if (category.label == "Others") {
+                return;
+              } else {
+                return (
+                  <TouchableOpacity
+                    style={styles.avatarContainer}
+                    key={category.label}
+                    onPress={() => navigateToResults(category)}
+                  >
+                    <MenTop />
+                    <DefaultText style={styles.categoryLabel}>
+                      {category.label}
+                    </DefaultText>
+                  </TouchableOpacity>
+                );
+              }
             })}
             {FemaleCategories.map((category) => {
               return (
-                <View style={styles.avatarContainer}>
-                  <Avatar
-                    rounded
-                    size={64}
-                    source={{
-                      uri:
-                        "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
-                    }}
-                  />
+                <TouchableOpacity
+                  style={styles.avatarContainer}
+                  key={category.label}
+                  onPress={() => navigateToResults(category)}
+                >
+                  <WomenTop />
                   <DefaultText style={styles.categoryLabel}>
                     {category.label}
                   </DefaultText>
-                </View>
+                </TouchableOpacity>
               );
             })}
           </ScrollView>
@@ -119,49 +140,91 @@ const HomeScreen = (props) => {
             horizontal={true}
             contentContainerStyle={styles.avatarsContainer}
           >
-            {recommendedUsers.map((user) => (
-              <View style={styles.avatarContainer}>
-                <Avatar
-                  rounded
-                  size={96}
-                  source={{
-                    uri: user.profilePic,
-                  }}
-                />
-                <DefaultText style={styles.categoryLabel}>
-                  @{user.username}
-                </DefaultText>
-              </View>
-            ))}
+            {recommendedUsers.map((user) => {
+              return (
+                <TouchableOpacity
+                  onPress={() => navigateToProfile(user)}
+                  style={styles.avatarContainer}
+                  key={user.username}
+                >
+                  <Avatar
+                    rounded
+                    size={96}
+                    source={{
+                      uri: user.profilePic,
+                    }}
+                  />
+                  <DefaultText style={styles.categoryLabel}>
+                    @{user.username}
+                  </DefaultText>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
         <View style={styles.section}>
           <DefaultText style={styles.subheader}>Trending Now</DefaultText>
-          <FlatList
-            onRefresh={loadProducts}
-            refreshing={isRefreshing}
-            columnWrapperStyle={styles.list}
-            data={trendingProducts}
-            horizontal={false}
-            numColumns={2}
-            keyExtractor={(item) => item.id}
-            renderItem={(itemData) => {
-              return (
-                <ProductBox
-                  item={itemData.item}
-                  productCreator={itemData.item.creator}
-                  navigate={() =>
-                    navigateToProductDetails({
-                      ...itemData.item,
-                      user: itemData.item.creator,
-                    })
-                  }
-                />
-              );
-            }}
-          ></FlatList>
         </View>
-      </ScrollView>
+      </>
+    );
+  };
+
+  return (
+    <View style={styles.screenContainer}>
+      <View style={styles.header}>
+        <CustomSearchBar
+          placeholder="Search for items"
+          query={query}
+          handleSearch={handleSearch}
+          style={styles.searchBar}
+          onSubmit={handleSubmit}
+          handleFocus={() => setIsFocusSearch(true)}
+          handleBlur={() => setIsFocusSearch(false)}
+        />
+        <IconButton
+          style={styles.messageIcon}
+          size={23}
+          color={Colors.primary}
+          name="message1"
+          onPress={() => props.navigation.navigate("Messages")}
+        />
+      </View>
+      {isFocusSearch && (
+        <TouchableOpacity onPress={() => navigateToSearchUser()}>
+          <View style={styles.searchUserContainer}>
+            <DefaultText style={styles.searchUserContainer}>
+              Search for users instead
+            </DefaultText>
+            <AntDesign name="user" size={23} color={Colors.primary} />
+          </View>
+        </TouchableOpacity>
+      )}
+      {!isFocusSearch && (
+        <FlatList
+          ListHeaderComponent={<ListHeader />}
+          onRefresh={loadProducts}
+          refreshing={isRefreshing}
+          columnWrapperStyle={styles.list}
+          data={trendingProducts}
+          horizontal={false}
+          numColumns={2}
+          keyExtractor={(item) => item.id}
+          renderItem={(itemData) => {
+            return (
+              <ProductBox
+                item={itemData.item}
+                productCreator={itemData.item.creator}
+                navigate={() =>
+                  navigateToProductDetails({
+                    ...itemData.item,
+                    user: itemData.item.creator,
+                  })
+                }
+              />
+            );
+          }}
+        ></FlatList>
+      )}
     </View>
   );
 };
@@ -176,6 +239,10 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  searchBar: {
+    marginTop: 46,
+    width: "90%",
   },
   messageIcon: {
     marginTop: 40,
@@ -205,5 +272,11 @@ const styles = StyleSheet.create({
   list: {
     justifyContent: "center",
     marginTop: 10,
+  },
+  searchUserContainer: {
+    flexDirection: "row",
+    fontSize: 16,
+    margin: 8,
+    alignItems: "center",
   },
 });

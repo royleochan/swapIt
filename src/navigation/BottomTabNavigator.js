@@ -98,5 +98,6 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontFamily: "latoBold",
     padding: 0,
+    width: '100%'
   },
 });

@@ -8,12 +8,13 @@ import {
 } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useSelector } from "react-redux";
-import { AntDesign } from "@expo/vector-icons";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunity from "react-native-vector-icons/MaterialCommunityIcons";
+import Feather from "react-native-vector-icons/Feather";
 
 import request from "utils/request";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
+import IconButton from "components/IconButton";
 
 const ProductDetailsScreen = (props) => {
   const {
@@ -58,26 +59,21 @@ const ProductDetailsScreen = (props) => {
   return (
     <View style={styles.screen}>
       <View style={styles.imageContainer}>
-        <TouchableOpacity
+        <IconButton
           style={styles.arrow}
+          size={23}
+          color={Colors.primary}
+          name="arrowleft"
           onPress={() => props.navigation.goBack()}
-        >
-          <AntDesign
-            name={"arrowleft"}
-            size={24}
-            color={Colors.background}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
+        />
         {loggedInUser._id == user._id && (
-          <TouchableOpacity style={styles.ellipsis} onPress={showActionSheet}>
-            <AntDesign
-              name={"ellipsis1"}
-              size={24}
-              color={Colors.background}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
+          <IconButton
+            style={styles.ellipsis}
+            size={23}
+            color={Colors.background}
+            name="ellipsis1"
+            onPress={showActionSheet}
+          />
         )}
         <Image source={{ uri: imageUrl }} style={styles.image} />
         <View style={styles.detailsContainer}>
@@ -85,9 +81,9 @@ const ProductDetailsScreen = (props) => {
             style={styles.iconTextContainer}
             onPress={() => console.log("Show users who liked item")}
           >
-            <MaterialCommunityIcons
+            <MaterialCommunity
               name={"heart-outline"}
-              size={14}
+              size={16}
               color={"#d50101"}
             />
             <DefaultText>
@@ -125,17 +121,6 @@ const ProductDetailsScreen = (props) => {
 export default ProductDetailsScreen;
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  imageContainer: {
-    height: "60%",
-    borderBottomStartRadius: 30,
-    borderBottomEndRadius: 30,
-    backgroundColor: Colors.background,
-    zIndex: 1,
-  },
   arrow: {
     zIndex: 10,
     position: "absolute",
@@ -151,14 +136,21 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginLeft: Dimensions.get("window").width - 40,
   },
+  title: {
+    fontSize: 20,
+    fontFamily: "latoBold",
+  },
   image: {
     width: "100%",
     height: "100%",
-    borderBottomStartRadius: 30,
-    borderBottomEndRadius: 30,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   detailsContainer: {
     padding: 24,
+  },
+  textContainer: {
+    marginVertical: 4,
   },
   iconTextContainer: {
     flexDirection: "row",
