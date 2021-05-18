@@ -23,31 +23,30 @@ const ChatScreen = (props) => {
   const [messages, setMessages] = useState([]);
   const [lastSentMessage, setLastSentMessage] = useState("");
   const [lastSentImageUrl, setLastSentImageUrl] = useState("");
-  // const [isLoading, setIsLoading] = useState(false);
 
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const userId = props.route.params._id;
   const userProfilePic = props.route.params.profilePic;
 
-  const isValidMessage = (msg) => {
-    return msg !== "";
-  };
-  //Image validation
-  const isValidImage = (image) => {
-    return image !== undefined;
-  };
+  const updateMessages = (userId, content, imageUrl) => {
+    const newMessage = [
+      {
+        _id: uuid.v4(),
+        text: content,
+        image: imageUrl,
+        createdAt: new Date(),
+        user: {
+          _id: userId,
+          avatar: userProfilePic,
+        },
+      },
+    ];
+    setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, newMessage)
+    );
+  }
 
-  const isValidImageUrl = (imageUrl) => {
-    return imageUrl === String;
-  };
-
-  const setValidImageUrl = (url) => {
-    if (isValidImageUrl(url)) {
-      setLastSentImageUrl(url);
-    } else {
-      console.log("Invalid image url!");
-    }
-  };
+  const handleCancel = () => {};
 
   //Choose image from image library
   const handlePickImage = async () => {
@@ -55,7 +54,7 @@ const ChatScreen = (props) => {
       let img = await chooseFromLibrary();
       if (isValidImage(img)) {
         console.log("Uploading image...");
-        const imageUrl = await uploadImageHandler(img);
+        let imageUrl = await uploadImageHandler(img);
         setValidImageUrl(imageUrl);
       } else {
         console.log("Image chosen is invalid!");
@@ -65,43 +64,35 @@ const ChatScreen = (props) => {
     }
   };
 
-  //Take picture
-  const handleLaunchCamera = async () => {
-    try {
-      let img = await takeImage();
-      if (isValidImage(img)) {
-        const imageUrl = await uploadImageHandler(img);
-        setValidImageUrl(imageUrl);
-      } else {
-        console.log("Image chosen is invalid!");
-      }
-    } catch (e) {
-      console.error(e);
+  const isValidString = (inputString) => {
+    return inputString !== "" && inputString !== undefined;
+  };
+
+  const isValidImage = (img) => {
+    return img !== undefined;
+  };
+
+  const setValidImageUrl = (inputUrl) => {
+    if (isValidString(inputUrl)) {
+      setLastSentImageUrl(inputUrl);
+    } else {
+      console.log("Invalid Image Url:", inputUrl);
     }
   };
 
-  const onSend = useCallback((newMessage = []) => {
-    const messageText = newMessage[0].text;
-    if (isValidMessage(messageText)) {
-      console.log(newMessage);
-      setLastSentMessage(messageText);
-      setMessages((previousMessages) =>
-          GiftedChat.append(previousMessages, newMessage)
-      );
-    }
-  }, []);
-
-  const renderActions = () => {
+  const renderActions = (props) => {
     return (
         <Actions
+            {...props}
             options={{
-              ['Use camera']: handleLaunchCamera,
-              ['Choose Image']: handlePickImage,
+              ["Use camera"]: takeImage,
+              ["Choose Image"]: handlePickImage,
+              ["Cancel"]: handleCancel,
             }}
             icon={() => (
-                <Icon name={'attachment'} size={23} color={"black"} />
+                <Icon name={"attachment"} size={23} color={Colors.primary} />
             )}
-            onSend={onSend}
+            onSend={(args) => console.log(args)}
         />
     );
   };
@@ -132,12 +123,13 @@ const ChatScreen = (props) => {
       socket.emit("join", "609a8094dec46a7ce23a5e61");
     });
     socket.on("joined", async (roomId) => {
+      console.log("User has joined room %s", roomId);
       await getMessages(roomId)
-        .then((response) => {
-          // setIsLoading(false);
-          setMessages(response.reverse());
-        })
-        .catch((e) => console.error(e));
+          .then((response) => {
+            // setIsLoading(false);
+            setMessages(response.reverse());
+          })
+          .catch((e) => console.error(e));
     });
     socket.on("message", (message) => {
       const newMessage = [
@@ -152,9 +144,8 @@ const ChatScreen = (props) => {
           },
         },
       ];
-      console.log(newMessage[0]);
       setMessages((previousMessages) =>
-        GiftedChat.append(previousMessages, newMessage)
+          GiftedChat.append(previousMessages, newMessage)
       );
     });
     return () => {
@@ -164,10 +155,12 @@ const ChatScreen = (props) => {
   }, []);
 
   useEffect(() => {
-    if (isValidMessage(lastSentMessage)) {
+    if (isValidString(lastSentMessage)) {
+      console.log("LAST SENT:" + lastSentMessage);
       socket.emit("message", {
         userId: loggedInUserId,
         message: lastSentMessage,
+        imageUrl: "",
       });
     } else {
       console.log("Invalid message");
@@ -175,31 +168,37 @@ const ChatScreen = (props) => {
   }, [lastSentMessage]);
 
   useEffect(() => {
-    if (isValidImageUrl(lastSentImageUrl)) {
-      console.log("imageUrl:", lastSentImageUrl);
+    if (isValidString(lastSentImageUrl)) {
+      console.log("LAST SENT:" + lastSentImageUrl);
       socket.emit("message", {
         userId: loggedInUserId,
         message: "",
         imageUrl: lastSentImageUrl,
       });
-      console.log("Emitted");
+      updateMessages(loggedInUserId, "", lastSentImageUrl);
     } else {
-      console.log("Image invalid!");
+      console.log("Invalid Image Url");
     }
   }, [lastSentImageUrl]);
 
-
+  const onSend = useCallback((newMessage = []) => {
+    console.log(newMessage[0]);
+    setLastSentMessage(newMessage[0].text);
+    setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, newMessage)
+    );
+  }, []);
 
   return (
-    <GiftedChat
-      messages={messages}
-      onSend={(messages) => onSend(messages)}
-      user={{
-        _id: loggedInUserId,
-      }}
-      renderActions={renderActions}
-      infiniteScroll
-    />
+      <GiftedChat
+          messages={messages}
+          onSend={(messages) => onSend(messages)}
+          user={{
+            _id: loggedInUserId,
+          }}
+          renderActions={renderActions}
+          infiniteScroll
+      />
   );
 };
 
