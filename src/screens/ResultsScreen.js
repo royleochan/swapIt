@@ -4,8 +4,9 @@ import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import request from "utils/request";
 import Colors from "constants/Colors";
 import ProductBox from "components/ProductBox";
-import CustomSearchBar from "components/CustomSearchBar";
 import IconButton from "components/IconButton";
+import DefaultText from "components/DefaultText";
+import SortFilterMenu from "components/SortFilterMenu";
 
 const ResultsScreen = (props) => {
   const [query, setQuery] = useState(props.route.params);
@@ -15,10 +16,6 @@ const ResultsScreen = (props) => {
 
   const navigateToProductDetails = (productData) => {
     props.navigation.navigate("Product", productData);
-  };
-
-  const handleSearch = (text) => {
-    setQuery(text);
   };
 
   const searchHandler = useCallback(
@@ -49,21 +46,21 @@ const ResultsScreen = (props) => {
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>
-        <IconButton
-          size={23}
-          color={Colors.primary}
-          name="arrowleft"
-          onPress={() => props.navigation.goBack()}
-        />
-        <CustomSearchBar
-          query={query}
-          handleSearch={handleSearch}
-          style={styles.searchBar}
-          onSubmit={() => searchHandler(query)}
-        />
+        <View style={styles.backButton}>
+          <IconButton
+            size={23}
+            color={Colors.primary}
+            name="arrowleft"
+            onPress={() => props.navigation.goBack()}
+          />
+        </View>
+        <View style={styles.headerTextContainer}>
+          <DefaultText style={styles.headerText}>{query}</DefaultText>
+        </View>
       </View>
+      <SortFilterMenu />
       {isLoading && <ActivityIndicator size={36} style={styles.loading} />}
-      <View style={styles.mainContainer}>
+      <View>
         <FlatList
           onRefresh={() => searchHandler(query)}
           refreshing={isRefreshing}
@@ -103,16 +100,25 @@ const styles = StyleSheet.create({
     marginTop: 50,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-evenly",
+    justifyContent: "flex-start",
+  },
+  backButton: {
+    position: "absolute",
+    marginLeft: 14,
+    zIndex: 1,
+  },
+  headerTextContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
+  headerText: {
+    fontSize: 24,
   },
   loading: {
     marginTop: 10,
   },
   searchBar: {
     width: "80%",
-  },
-  mainContainer: {
-    marginTop: 10,
   },
   list: {
     justifyContent: "center",
