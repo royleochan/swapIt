@@ -11,6 +11,8 @@ import { Avatar } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
 
 import request from "utils/request";
+import WomenTop from "assets/svg/WomenTop";
+import MenTop from "assets/svg/MenTop";
 import Colors from "constants/Colors";
 import MaleCategories from "constants/MaleCategories";
 import FemaleCategories from "constants/FemaleCategories";
@@ -107,13 +109,7 @@ const HomeScreen = (props) => {
                     key={category.label}
                     onPress={() => navigateToResults(category)}
                   >
-                    <Avatar
-                      rounded
-                      size={64}
-                      source={{
-                        uri: "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
-                      }}
-                    />
+                    <MenTop />
                     <DefaultText style={styles.categoryLabel}>
                       {category.label}
                     </DefaultText>
@@ -128,13 +124,7 @@ const HomeScreen = (props) => {
                   key={category.label}
                   onPress={() => navigateToResults(category)}
                 >
-                  <Avatar
-                    rounded
-                    size={64}
-                    source={{
-                      uri: "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
-                    }}
-                  />
+                  <WomenTop />
                   <DefaultText style={styles.categoryLabel}>
                     {category.label}
                   </DefaultText>

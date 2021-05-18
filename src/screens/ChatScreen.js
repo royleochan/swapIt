@@ -1,17 +1,18 @@
+import uuid from "react-native-uuid";
 import { REACT_APP_BACKEND_URL } from "@env";
 import React, { useCallback, useEffect, useState } from "react";
 import { Actions, GiftedChat } from "react-native-gifted-chat";
+import { useSelector } from "react-redux";
+import { io } from "socket.io-client";
+import { Icon } from "react-native-elements";
+
+import request from "utils/request";
+import Colors from "constants/Colors";
 import {
   takeImage,
   chooseFromLibrary,
   uploadImageHandler,
 } from "utils/imagePicker";
-import uuid from "react-native-uuid";
-
-import { useSelector } from "react-redux";
-import request from "utils/request";
-import { io } from "socket.io-client";
-import {Icon} from "react-native-elements";
 
 const ChatScreen = (props) => {
   const [socket] = useState(
@@ -124,8 +125,10 @@ const ChatScreen = (props) => {
 
   useEffect(() => {
     // setIsLoading(true);
+    console.log("Attempting to connect...");
     socket.connect();
     socket.on("connect", async () => {
+      console.log("Received connect, preparing to emit...");
       socket.emit("join", "609a8094dec46a7ce23a5e61");
     });
     socket.on("joined", async (roomId) => {
@@ -155,6 +158,7 @@ const ChatScreen = (props) => {
       );
     });
     return () => {
+      console.log("DISCONNECT");
       socket.disconnect();
     };
   }, []);
@@ -189,7 +193,7 @@ const ChatScreen = (props) => {
   return (
     <GiftedChat
       messages={messages}
-      onSend={(msg) => onSend(msg)}
+      onSend={(messages) => onSend(messages)}
       user={{
         _id: loggedInUserId,
       }}
