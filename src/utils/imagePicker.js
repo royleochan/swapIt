@@ -11,7 +11,7 @@ const DUMMY_PROFILE_PIC_URL =
 const verifyCameraPermissions = async () => {
   const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
 
-  if (mediaStatus.status !== "granted") {
+  if (cameraStatus.status !== "granted") {
     Alert.alert(
       "Insufficient Permissions!",
       "You need to grant camera permissions to upload an Image.",

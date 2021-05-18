@@ -1,5 +1,5 @@
 import { REACT_APP_BACKEND_URL } from "@env";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Actions, GiftedChat } from "react-native-gifted-chat";
 import {
   takeImage,
@@ -21,26 +21,78 @@ const ChatScreen = (props) => {
   );
   const [messages, setMessages] = useState([]);
   const [lastSentMessage, setLastSentMessage] = useState("");
-  const [lastSentImage, setLastSentImage] = useState("");
+  const [lastSentImageUrl, setLastSentImageUrl] = useState("");
   // const [isLoading, setIsLoading] = useState(false);
-  const firstUpdate = useRef(true);
 
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const userId = props.route.params._id;
   const userProfilePic = props.route.params.profilePic;
 
+  const isValidMessage = (msg) => {
+    return msg !== "";
+  };
+  //Image validation
+  const isValidImage = (image) => {
+    return image !== undefined;
+  };
+
+  const isValidImageUrl = (imageUrl) => {
+    return imageUrl === String;
+  };
+
+  const setValidImageUrl = (url) => {
+    if (isValidImageUrl(url)) {
+      setLastSentImageUrl(url);
+    } else {
+      console.log("Invalid image url!");
+    }
+  };
+
   //Choose image from image library
-  const handlePickImage = () => {
-  }
+  const handlePickImage = async () => {
+    try {
+      let img = await chooseFromLibrary();
+      if (isValidImage(img)) {
+        console.log("Uploading image...");
+        const imageUrl = await uploadImageHandler(img);
+        setValidImageUrl(imageUrl);
+      } else {
+        console.log("Image chosen is invalid!");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   //Take picture
-  const handleLaunchCamera = () => {
-  }
+  const handleLaunchCamera = async () => {
+    try {
+      let img = await takeImage();
+      if (isValidImage(img)) {
+        const imageUrl = await uploadImageHandler(img);
+        setValidImageUrl(imageUrl);
+      } else {
+        console.log("Image chosen is invalid!");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
-  const renderActions = (props) => {
+  const onSend = useCallback((newMessage = []) => {
+    const messageText = newMessage[0].text;
+    if (isValidMessage(messageText)) {
+      console.log(newMessage);
+      setLastSentMessage(messageText);
+      setMessages((previousMessages) =>
+          GiftedChat.append(previousMessages, newMessage)
+      );
+    }
+  }, []);
+
+  const renderActions = () => {
     return (
         <Actions
-            {...props}
             options={{
               ['Use camera']: handleLaunchCamera,
               ['Choose Image']: handlePickImage,
@@ -48,18 +100,19 @@ const ChatScreen = (props) => {
             icon={() => (
                 <Icon name={'attachment'} size={23} color={"black"} />
             )}
-            onSend={args => console.log(args)}
+            onSend={onSend}
         />
     );
   };
 
-  const getMessages = async () => {
+  const getMessages = async (roomId) => {
     //   const response = await request.get(`/api/chats/${loggedInUserId}/${userId}`);
-    const response = await request.get(`/api/chats/609a8094dec46a7ce23a5e61`);
+    const response = await request.get(`/api/chats/${roomId}`);
     return response.data.room.messages.map((message) => {
       return {
         _id: message._id,
         text: message.content,
+        image: message.imageUrl,
         createdAt: message.createdAt,
         user: {
           _id: message.creator,
@@ -71,15 +124,12 @@ const ChatScreen = (props) => {
 
   useEffect(() => {
     // setIsLoading(true);
-    console.log("Attempting to connect...");
     socket.connect();
     socket.on("connect", async () => {
-      console.log("Received connect, preparing to emit...");
       socket.emit("join", "609a8094dec46a7ce23a5e61");
     });
     socket.on("joined", async (roomId) => {
-      console.log("User has joined room %s", roomId);
-      await getMessages()
+      await getMessages(roomId)
         .then((response) => {
           // setIsLoading(false);
           setMessages(response.reverse());
@@ -91,6 +141,7 @@ const ChatScreen = (props) => {
         {
           _id: uuid.v4(),
           text: message.content,
+          image: message.imageUrl,
           createdAt: new Date(),
           user: {
             _id: message.userId,
@@ -98,40 +149,47 @@ const ChatScreen = (props) => {
           },
         },
       ];
+      console.log(newMessage[0]);
       setMessages((previousMessages) =>
         GiftedChat.append(previousMessages, newMessage)
       );
     });
     return () => {
-      console.log("DISCONNECT");
       socket.disconnect();
     };
   }, []);
 
   useEffect(() => {
-    if (!firstUpdate.current) {
-      console.log("LAST SENT:" + lastSentMessage);
+    if (isValidMessage(lastSentMessage)) {
       socket.emit("message", {
         userId: loggedInUserId,
         message: lastSentMessage,
       });
     } else {
-      firstUpdate.current = false;
+      console.log("Invalid message");
     }
   }, [lastSentMessage]);
 
-  const onSend = useCallback((newMessage = []) => {
-    console.log(newMessage[0]);
-    setLastSentMessage(newMessage[0].text);
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessage)
-    );
-  }, []);
+  useEffect(() => {
+    if (isValidImageUrl(lastSentImageUrl)) {
+      console.log("imageUrl:", lastSentImageUrl);
+      socket.emit("message", {
+        userId: loggedInUserId,
+        message: "",
+        imageUrl: lastSentImageUrl,
+      });
+      console.log("Emitted");
+    } else {
+      console.log("Image invalid!");
+    }
+  }, [lastSentImageUrl]);
+
+
 
   return (
     <GiftedChat
       messages={messages}
-      onSend={(messages) => onSend(messages)}
+      onSend={(msg) => onSend(msg)}
       user={{
         _id: loggedInUserId,
       }}
