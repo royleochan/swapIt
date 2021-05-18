@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 
 import request from "utils/request";
 import ProductBox from "components/ProductBox";
+import SortFilterMenu from "components/SortFilterMenu";
 import DefaultText from "components/DefaultText";
 
 const CategoryScreen = (props) => {
@@ -35,6 +36,7 @@ const CategoryScreen = (props) => {
       <View style={styles.header}>
         <DefaultText style={styles.title}>{category}</DefaultText>
       </View>
+      <SortFilterMenu />
       <View style={styles.mainContainer}>
         <FlatList
           onRefresh={categoryHandler}

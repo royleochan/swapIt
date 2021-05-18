@@ -5,6 +5,7 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
@@ -109,7 +110,7 @@ const HomeScreen = (props) => {
                     key={category.label}
                     onPress={() => navigateToResults(category)}
                   >
-                    <MenTop />
+                    <Image source={category.icon} />
                     <DefaultText style={styles.categoryLabel}>
                       {category.label}
                     </DefaultText>
@@ -124,7 +125,7 @@ const HomeScreen = (props) => {
                   key={category.label}
                   onPress={() => navigateToResults(category)}
                 >
-                  <WomenTop />
+                  <Image source={category.icon} />
                   <DefaultText style={styles.categoryLabel}>
                     {category.label}
                   </DefaultText>
