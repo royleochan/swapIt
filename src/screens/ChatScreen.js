@@ -27,8 +27,8 @@ const ChatScreen = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
 
+  const chatId = props.route.params.chatId;
   const loggedInUserId = useSelector((state) => state.auth.user.id);
-  const userId = props.route.params._id;
   const userProfilePic = props.route.params.profilePic;
 
   //Validation Checks
@@ -57,7 +57,7 @@ const ChatScreen = (props) => {
         let imageUrl = await uploadImageHandler(img);
         setValidImageUrl(imageUrl);
       } else {
-        console.log("Image chosen is invalid");
+        updateMessages(loggedInUserId, "Image chosen is invalid. Please try another.", "", true);
       }
     } catch (e) {
       console.error(e);
@@ -92,12 +92,10 @@ const ChatScreen = (props) => {
     } else {
       setIsUploading(false);
       updateMessages(loggedInUserId, "Upload failed. Please try again.", "", true);
-      console.log("Invalid Image Url:", inputUrl);
     }
   };
 
   const onSend = useCallback((newMessage = []) => {
-    console.log(newMessage[0]);
     setLastSentMessage(newMessage[0].text);
     setMessages((previousMessages) =>
         GiftedChat.append(previousMessages, newMessage)
@@ -125,7 +123,7 @@ const ChatScreen = (props) => {
   useEffect(() => {
     socket.connect();
     socket.on("connect", async () => {
-      socket.emit("join", "609a8094dec46a7ce23a5e61");
+      socket.emit("join", `${chatId}`);
     });
     socket.on("joined", async (roomId) => {
       await getMessages(roomId)
@@ -165,8 +163,6 @@ const ChatScreen = (props) => {
         message: lastSentMessage,
         imageUrl: "",
       });
-    } else {
-      console.log("Invalid message");
     }
   }, [lastSentMessage]);
 
@@ -179,8 +175,6 @@ const ChatScreen = (props) => {
         imageUrl: lastSentImageUrl,
       });
       updateMessages(loggedInUserId, "", lastSentImageUrl, false);
-    } else {
-      console.log("Invalid Image Url");
     }
     setIsUploading(false);
   }, [lastSentImageUrl]);
