@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   View,
   StyleSheet,
@@ -13,11 +13,15 @@ import useDidMountEffect from "hooks/useDidMountEffect";
 import DefaultText from "components/DefaultText";
 import CustomSearchBar from "components/CustomSearchBar";
 import IconButton from "components/IconButton";
+import {useSelector} from "react-redux";
 
 const MessagesScreen = (props) => {
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [searchedUsers, setSearchedUsers] = useState([]);
+  const [userChats, setUserChats] = useState([]);
+
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
 
   const handleSearch = (text) => {
     setQuery(text);
@@ -34,11 +38,34 @@ const MessagesScreen = (props) => {
     }
   };
 
+  //Get an array of chats with the following format:
+  //{ user: The opposing party's user object,
+  //chatId: The ObjectId of the Chat object }
+  const getChats = async () => {
+    try {
+      let response = await request.get(`/api/chats/rooms/${loggedInUserId}`);
+      return response.data.rooms.chats.map((chat) => {
+        return {
+          user: chat.users.find(usr => usr.id !== loggedInUserId),
+          chatId: chat.id,
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  //Initial loading of active chats
+  useEffect(() => {
+    getChats()
+        .then((response) => setUserChats(response))
+        .catch((err) => console.error(err));
+  }, []);
+
   useDidMountEffect(() => {
     setIsLoading(true);
     // Executes searchHandler after 1000ms, returns a positive integer which uniquely identifies the timer created
     const timer = setTimeout(() => searchHandler(query), 1000);
-
     // Cancels the timer given the timer id
     return () => clearTimeout(timer);
   }, [query]);
@@ -60,31 +87,59 @@ const MessagesScreen = (props) => {
       </View>
       <View style={styles.mainContainer}>
         {isLoading && <ActivityIndicator size={30} />}
-        {searchedUsers.map((user) => {
-          return (
-            <TouchableHighlight
-              key={user.username}
-              activeOpacity={0.9}
-              underlayColor={"#F6F4F4"}
-              onPress={() => props.navigation.navigate("Chat", user)}
-            >
-              <View style={styles.userRow}>
-                <View style={styles.avatarTextContainer}>
-                  <Avatar
-                    rounded
-                    size={64}
-                    source={{
-                      uri: user.profilePic,
-                    }}
-                  />
-                  <DefaultText style={styles.username}>
-                    {user.username}
-                  </DefaultText>
-                </View>
-              </View>
-            </TouchableHighlight>
-          );
-        })}
+        {query === "" ?
+            userChats.map((chat) => {
+                return (
+                    <TouchableHighlight
+                        key={chat.chatId}
+                        activeOpacity={0.9}
+                        underlayColor={"#F6F4F4"}
+                        onPress={() => props.navigation.navigate("Chat", chat)}
+                    >
+                      <View style={styles.userRow}>
+                        <View style={styles.avatarTextContainer}>
+                          <Avatar
+                              rounded
+                              size={64}
+                              source={{
+                                uri: chat.user.profilePic,
+                              }}
+                          />
+                          <DefaultText style={styles.username}>
+                            {chat.user.username}
+                          </DefaultText>
+                        </View>
+                      </View>
+                    </TouchableHighlight>
+                );
+              })
+            :
+            searchedUsers.map((user) => {
+                return (
+                    <TouchableHighlight
+                        key={user.username}
+                        activeOpacity={0.9}
+                        underlayColor={"#F6F4F4"}
+                        onPress={() => props.navigation.navigate("Chat", user)}
+                    >
+                      <View style={styles.userRow}>
+                        <View style={styles.avatarTextContainer}>
+                          <Avatar
+                              rounded
+                              size={64}
+                              source={{
+                                uri: user.profilePic,
+                              }}
+                          />
+                          <DefaultText style={styles.username}>
+                            {user.username}
+                          </DefaultText>
+                        </View>
+                      </View>
+                    </TouchableHighlight>
+                );
+              })
+        }
       </View>
     </View>
   );
