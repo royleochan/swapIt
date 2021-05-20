@@ -57,17 +57,26 @@ const MessagesScreen = (props) => {
 
   //Initial loading of active chats
   useEffect(() => {
+    setIsLoading(true);
     getChats()
-        .then((response) => setUserChats(response))
-        .catch((err) => console.error(err));
+        .then((response) => {
+          setUserChats(response);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          console.error(err);
+        });
   }, []);
 
   useDidMountEffect(() => {
-    setIsLoading(true);
-    // Executes searchHandler after 1000ms, returns a positive integer which uniquely identifies the timer created
-    const timer = setTimeout(() => searchHandler(query), 1000);
-    // Cancels the timer given the timer id
-    return () => clearTimeout(timer);
+    if (query !== "") {
+      setIsLoading(true);
+      // Executes searchHandler after 1000ms, returns a positive integer which uniquely identifies the timer created
+      const timer = setTimeout(() => searchHandler(query), 1000);
+      // Cancels the timer given the timer id
+      return () => clearTimeout(timer);
+    }
   }, [query]);
 
   return (
