@@ -182,7 +182,7 @@ const SignupScreen = (props) => {
       </View>
       <View style={styles.signInContainer}>
         <DefaultText style={styles.signInText}>
-          Already have an account?{" "}
+          Already have an account?
         </DefaultText>
         <TouchableOpacity onPress={loginHandler}>
           <DefaultText style={styles.signInTextAccent}>Sign in!</DefaultText>

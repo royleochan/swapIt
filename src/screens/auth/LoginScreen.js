@@ -108,7 +108,7 @@ const LoginScreen = (props) => {
       </View>
       <View style={styles.signupContainer}>
         <DefaultText style={styles.signupText}>
-          Don't have an account?{" "}
+          Don't have an account?
         </DefaultText>
         <TouchableOpacity onPress={signupHandler}>
           <DefaultText style={styles.signupTextAccent}>Sign Up!</DefaultText>
