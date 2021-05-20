@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
+import { useSelector } from "react-redux";
 
 import request from "utils/request";
+import filter from "utils/filter";
+import sort from "utils/sort";
 import Colors from "constants/Colors";
 import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
@@ -13,6 +16,9 @@ const ResultsScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
+
+  const sortState = useSelector((state) => state.sort);
+  const filterState = useSelector((state) => state.filter);
 
   const navigateToProductDetails = (productData) => {
     props.navigation.navigate("Product", productData);
@@ -42,6 +48,14 @@ const ResultsScreen = (props) => {
     // Cancels the timer given the timer id
     return () => clearTimeout(timer);
   }, [query]);
+
+  useEffect(() => {
+    setProducts(filter(products, filterState));
+  }, [filterState]);
+
+  useEffect(() => {
+    setProducts(sort([...products], sortState));
+  }, [sortState]);
 
   return (
     <View style={styles.screenContainer}>

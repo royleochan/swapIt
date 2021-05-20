@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
+import { useSelector } from "react-redux";
 
 import request from "utils/request";
+import filter from "utils/filter";
+import sort from "utils/sort";
 import ProductBox from "components/ProductBox";
 import SortFilterMenu from "components/SortFilterMenu";
 import DefaultText from "components/DefaultText";
@@ -10,6 +13,9 @@ const CategoryScreen = (props) => {
   const category = props.route.params.label;
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [products, setProducts] = useState([]);
+
+  const sortState = useSelector((state) => state.sort);
+  const filterState = useSelector((state) => state.filter);
 
   const navigateToProductDetails = (productData) => {
     props.navigation.navigate("Product", productData);
@@ -20,6 +26,7 @@ const CategoryScreen = (props) => {
     try {
       const response = await request.get(`/api/products/category/${category}`);
       const resData = response.data.products;
+      console.log(resData);
       setProducts(resData);
     } catch (err) {
       setProducts([]);
@@ -30,6 +37,14 @@ const CategoryScreen = (props) => {
   useEffect(() => {
     categoryHandler();
   }, []);
+
+  useEffect(() => {
+    setProducts(filter(products, filterState));
+  }, [filterState]);
+
+  useEffect(() => {
+    setProducts(sort([...products], sortState));
+  }, [sortState]);
 
   return (
     <View style={styles.screenContainer}>
