@@ -56,31 +56,29 @@ const CategoryScreen = (props) => {
         <DefaultText style={styles.title}>{category}</DefaultText>
       </View>
       <SortFilterMenu />
-      <View style={styles.mainContainer}>
-        <FlatList
-          onRefresh={categoryHandler}
-          refreshing={isRefreshing}
-          columnWrapperStyle={styles.list}
-          data={products}
-          horizontal={false}
-          numColumns={2}
-          keyExtractor={(item) => item.id}
-          renderItem={(itemData) => {
-            return (
-              <ProductBox
-                item={itemData.item}
-                productCreator={itemData.item.creator}
-                navigate={() =>
-                  navigateToProductDetails({
-                    ...itemData.item,
-                    user: itemData.item.creator,
-                  })
-                }
-              />
-            );
-          }}
-        ></FlatList>
-      </View>
+      <FlatList
+        onRefresh={categoryHandler}
+        refreshing={isRefreshing}
+        columnWrapperStyle={styles.list}
+        data={products}
+        horizontal={false}
+        numColumns={2}
+        keyExtractor={(item) => item.id}
+        renderItem={(itemData) => {
+          return (
+            <ProductBox
+              item={itemData.item}
+              productCreator={itemData.item.creator}
+              navigate={() =>
+                navigateToProductDetails({
+                  ...itemData.item,
+                  user: itemData.item.creator,
+                })
+              }
+            />
+          );
+        }}
+      ></FlatList>
     </View>
   );
 };
