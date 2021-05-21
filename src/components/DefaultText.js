@@ -15,7 +15,7 @@ export default DefaultText;
 
 const styles = StyleSheet.create({
   defaultText: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: "lato",
     color: Colors.primary,
   },
