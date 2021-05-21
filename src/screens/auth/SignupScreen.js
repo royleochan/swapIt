@@ -25,12 +25,12 @@ const SignupScreen = (props) => {
       ]);
     } else {
       delete data.confirmPassword;
-      props.navigation.navigate("SignupTwo", data);
+      props.navigation.push("SignupTwo", data);
     }
   };
 
   const loginHandler = () => {
-    props.navigation.navigate("Login");
+    props.navigation.push("Login");
   };
 
   return (

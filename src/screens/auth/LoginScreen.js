@@ -34,7 +34,7 @@ const LoginScreen = (props) => {
   };
 
   const signupHandler = () => {
-    props.navigation.navigate("Signup");
+    props.navigation.push("Signup");
   };
 
   useEffect(() => {

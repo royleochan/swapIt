@@ -111,7 +111,7 @@ const MessagesScreen = (props) => {
                   key={chat.chatId}
                   activeOpacity={0.9}
                   underlayColor={"#F6F4F4"}
-                  onPress={() => props.navigation.navigate("Chat", chat)}
+                  onPress={() => props.navigation.push("Chat", chat)}
                 >
                   <View style={styles.userRow}>
                     <View style={styles.avatarTextContainer}>
@@ -136,7 +136,7 @@ const MessagesScreen = (props) => {
                   key={chat.user._id}
                   activeOpacity={0.9}
                   underlayColor={"#F6F4F4"}
-                  onPress={() => props.navigation.navigate("Chat", chat)}
+                  onPress={() => props.navigation.push("Chat", chat)}
                 >
                   <View style={styles.userRow}>
                     <View style={styles.avatarTextContainer}>

@@ -97,7 +97,7 @@ const EditProductScreen = (props) => {
       setFemaleCategory(null);
       reset({ title: "", description: "" });
       setIsLoading(false);
-      props.navigation.navigate("Profile");
+      props.navigation.push("Profile");
     } catch (err) {
       throw new Error(err);
     }

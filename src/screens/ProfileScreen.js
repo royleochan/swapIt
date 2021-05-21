@@ -13,7 +13,7 @@ const ProfileScreen = (props) => {
   const user = props.route.params.user;
 
   const navigateToProductDetails = (productData) => {
-    props.navigation.navigate("Product", productData);
+    props.navigation.push("Product", productData);
   };
 
   const loadProducts = async () => {

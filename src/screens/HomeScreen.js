@@ -38,26 +38,26 @@ const HomeScreen = (props) => {
   const handleSubmit = () => {
     const searchQuery = query;
     setQuery("");
-    props.navigation.navigate("Results", searchQuery);
+    props.navigation.push("Results", searchQuery);
   };
 
   const navigateToProductDetails = (productData) => {
-    props.navigation.navigate("Product", productData);
+    props.navigation.push("Product", productData);
   };
 
-  const navigateToResults = (category) => {
-    props.navigation.navigate("Category", category);
+  const navigateToCategory = (category) => {
+    console.log(category);
+    props.navigation.push("Category", category);
   };
 
   const navigateToProfile = (userData) => {
-    props.navigation.navigate("ProfileNavigator", {
-      screen: "Profile",
-      params: userData,
+    props.navigation.push("ProfileScreen", {
+      user: userData,
     });
   };
 
   const navigateToSearchUser = () => {
-    props.navigation.navigate("Search");
+    props.navigation.push("Search");
   };
 
   // Need to change to trending products
@@ -108,7 +108,7 @@ const HomeScreen = (props) => {
                   <TouchableOpacity
                     style={styles.avatarContainer}
                     key={category.label}
-                    onPress={() => navigateToResults(category)}
+                    onPress={() => navigateToCategory(category)}
                   >
                     <Image source={category.icon} />
                     <DefaultText style={styles.categoryLabel}>
@@ -123,7 +123,7 @@ const HomeScreen = (props) => {
                 <TouchableOpacity
                   style={styles.avatarContainer}
                   key={category.label}
-                  onPress={() => navigateToResults(category)}
+                  onPress={() => navigateToCategory(category)}
                 >
                   <Image source={category.icon} />
                   <DefaultText style={styles.categoryLabel}>
@@ -187,7 +187,7 @@ const HomeScreen = (props) => {
           size={23}
           color={Colors.primary}
           name="message1"
-          onPress={() => props.navigation.navigate("Messages")}
+          onPress={() => props.navigation.push("Messages")}
         />
       </View>
       {isFocusSearch && (
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   avatarContainer: {
     flexDirection: "column",
     alignItems: "center",
-    width: 100,
+    width: 115,
   },
   categoryLabel: {
     marginTop: 10,
