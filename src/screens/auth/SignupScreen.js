@@ -185,7 +185,7 @@ const SignupScreen = (props) => {
           Already have an account?
         </DefaultText>
         <TouchableOpacity onPress={loginHandler}>
-          <DefaultText style={styles.signInTextAccent}>Sign in!</DefaultText>
+          <DefaultText style={styles.signInTextAccent}> Sign in!</DefaultText>
         </TouchableOpacity>
       </View>
     </View>
