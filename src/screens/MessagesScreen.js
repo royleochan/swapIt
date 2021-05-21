@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
   TouchableHighlight,
   ActivityIndicator,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
 
 import request from "utils/request";
@@ -13,7 +14,6 @@ import useDidMountEffect from "hooks/useDidMountEffect";
 import DefaultText from "components/DefaultText";
 import CustomSearchBar from "components/CustomSearchBar";
 import IconButton from "components/IconButton";
-import {useSelector} from "react-redux";
 
 const MessagesScreen = (props) => {
   const [query, setQuery] = useState("");
@@ -29,7 +29,9 @@ const MessagesScreen = (props) => {
 
   const searchHandler = async () => {
     try {
-      const response = await request.get(`/api/users/search/${query}`);
+      const response = await request.get(
+        `/api/users/search/${query}/${loggedInUserId}`
+      );
       const searchChats = response.data.users.map((usr) => {
         return {
           user: usr,
@@ -52,9 +54,9 @@ const MessagesScreen = (props) => {
       let response = await request.get(`/api/chats/rooms/${loggedInUserId}`);
       return response.data.rooms.chats.map((chat) => {
         return {
-          user: chat.users.find(usr => usr.id !== loggedInUserId),
+          user: chat.users.find((usr) => usr.id !== loggedInUserId),
           chatId: chat.id,
-        }
+        };
       });
     } catch (e) {
       console.error(e);
@@ -65,14 +67,14 @@ const MessagesScreen = (props) => {
   useEffect(() => {
     setIsLoading(true);
     getChats()
-        .then((response) => {
-          setUserChats(response);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          console.error(err);
-        });
+      .then((response) => {
+        setUserChats(response);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.error(err);
+      });
   }, []);
 
   useDidMountEffect(() => {
@@ -102,59 +104,57 @@ const MessagesScreen = (props) => {
       </View>
       <View style={styles.mainContainer}>
         {isLoading && <ActivityIndicator size={30} />}
-        {query === "" ?
-            userChats.map((chat) => {
-                return (
-                    <TouchableHighlight
-                        key={chat.chatId}
-                        activeOpacity={0.9}
-                        underlayColor={"#F6F4F4"}
-                        onPress={() => props.navigation.navigate("Chat", chat)}
-                    >
-                      <View style={styles.userRow}>
-                        <View style={styles.avatarTextContainer}>
-                          <Avatar
-                              rounded
-                              size={64}
-                              source={{
-                                uri: chat.user.profilePic,
-                              }}
-                          />
-                          <DefaultText style={styles.username}>
-                            {chat.user.username}
-                          </DefaultText>
-                        </View>
-                      </View>
-                    </TouchableHighlight>
-                );
-              })
-            :
-            searchedChats.map((chat) => {
+        {query === ""
+          ? userChats.map((chat) => {
               return (
-                  <TouchableHighlight
-                      key={chat.user._id}
-                      activeOpacity={0.9}
-                      underlayColor={"#F6F4F4"}
-                      onPress={() => props.navigation.navigate("Chat", chat)}
-                  >
-                    <View style={styles.userRow}>
-                      <View style={styles.avatarTextContainer}>
-                        <Avatar
-                            rounded
-                            size={64}
-                            source={{
-                              uri: chat.user.profilePic,
-                            }}
-                        />
-                        <DefaultText style={styles.username}>
-                          {chat.user.username}
-                        </DefaultText>
-                      </View>
+                <TouchableHighlight
+                  key={chat.chatId}
+                  activeOpacity={0.9}
+                  underlayColor={"#F6F4F4"}
+                  onPress={() => props.navigation.navigate("Chat", chat)}
+                >
+                  <View style={styles.userRow}>
+                    <View style={styles.avatarTextContainer}>
+                      <Avatar
+                        rounded
+                        size={64}
+                        source={{
+                          uri: chat.user.profilePic,
+                        }}
+                      />
+                      <DefaultText style={styles.username}>
+                        {chat.user.username}
+                      </DefaultText>
                     </View>
-                  </TouchableHighlight>
+                  </View>
+                </TouchableHighlight>
               );
             })
-        }
+          : searchedChats.map((chat) => {
+              return (
+                <TouchableHighlight
+                  key={chat.user._id}
+                  activeOpacity={0.9}
+                  underlayColor={"#F6F4F4"}
+                  onPress={() => props.navigation.navigate("Chat", chat)}
+                >
+                  <View style={styles.userRow}>
+                    <View style={styles.avatarTextContainer}>
+                      <Avatar
+                        rounded
+                        size={64}
+                        source={{
+                          uri: chat.user.profilePic,
+                        }}
+                      />
+                      <DefaultText style={styles.username}>
+                        {chat.user.username}
+                      </DefaultText>
+                    </View>
+                  </View>
+                </TouchableHighlight>
+              );
+            })}
       </View>
     </View>
   );

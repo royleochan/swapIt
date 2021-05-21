@@ -6,6 +6,7 @@ import {
   TouchableHighlight,
   ActivityIndicator,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -19,6 +20,7 @@ const SearchUserScreen = (props) => {
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [searchedUsers, setSearchedUsers] = useState([]);
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
 
   const handleSearch = (text) => {
     setQuery(text);
@@ -26,7 +28,9 @@ const SearchUserScreen = (props) => {
 
   const searchHandler = async () => {
     try {
-      const response = await request.get(`/api/users/search/${query}`);
+      const response = await request.get(
+        `/api/users/search/${query}/${loggedInUserId}`
+      );
       setSearchedUsers(response.data.users);
       setIsLoading(false);
     } catch (err) {
