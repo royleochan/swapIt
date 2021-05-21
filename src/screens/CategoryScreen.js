@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
+import * as productsActions from "store/actions/products";
 import request from "utils/request";
 import filter from "utils/filter";
 import sort from "utils/sort";
@@ -14,8 +15,10 @@ const CategoryScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [products, setProducts] = useState([]);
 
+  const dispatch = useDispatch();
   const sortState = useSelector((state) => state.sort);
   const filterState = useSelector((state) => state.filter);
+  const storeProducts = useSelector((state) => state.products);
 
   const navigateToProductDetails = (productData) => {
     props.navigation.navigate("Product", productData);
@@ -26,20 +29,21 @@ const CategoryScreen = (props) => {
     try {
       const response = await request.get(`/api/products/category/${category}`);
       const resData = response.data.products;
-      console.log(resData);
+      dispatch(productsActions.updateProducts(resData));
       setProducts(resData);
     } catch (err) {
+      dispatch(productsActions.updateProducts([]));
       setProducts([]);
     }
     setIsRefreshing(false);
-  }, [setIsRefreshing, setProducts]);
+  }, [setIsRefreshing, dispatch]);
 
   useEffect(() => {
     categoryHandler();
   }, []);
 
   useEffect(() => {
-    setProducts(filter(products, filterState));
+    setProducts(filter(storeProducts, filterState));
   }, [filterState]);
 
   useEffect(() => {

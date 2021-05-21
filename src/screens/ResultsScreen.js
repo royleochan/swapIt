@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
+import * as productsActions from "store/actions/products";
 import request from "utils/request";
 import filter from "utils/filter";
 import sort from "utils/sort";
@@ -17,8 +18,10 @@ const ResultsScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
 
+  const dispatch = useDispatch();
   const sortState = useSelector((state) => state.sort);
   const filterState = useSelector((state) => state.filter);
+  const storeProducts = useSelector((state) => state.products);
 
   const navigateToProductDetails = (productData) => {
     props.navigation.navigate("Product", productData);
@@ -31,8 +34,10 @@ const ResultsScreen = (props) => {
           `/api/products/search/${searchQuery}`
         );
         const resData = response.data.products;
+        dispatch(productsActions.updateProducts(resData));
         setProducts(resData);
       } catch (err) {
+        dispatch(productsActions.updateProducts([]));
         setProducts([]);
       }
       setIsLoading(false);
@@ -50,7 +55,7 @@ const ResultsScreen = (props) => {
   }, [query]);
 
   useEffect(() => {
-    setProducts(filter(products, filterState));
+    setProducts(filter(storeProducts, filterState));
   }, [filterState]);
 
   useEffect(() => {
