@@ -27,9 +27,10 @@ const ChatScreen = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
 
-  const chatId = props.route.params.chatId;
+  let chatId = props.route.params.chatId;
+  const userId = props.route.params.user._id;
   const loggedInUserId = useSelector((state) => state.auth.user.id);
-  const userProfilePic = props.route.params.profilePic;
+  const userProfilePic = props.route.params.user.profilePic;
 
   //Validation Checks
   const isValidString = (inputString) => {
@@ -119,11 +120,21 @@ const ChatScreen = (props) => {
     });
   };
 
+  const getChatRoom = async () => {
+    const response = await request.get(`/api/chats/${loggedInUserId}/${userId}`);
+    return response.data.room.id;
+  }
+
   //Initialise socket connection and event listeners
   useEffect(() => {
     socket.connect();
     socket.on("connect", async () => {
-      socket.emit("join", `${chatId}`);
+      if (!chatId) {
+        chatId = await getChatRoom();
+      }
+      if (chatId) {
+        socket.emit("join", `${chatId}`);
+      }
     });
     socket.on("joined", async (roomId) => {
       await getMessages(roomId)
@@ -191,7 +202,6 @@ const ChatScreen = (props) => {
             icon={() => (
                 <Icon name={"attachment"} size={23} color={Colors.primary} />
             )}
-            onSend={(args) => console.log(args)}
         />
     );
   };

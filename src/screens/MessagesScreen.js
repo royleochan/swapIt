@@ -18,7 +18,7 @@ import {useSelector} from "react-redux";
 const MessagesScreen = (props) => {
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [searchedUsers, setSearchedUsers] = useState([]);
+  const [searchedChats, setSearchedChats] = useState([]);
   const [userChats, setUserChats] = useState([]);
 
   const loggedInUserId = useSelector((state) => state.auth.user.id);
@@ -30,10 +30,16 @@ const MessagesScreen = (props) => {
   const searchHandler = async () => {
     try {
       const response = await request.get(`/api/users/search/${query}`);
-      setSearchedUsers(response.data.users);
+      const searchChats = response.data.users.map((usr) => {
+        return {
+          user: usr,
+          chatId: null,
+        };
+      });
+      setSearchedChats(searchChats);
       setIsLoading(false);
     } catch (err) {
-      setSearchedUsers([]);
+      setSearchedChats([]);
       setIsLoading(false);
     }
   };
@@ -123,31 +129,31 @@ const MessagesScreen = (props) => {
                 );
               })
             :
-            searchedUsers.map((user) => {
-                return (
-                    <TouchableHighlight
-                        key={user.username}
-                        activeOpacity={0.9}
-                        underlayColor={"#F6F4F4"}
-                        onPress={() => props.navigation.navigate("Chat", user)}
-                    >
-                      <View style={styles.userRow}>
-                        <View style={styles.avatarTextContainer}>
-                          <Avatar
-                              rounded
-                              size={64}
-                              source={{
-                                uri: user.profilePic,
-                              }}
-                          />
-                          <DefaultText style={styles.username}>
-                            {user.username}
-                          </DefaultText>
-                        </View>
+            searchedChats.map((chat) => {
+              return (
+                  <TouchableHighlight
+                      key={chat.user._id}
+                      activeOpacity={0.9}
+                      underlayColor={"#F6F4F4"}
+                      onPress={() => props.navigation.navigate("Chat", chat)}
+                  >
+                    <View style={styles.userRow}>
+                      <View style={styles.avatarTextContainer}>
+                        <Avatar
+                            rounded
+                            size={64}
+                            source={{
+                              uri: chat.user.profilePic,
+                            }}
+                        />
+                        <DefaultText style={styles.username}>
+                          {chat.user.username}
+                        </DefaultText>
                       </View>
-                    </TouchableHighlight>
-                );
-              })
+                    </View>
+                  </TouchableHighlight>
+              );
+            })
         }
       </View>
     </View>
