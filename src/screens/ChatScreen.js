@@ -87,12 +87,16 @@ const ChatScreen = (props) => {
     );
   };
 
+  const updateErrorMessage = (error) => {
+    updateMessages(uuid.v4(), error, "", true);
+  }
+
   const setValidImageUrl = (inputUrl) => {
     if (isValidString(inputUrl)) {
       setLastSentImageUrl(inputUrl);
     } else {
       setIsUploading(false);
-      updateMessages(loggedInUserId, "Upload failed. Please try again.", "", true);
+      updateErrorMessage("Upload failed. Please try again.");
     }
   };
 
@@ -142,7 +146,11 @@ const ChatScreen = (props) => {
             setMessages(response.reverse());
             setIsLoading(false);
           })
-          .catch((e) => console.error(e));
+          .catch((e) => {
+            updateErrorMessage("Failed to open chat. Please try again.");
+            setIsLoading(false);
+            console.error(e);
+          });
     });
     socket.on("message", (message) => {
       const newMessage = [
