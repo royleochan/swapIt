@@ -126,7 +126,24 @@ const SortFilterMenu = (props) => {
           />
         </View>
         <View>
-          <DefaultText style={styles.filterHeader}>Price</DefaultText>
+          <View style={styles.filterHeaderContainer}>
+            <DefaultText style={styles.filterHeader}>Price</DefaultText>
+            <TouchableOpacity
+              style={styles.resetButton}
+              onPress={() => {
+                dispatch(
+                  filterActions.updateFilterState({
+                    minPrice: null,
+                    maxPrice: null,
+                  })
+                );
+                refRBSheetFilter.current.close();
+              }}
+            >
+              <AntDesign name="reload1" size={16} color={Colors.primary} />
+              <DefaultText style={styles.resetText}>Reset</DefaultText>
+            </TouchableOpacity>
+          </View>
           <DefaultText style={styles.option}>Minimum Price</DefaultText>
           <Controller
             name="minPrice"
@@ -273,11 +290,23 @@ const styles = StyleSheet.create({
   tickIcon: {
     marginRight: 16,
   },
+  filterHeaderContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   filterHeader: {
     fontSize: 16,
     fontFamily: "latoBold",
     marginLeft: 16,
     marginVertical: 8,
+  },
+  resetButton: {
+    flexDirection: "row",
+    marginLeft: 10,
+    alignItems: "center",
+  },
+  resetText: {
+    marginLeft: 5,
   },
   button: {
     marginTop: 20,
