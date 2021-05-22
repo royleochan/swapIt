@@ -11,7 +11,9 @@ const SwipeProduct = (props) => {
       <Image style={styles.image} source={{ uri: item.imageUrl }} />
       <View style={styles.photoDescriptionContainer}>
         <DefaultText style={styles.text}>{item.title}</DefaultText>
-        <DefaultText style={styles.text}>${item.price}</DefaultText>
+        <DefaultText style={styles.text}>
+          ${item.minPrice} - ${item.maxPrice}
+        </DefaultText>
         <DefaultText style={styles.description}>{item.description}</DefaultText>
       </View>
     </View>
