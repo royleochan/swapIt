@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import ProfileScreen from "screens/ProfileScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
 import EditProductScreen from "screens/EditProductScreen";
+import ReviewsScreen from "screens/ReviewsScreen";
 import DefaultNavOptions from "navigation/options/DefaultNavOptions";
 
 const Stack = createStackNavigator();
@@ -28,6 +29,11 @@ const UserProfileNavigator = () => {
       <Stack.Screen
         name="EditProduct"
         component={EditProductScreen}
+        options={DefaultNavOptions}
+      />
+      <Stack.Screen
+        name="Reviews"
+        component={ReviewsScreen}
         options={DefaultNavOptions}
       />
     </Stack.Navigator>
