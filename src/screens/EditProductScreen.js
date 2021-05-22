@@ -114,12 +114,12 @@ const EditProductScreen = (props) => {
     }
   };
 
-  // header save and back button
+  // header back button
   useLayoutEffect(() => {
     props.navigation.setOptions({
       headerLeft: () => (
         <IconButton
-          style={{ paddingLeft: 10 }}
+          style={{ marginLeft: 10 }}
           size={23}
           color={Colors.primary}
           name="arrowleft"
