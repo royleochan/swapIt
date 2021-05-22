@@ -110,7 +110,10 @@ const HomeScreen = (props) => {
                     key={category.label}
                     onPress={() => navigateToCategory(category)}
                   >
-                    <Image source={category.icon} />
+                    <Image
+                      style={styles.categoryImage}
+                      source={category.icon}
+                    />
                     <DefaultText style={styles.categoryLabel}>
                       {category.label}
                     </DefaultText>
@@ -125,7 +128,7 @@ const HomeScreen = (props) => {
                   key={category.label}
                   onPress={() => navigateToCategory(category)}
                 >
-                  <Image source={category.icon} />
+                  <Image style={styles.categoryImage} source={category.icon} />
                   <DefaultText style={styles.categoryLabel}>
                     {category.label}
                   </DefaultText>
@@ -139,7 +142,7 @@ const HomeScreen = (props) => {
           <ScrollView
             showsHorizontalScrollIndicator={false}
             horizontal={true}
-            contentContainerStyle={styles.avatarsContainer}
+            contentContainerStyle={styles.recUsersContainer}
           >
             {recommendedUsers.map((user) => {
               return (
@@ -250,10 +253,10 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   section: {
-    marginLeft: 16,
     marginVertical: 12,
   },
   subheader: {
+    marginLeft: 14,
     fontFamily: "latoBold",
     fontSize: 24,
   },
@@ -267,6 +270,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: 115,
   },
+  categoryImage: {
+    width: 70,
+    height: 70,
+  },
   categoryLabel: {
     marginTop: 10,
   },
@@ -279,5 +286,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     margin: 8,
     alignItems: "center",
+  },
+  recUsersContainer: {
+    marginTop: 14,
+    flexDirection: "row",
+    flexGrow: 1,
+    marginLeft: 16,
   },
 });

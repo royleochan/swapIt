@@ -17,7 +17,7 @@ export default [
   {
     label: "Women's Rompers, Dresses & Jumpsuits",
     value: "Women's Rompers, Dresses & Jumpsuits",
-    icon: require("assets/categories/womenTop.png"),
+    icon: require("assets/categories/womenDress.png"),
   },
   {
     label: "Women's Outerwear",
@@ -27,6 +27,6 @@ export default [
   {
     label: "Others",
     value: "Others",
-    icon: require("assets/categories/womenTop.png"),
+    icon: require("assets/categories/others.png"),
   },
 ];

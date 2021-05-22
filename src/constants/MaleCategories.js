@@ -17,6 +17,6 @@ export default [
   {
     label: "Others",
     value: "Others",
-    icon: require("assets/categories/menTop.png"),
+    icon: require("assets/categories/others.png"),
   },
 ];
