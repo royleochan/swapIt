@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 
 import request from "utils/request";
+import Colors from "constants/Colors";
 import UserHeader from "components/UserHeader";
 import ProductBox from "components/ProductBox";
 
@@ -75,6 +76,7 @@ const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
     justifyContent: "flex-start",
+    backgroundColor: Colors.background,
   },
   list: {
     justifyContent: "center",
