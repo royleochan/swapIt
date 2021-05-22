@@ -46,7 +46,6 @@ const HomeScreen = (props) => {
   };
 
   const navigateToCategory = (category) => {
-    console.log(category);
     props.navigation.push("Category", category);
   };
 
