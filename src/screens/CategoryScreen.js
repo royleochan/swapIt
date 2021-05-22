@@ -1,4 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -6,9 +11,11 @@ import * as productsActions from "store/actions/products";
 import request from "utils/request";
 import filter from "utils/filter";
 import sort from "utils/sort";
+import Colors from "constants/Colors";
 import ProductBox from "components/ProductBox";
 import SortFilterMenu from "components/SortFilterMenu";
 import DefaultText from "components/DefaultText";
+import IconButton from "components/IconButton";
 
 const CategoryScreen = (props) => {
   const category = props.route.params.label;
@@ -49,6 +56,21 @@ const CategoryScreen = (props) => {
   useEffect(() => {
     setProducts(sort([...products], sortState));
   }, [sortState]);
+
+  // header back button
+  useLayoutEffect(() => {
+    props.navigation.setOptions({
+      headerLeft: () => (
+        <IconButton
+          style={{ marginLeft: 10 }}
+          size={23}
+          color={Colors.primary}
+          name="arrowleft"
+          onPress={() => props.navigation.goBack()}
+        />
+      ),
+    });
+  }, [props.navigation]);
 
   return (
     <View style={styles.screenContainer}>
