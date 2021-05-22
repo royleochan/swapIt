@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
 import { Rating } from "react-native-elements";
 import { EvilIcons } from "@expo/vector-icons";
 
@@ -8,16 +9,21 @@ import DefaultText from "components/DefaultText";
 import UserStatistic from "components/UserStatistic";
 
 const UserHeader = (props) => {
-  const { selectedUser } = props;
-  console.log(selectedUser);
+  const { selectedUser, navigateToReviews } = props;
+  const loggedInUser = useSelector((state) => state.auth.user);
 
   return (
     <View style={styles.container}>
-      <View style={{ zIndex: 1 }}>
-        <TouchableOpacity style={styles.followButton}>
-          <DefaultText style={styles.followText}>Follow</DefaultText>
-        </TouchableOpacity>
-      </View>
+      {loggedInUser.id !== selectedUser.id && (
+        <View style={{ zIndex: 1 }}>
+          <TouchableOpacity
+            style={styles.followButton}
+            onPress={() => console.log("follow")}
+          >
+            <DefaultText style={styles.followText}>Follow</DefaultText>
+          </TouchableOpacity>
+        </View>
+      )}
       <View style={styles.topHeaderContainer}>
         <Image
           source={{ uri: selectedUser.profilePic }}
@@ -39,7 +45,10 @@ const UserHeader = (props) => {
         <DefaultText style={styles.username}>
           @{selectedUser.username}
         </DefaultText>
-        <View style={styles.ratingContainer}>
+        <TouchableOpacity
+          style={styles.ratingContainer}
+          onPress={() => navigateToReviews(selectedUser)}
+        >
           <Rating
             type="custom"
             readonly
@@ -53,7 +62,7 @@ const UserHeader = (props) => {
           <DefaultText style={styles.rating}>
             {selectedUser.rating}(0)
           </DefaultText>
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.locationContainer}>
         <EvilIcons name="location" size={20} color={Colors.primary} />
