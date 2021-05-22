@@ -278,7 +278,6 @@ const styles = StyleSheet.create({
   },
   list: {
     justifyContent: "center",
-    marginTop: 10,
   },
   searchUserContainer: {
     flexDirection: "row",
