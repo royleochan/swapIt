@@ -1,27 +1,65 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Rating } from "react-native-elements";
 import { EvilIcons } from "@expo/vector-icons";
 
+import * as authActions from "store/actions/auth";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import UserStatistic from "components/UserStatistic";
 
 const UserHeader = (props) => {
   const { selectedUser, navigateToReviews } = props;
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.jwtToken);
+
+  const followUser = () => {
+    setIsFollowing(true);
+    dispatch(
+      authActions.updateUserFollowing(
+        loggedInUser.id,
+        selectedUser.id,
+        token,
+        true
+      )
+    );
+  };
+
+  const unfollowUser = () => {
+    setIsFollowing(false);
+    dispatch(
+      authActions.updateUserFollowing(
+        loggedInUser.id,
+        selectedUser.id,
+        token,
+        false
+      )
+    );
+  };
 
   return (
     <View style={styles.container}>
       {loggedInUser.id !== selectedUser.id && (
         <View style={{ zIndex: 1 }}>
-          <TouchableOpacity
-            style={styles.followButton}
-            onPress={() => console.log("follow")}
-          >
-            <DefaultText style={styles.followText}>Follow</DefaultText>
-          </TouchableOpacity>
+          {(!loggedInUser.following.includes(selectedUser.id) ||
+            !isFollowing) && (
+            <TouchableOpacity style={styles.followButton} onPress={followUser}>
+              <DefaultText style={styles.followText}>Follow</DefaultText>
+            </TouchableOpacity>
+          )}
+          {(loggedInUser.following.includes(selectedUser.id) ||
+            isFollowing) && (
+            <TouchableOpacity
+              style={styles.followButton}
+              onPress={unfollowUser}
+            >
+              <DefaultText style={styles.followText}>Unfollow</DefaultText>
+            </TouchableOpacity>
+          )}
         </View>
       )}
       <View style={styles.topHeaderContainer}>
