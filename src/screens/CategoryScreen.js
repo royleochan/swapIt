@@ -23,6 +23,7 @@ const CategoryScreen = (props) => {
   const [products, setProducts] = useState([]);
 
   const dispatch = useDispatch();
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
   const sortState = useSelector((state) => state.sort);
   const filterState = useSelector((state) => state.filter);
   const storeProducts = useSelector((state) => state.products);
@@ -34,7 +35,12 @@ const CategoryScreen = (props) => {
   const categoryHandler = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const response = await request.get(`/api/products/category/${category}`);
+      let response;
+      if (category === "Following") {
+        response = await request.get(`/api/products/all/${loggedInUserId}`);
+      } else {
+        response = await request.get(`/api/products/category/${category}`);
+      }
       const resData = response.data.products;
       dispatch(productsActions.updateProducts(resData));
       setProducts(resData);

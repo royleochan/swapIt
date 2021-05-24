@@ -11,9 +11,8 @@ import { useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
 
+import followingIcon from "assets/categories/following.png";
 import request from "utils/request";
-import WomenTop from "assets/svg/WomenTop";
-import MenTop from "assets/svg/MenTop";
 import Colors from "constants/Colors";
 import MaleCategories from "constants/MaleCategories";
 import FemaleCategories from "constants/FemaleCategories";
@@ -63,7 +62,7 @@ const HomeScreen = (props) => {
   const loadProducts = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const response = await request.get(`/api/products/user/all/${user.id}`);
+      const response = await request.get(`/api/products/all/${user.id}`);
       const resData = response.data.products;
       setTrendingProducts(resData);
     } catch (err) {
@@ -99,6 +98,14 @@ const HomeScreen = (props) => {
             horizontal={true}
             contentContainerStyle={styles.avatarsContainer}
           >
+            <TouchableOpacity
+              style={styles.avatarContainer}
+              key="Following"
+              onPress={() => navigateToCategory({ label: "Following" })}
+            >
+              <Image style={styles.categoryImage} source={followingIcon} />
+              <DefaultText style={styles.categoryLabel}>Following</DefaultText>
+            </TouchableOpacity>
             {MaleCategories.map((category) => {
               if (category.label == "Others") {
                 return;
@@ -270,8 +277,8 @@ const styles = StyleSheet.create({
     width: 115,
   },
   categoryImage: {
-    width: 70,
-    height: 70,
+    width: 66,
+    height: 66,
   },
   categoryLabel: {
     marginTop: 10,
