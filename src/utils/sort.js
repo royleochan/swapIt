@@ -1,7 +1,8 @@
 const sortProducts = (products, sortState) => {
   if (sortState[0]) {
     return products.sort(
-      (productOne, productTwo) => productTwo.createdAt - productOne.createdAt
+      (productOne, productTwo) =>
+        new Date(productTwo.createdAt) - new Date(productOne.createdAt)
     );
   } else if (sortState[1]) {
     return products.sort(
