@@ -55,7 +55,7 @@ const ResultsScreen = (props) => {
   }, [query]);
 
   useEffect(() => {
-    setProducts(filter(storeProducts, filterState));
+    setProducts(sort(filter(storeProducts, filterState), sortState));
   }, [filterState]);
 
   useEffect(() => {
