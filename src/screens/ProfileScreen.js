@@ -83,7 +83,10 @@ const ProfileScreen = (props) => {
 
   return (
     <View style={styles.screenContainer}>
-      <UserHeader selectedUser={user} navigateToReviews={navigateToReviews} />
+      <UserHeader
+        selectedUser={user.id === loggedInUser.id ? loggedInUser : user}
+        navigateToReviews={navigateToReviews}
+      />
       <FlatList
         onRefresh={loadProducts}
         refreshing={isRefreshing}
