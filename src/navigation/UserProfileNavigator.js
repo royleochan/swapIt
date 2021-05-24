@@ -6,6 +6,7 @@ import ProfileScreen from "screens/ProfileScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
 import EditProductScreen from "screens/EditProductScreen";
 import ReviewsScreen from "screens/ReviewsScreen";
+import CategoryScreen from "screens/CategoryScreen";
 import DefaultNavOptions from "navigation/options/DefaultNavOptions";
 
 const Stack = createStackNavigator();
@@ -34,6 +35,11 @@ const UserProfileNavigator = () => {
       <Stack.Screen
         name="Reviews"
         component={ReviewsScreen}
+        options={DefaultNavOptions}
+      />
+      <Stack.Screen
+        name="Category"
+        component={CategoryScreen}
         options={DefaultNavOptions}
       />
     </Stack.Navigator>
