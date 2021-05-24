@@ -21,7 +21,7 @@ const ChatScreen = (props) => {
       autoConnect: false,
     })
   );
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(props.route.params.messages);
   const [lastSentMessage, setLastSentMessage] = useState("");
   const [lastSentImageUrl, setLastSentImageUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -178,6 +178,7 @@ const ChatScreen = (props) => {
   useEffect(() => {
     if (isValidString(lastSentMessage)) {
       socket.emit("message", {
+        otherUserId: userId,
         userId: loggedInUserId,
         message: lastSentMessage,
         imageUrl: "",

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { REACT_APP_BACKEND_URL } from "@env";
 import {
   View,
   StyleSheet,
@@ -7,6 +8,7 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
+import { io } from "socket.io-client";
 
 import request from "utils/request";
 import Colors from "constants/Colors";
@@ -16,6 +18,11 @@ import CustomSearchBar from "components/CustomSearchBar";
 import IconButton from "components/IconButton";
 
 const MessagesScreen = (props) => {
+  const [socket] = useState(
+      io(`${REACT_APP_BACKEND_URL}/chatSocket`, {
+        autoConnect: false,
+      })
+  );
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [searchedChats, setSearchedChats] = useState([]);
@@ -56,6 +63,8 @@ const MessagesScreen = (props) => {
         return {
           user: chat.users.find((usr) => usr.id !== loggedInUserId),
           chatId: chat.id,
+          messages: chat.messages,
+          numUnseen: chat.messages.filter(msg => !msg.seen).length,
         };
       });
     } catch (e) {
@@ -63,19 +72,45 @@ const MessagesScreen = (props) => {
     }
   };
 
-  //Initial loading of active chats
   useEffect(() => {
-    setIsLoading(true);
-    getChats()
-      .then((response) => {
-        setUserChats(response);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        console.error(err);
-      });
-  }, []);
+    socket.connect();
+    socket.on("connect", () => {
+      socket.emit("messages screen", loggedInUserId);
+    });
+    socket.on("messages joined", async () => {
+      setIsLoading(true);
+      await getChats()
+          .then((response) => {
+            setUserChats(response);
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            console.error(err);
+          });
+    });
+    socket.on("new message", ({ creator, content, imageUrl }) => {
+      //Update last message for the chat with 'creator'
+      console.log(creator, ":", content);
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, [])
+
+  //Initial loading of active chats
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   getChats()
+  //     .then((response) => {
+  //       setUserChats(response);
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       setIsLoading(false);
+  //       console.error(err);
+  //     });
+  // }, []);
 
   useDidMountEffect(() => {
     if (query !== "") {
