@@ -3,63 +3,58 @@ import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Rating } from "react-native-elements";
 import { EvilIcons } from "@expo/vector-icons";
+import useDebouncedCallback from "use-debounce/lib/useDebouncedCallback";
 
 import * as authActions from "store/actions/auth";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import UserStatistic from "components/UserStatistic";
+import useDidMountEffect from "hooks/useDidMountEffect";
 
 const UserHeader = (props) => {
   const { selectedUser, navigateToReviews } = props;
-  const [isFollowing, setIsFollowing] = useState(false);
 
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.jwtToken);
 
-  const followUser = () => {
-    setIsFollowing(true);
-    dispatch(
-      authActions.updateUserFollowing(
-        loggedInUser.id,
-        selectedUser.id,
-        token,
-        true
-      )
-    );
-  };
+  const [actualIsFollowing, setActualIsFollowing] = useState(
+    loggedInUser.following.includes(selectedUser.id)
+  );
+  const [debouncedIsFollowing, setDebouncedIsFollowing] = useState(
+    loggedInUser.following.includes(selectedUser.id)
+  );
+  const debounced = useDebouncedCallback((val) => {
+    setDebouncedIsFollowing(val);
+  }, 1000);
 
-  const unfollowUser = () => {
-    setIsFollowing(false);
+  useDidMountEffect(() => {
+    console.log("sent request");
     dispatch(
       authActions.updateUserFollowing(
         loggedInUser.id,
         selectedUser.id,
         token,
-        false
+        debouncedIsFollowing
       )
     );
-  };
+  }, [debouncedIsFollowing]);
 
   return (
     <View style={styles.container}>
       {loggedInUser.id !== selectedUser.id && (
         <View style={{ zIndex: 1 }}>
-          {(!loggedInUser.following.includes(selectedUser.id) ||
-            !isFollowing) && (
-            <TouchableOpacity style={styles.followButton} onPress={followUser}>
-              <DefaultText style={styles.followText}>Follow</DefaultText>
-            </TouchableOpacity>
-          )}
-          {(loggedInUser.following.includes(selectedUser.id) ||
-            isFollowing) && (
-            <TouchableOpacity
-              style={styles.followButton}
-              onPress={unfollowUser}
-            >
-              <DefaultText style={styles.followText}>Unfollow</DefaultText>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            style={styles.followButton}
+            onPress={() => {
+              setActualIsFollowing(!actualIsFollowing);
+              debounced(!actualIsFollowing);
+            }}
+          >
+            <DefaultText style={styles.followText}>
+              {actualIsFollowing ? "Unfollow" : "Follow"}
+            </DefaultText>
+          </TouchableOpacity>
         </View>
       )}
       <View style={styles.topHeaderContainer}>
