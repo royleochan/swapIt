@@ -29,7 +29,6 @@ const UserHeader = (props) => {
   }, 1000);
 
   useDidMountEffect(() => {
-    console.log("sent request");
     dispatch(
       authActions.updateUserFollowing(
         loggedInUser.id,
