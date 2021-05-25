@@ -37,9 +37,9 @@ const ProfileScreen = (props) => {
     props.navigation.push("Follow", { screen: "Followers" });
   };
 
-  const navigateToSettings = (user) => {
-    props.navigation.push("Settings", user);
-  }
+  const navigateToSettings = () => {
+    props.navigation.push("Settings", selectedUser);
+  };
 
   const loadProducts = async () => {
     setIsRefreshing(true);
@@ -84,7 +84,7 @@ const ProfileScreen = (props) => {
             size={26}
             color={Colors.primary}
             name="setting"
-            onPress={() => navigateToSettings(user)}
+            onPress={() => navigateToSettings()}
           />
         ),
       });

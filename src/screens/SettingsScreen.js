@@ -8,7 +8,7 @@ import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 
 const SettingsScreen = (props) => {
-  const user = props.route.params.user;
+  const user = props.route.params.selectedUser;
 
   // header back button
   useLayoutEffect(() => {

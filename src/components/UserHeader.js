@@ -88,7 +88,7 @@ const UserHeader = (props) => {
         </DefaultText>
         <TouchableOpacity
           style={styles.ratingContainer}
-          onPress={() => navigateToReviews(selectedUser)}
+          onPress={() => navigateToReviews()}
         >
           <Rating
             type="custom"
