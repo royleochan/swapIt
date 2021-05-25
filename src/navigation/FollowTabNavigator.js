@@ -9,14 +9,14 @@ const FollowTabNavigator = () => {
   return (
     <TopTab.Navigator>
       <TopTab.Screen
-        name="Following"
-        component={FollowScreen}
-        initialParams={{ type: "following" }}
-      />
-      <TopTab.Screen
         name="Followers"
         component={FollowScreen}
         initialParams={{ type: "followers" }}
+      />
+      <TopTab.Screen
+        name="Following"
+        component={FollowScreen}
+        initialParams={{ type: "following" }}
       />
     </TopTab.Navigator>
   );
