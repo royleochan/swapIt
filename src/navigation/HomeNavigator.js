@@ -11,6 +11,8 @@ import CategoryScreen from "screens/CategoryScreen";
 import ResultsScreen from "screens/ResultsScreen";
 import SearchUserScreen from "screens/SearchUserScreen";
 import ReviewsScreen from "screens/ReviewsScreen";
+import SettingsScreen from "screens/SettingsScreen";
+import { startClock } from "react-native-reanimated";
 
 const Stack = createStackNavigator();
 
@@ -60,6 +62,11 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="Reviews"
         component={ReviewsScreen}
+        options={DefaultNavOptions}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
         options={DefaultNavOptions}
       />
     </Stack.Navigator>
