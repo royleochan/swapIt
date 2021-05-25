@@ -9,21 +9,6 @@ import DefaultText from "components/DefaultText";
 const ReviewsScreen = (props) => {
   const user = props.route.params.user;
 
-  // header back button
-  useLayoutEffect(() => {
-    props.navigation.setOptions({
-      headerLeft: () => (
-        <IconButton
-          style={{ marginLeft: 10 }}
-          size={23}
-          color={Colors.primary}
-          name="arrowleft"
-          onPress={() => props.navigation.goBack()}
-        />
-      ),
-    });
-  }, [props.navigation]);
-
   return (
     <View style={styles.screenContainer}>
       <DefaultText style={styles.numberRating}>3.5</DefaultText>

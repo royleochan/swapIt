@@ -114,21 +114,6 @@ const EditProductScreen = (props) => {
     }
   };
 
-  // header back button
-  useLayoutEffect(() => {
-    props.navigation.setOptions({
-      headerLeft: () => (
-        <IconButton
-          style={{ marginLeft: 10 }}
-          size={23}
-          color={Colors.primary}
-          name="arrowleft"
-          onPress={() => props.navigation.goBack()}
-        />
-      ),
-    });
-  }, [props.navigation]);
-
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.screen}>

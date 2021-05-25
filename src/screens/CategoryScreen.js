@@ -63,21 +63,6 @@ const CategoryScreen = (props) => {
     setProducts(sort([...products], sortState));
   }, [sortState]);
 
-  // header back button
-  useLayoutEffect(() => {
-    props.navigation.setOptions({
-      headerLeft: () => (
-        <IconButton
-          style={{ marginLeft: 10 }}
-          size={23}
-          color={Colors.primary}
-          name="arrowleft"
-          onPress={() => props.navigation.goBack()}
-        />
-      ),
-    });
-  }, [props.navigation]);
-
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>

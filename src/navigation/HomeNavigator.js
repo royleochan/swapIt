@@ -1,7 +1,8 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import DefaultNavOptions from "navigation/options/DefaultNavOptions";
+import * as NavOptions from "navigation/options/DefaultNavOptions";
+import FollowTabNavigator from "navigation/FollowTabNavigator";
 import HomeScreen from "screens/HomeScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
 import MessagesScreen from "screens/MessagesScreen";
@@ -40,7 +41,7 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="Category"
         component={CategoryScreen}
-        options={DefaultNavOptions}
+        options={NavOptions.DefaultNavOptions}
       />
       <Stack.Screen
         name="Results"
@@ -50,7 +51,7 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="ProfileScreen"
         component={ProfileScreen}
-        options={DefaultNavOptions}
+        options={NavOptions.DefaultNavOptions}
       />
       <Stack.Screen
         name="Search"
@@ -60,7 +61,12 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="Reviews"
         component={ReviewsScreen}
-        options={DefaultNavOptions}
+        options={NavOptions.DefaultNavOptions}
+      />
+      <Stack.Screen
+        name="Follow"
+        component={FollowTabNavigator}
+        options={NavOptions.DefaultNavOptions}
       />
     </Stack.Navigator>
   );
