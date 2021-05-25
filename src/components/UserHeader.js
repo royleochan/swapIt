@@ -12,7 +12,12 @@ import UserStatistic from "components/UserStatistic";
 import useDidMountEffect from "hooks/useDidMountEffect";
 
 const UserHeader = (props) => {
-  const { selectedUser, navigateToReviews } = props;
+  const {
+    selectedUser,
+    navigateToReviews,
+    navigateToFollowers,
+    navigateToFollowing,
+  } = props;
 
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.auth.user);
@@ -65,12 +70,16 @@ const UserHeader = (props) => {
           <UserStatistic value={selectedUser.products.length}>
             Listings
           </UserStatistic>
-          <UserStatistic value={selectedUser.followers.length}>
-            Followers
-          </UserStatistic>
-          <UserStatistic value={selectedUser.following.length}>
-            Following
-          </UserStatistic>
+          <TouchableOpacity onPress={() => navigateToFollowers()}>
+            <UserStatistic value={selectedUser.followers.length}>
+              Followers
+            </UserStatistic>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigateToFollowing()}>
+            <UserStatistic value={selectedUser.following.length}>
+              Following
+            </UserStatistic>
+          </TouchableOpacity>
         </View>
       </View>
       <View style={styles.usernameReviewContainer}>

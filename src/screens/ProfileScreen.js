@@ -24,6 +24,14 @@ const ProfileScreen = (props) => {
     props.navigation.push("Reviews", user);
   };
 
+  const navigateToFollowing = () => {
+    props.navigation.push("Follow", { screen: "Following" });
+  };
+
+  const navigateToFollowers = () => {
+    props.navigation.push("Follow", { screen: "Followers" });
+  };
+
   const loadProducts = async () => {
     setIsRefreshing(true);
     try {
@@ -86,6 +94,8 @@ const ProfileScreen = (props) => {
       <UserHeader
         selectedUser={user.id === loggedInUser.id ? loggedInUser : user}
         navigateToReviews={navigateToReviews}
+        navigateToFollowers={navigateToFollowers}
+        navigateToFollowing={navigateToFollowing}
       />
       <FlatList
         onRefresh={loadProducts}
