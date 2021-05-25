@@ -12,6 +12,7 @@ import ProductDetailsScreen from "screens/ProductDetailsScreen";
 import EditProductScreen from "screens/EditProductScreen";
 import ReviewsScreen from "screens/ReviewsScreen";
 import CategoryScreen from "screens/CategoryScreen";
+import SettingsScreen from "screens/SettingsScreen";
 
 const Stack = createStackNavigator();
 
@@ -66,6 +67,11 @@ const UserProfileNavigator = () => {
             />
           ),
         })}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={DefaultNavOptions}
       />
     </Stack.Navigator>
   );

@@ -56,6 +56,11 @@ const HomeNavigator = () => {
         component={UserProfileNavigator}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={DefaultNavOptions}
+      />
     </Stack.Navigator>
   );
 };
