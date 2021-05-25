@@ -1,9 +1,7 @@
 import uuid from "react-native-uuid";
-import { REACT_APP_BACKEND_URL } from "@env";
 import React, { useCallback, useEffect, useState } from "react";
 import { Actions, GiftedChat } from "react-native-gifted-chat";
 import { useSelector } from "react-redux";
-import { io } from "socket.io-client";
 import { Icon } from "react-native-elements";
 
 import request from "utils/request";
@@ -16,21 +14,37 @@ import {
 } from "utils/imagePicker";
 
 const ChatScreen = (props) => {
-  const [socket] = useState(
-    io(`${REACT_APP_BACKEND_URL}/chatSocket`, {
-      autoConnect: false,
-    })
-  );
-  const [messages, setMessages] = useState(props.route.params.messages);
-  const [lastSentMessage, setLastSentMessage] = useState("");
-  const [lastSentImageUrl, setLastSentImageUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [isUploading, setIsUploading] = useState(false);
-
   let chatId = props.route.params.chatId;
   const userId = props.route.params.user._id;
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const userProfilePic = props.route.params.user.profilePic;
+  const initialMessages = () => {
+    if (chatId) {
+      return props.route.params.messages.map((message) => {
+        return {
+          _id: message._id,
+          text: message.content,
+          image: message.imageUrl,
+          createdAt: message.createdAt,
+          sent: true,
+          received: message.seen,
+          user: {
+            _id: message.creator,
+            avatar: userProfilePic,
+          },
+        };
+      }).reverse();
+    }
+    return [];
+  }
+
+  const [socket] = useState(props.route.params.socket);
+  const [messages, setMessages] = useState(initialMessages());
+  const [lastSentMessage, setLastSentMessage] = useState("");
+  const [lastSentImageUrl, setLastSentImageUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
+  const [userOnline, setUserOnline] = useState(false);
 
   //Validation Checks
   const isValidString = (inputString) => {
@@ -75,6 +89,8 @@ const ChatScreen = (props) => {
         text: content,
         image: imageUrl,
         createdAt: new Date(),
+        sent: true,
+        received: userOnline,
         system: isSystem,
         user: {
           _id: userId,
@@ -102,9 +118,7 @@ const ChatScreen = (props) => {
 
   const onSend = useCallback((newMessage = []) => {
     setLastSentMessage(newMessage[0].text);
-    setMessages((previousMessages) =>
-        GiftedChat.append(previousMessages, newMessage)
-    );
+    updateMessages(loggedInUserId, newMessage[0].text, "", false);
   }, []);
 
   //Asynchronous Methods
@@ -116,6 +130,8 @@ const ChatScreen = (props) => {
         text: message.content,
         image: message.imageUrl,
         createdAt: message.createdAt,
+        sent: true,
+        received: message.seen,
         user: {
           _id: message.creator,
           avatar: userProfilePic,
@@ -126,31 +142,48 @@ const ChatScreen = (props) => {
 
   const getChatRoom = async () => {
     const response = await request.get(`/api/chats/${loggedInUserId}/${userId}`);
-    return response.data.room.id;
+    chatId = response.data.room.id;
+    return chatId;
   }
 
   //Initialise socket connection and event listeners
   useEffect(() => {
-    socket.connect();
-    socket.on("connect", async () => {
-      if (!chatId) {
-        chatId = await getChatRoom();
-      }
-      if (chatId) {
-        socket.emit("join", `${chatId}`);
+    if (chatId === undefined || chatId === null) {
+      getChatRoom()
+          .then((result) => {
+            getMessages(chatId)
+                .then((response) => {
+                  setMessages(response.reverse());
+                })
+                .catch((e) => {
+                  updateErrorMessage("Failed to open chat. Please try again.");
+                  console.error(e);
+                });
+            socket.emit("join", {
+              chatId: result,
+              currUser: loggedInUserId,
+            });
+          })
+          .catch((e) => console.error(e));
+    } else {
+      socket.emit("join", {
+        chatId: chatId,
+        currUser: loggedInUserId,
+      });
+    }
+    socket.on("joined", () => {
+      setIsLoading(false);
+    });
+    socket.on("user connected", (user) => {
+      if (user === userId) {
+        setUserOnline(true);
+        socket.emit("respond connected", loggedInUserId);
       }
     });
-    socket.on("joined", async (roomId) => {
-      await getMessages(roomId)
-          .then((response) => {
-            setMessages(response.reverse());
-            setIsLoading(false);
-          })
-          .catch((e) => {
-            updateErrorMessage("Failed to open chat. Please try again.");
-            setIsLoading(false);
-            console.error(e);
-          });
+    socket.on("connected response", (user) => {
+      if (user === userId) {
+        setUserOnline(true);
+      }
     });
     socket.on("message", (message) => {
       const newMessage = [
@@ -159,6 +192,8 @@ const ChatScreen = (props) => {
           text: message.content,
           image: message.imageUrl,
           createdAt: new Date(),
+          sent: true,
+          received: true,
           user: {
             _id: message.userId,
             avatar: userProfilePic,
@@ -169,9 +204,12 @@ const ChatScreen = (props) => {
           GiftedChat.append(previousMessages, newMessage)
       );
     });
-    return () => {
-      socket.disconnect();
-    };
+    socket.on("user disconnect", (user) => {
+      if (user === userId) {
+        setUserOnline(false);
+      }
+    });
+    return () => socket.emit("leave room", { chatId: chatId, currUser: loggedInUserId });
   }, []);
 
   //Effect when text message is sent
@@ -182,6 +220,7 @@ const ChatScreen = (props) => {
         userId: loggedInUserId,
         message: lastSentMessage,
         imageUrl: "",
+        seen: userOnline,
       });
     }
   }, [lastSentMessage]);
@@ -190,9 +229,11 @@ const ChatScreen = (props) => {
   useEffect(() => {
     if (isValidString(lastSentImageUrl)) {
       socket.emit("message", {
+        otherUserId: userId,
         userId: loggedInUserId,
         message: "",
         imageUrl: lastSentImageUrl,
+        seen: userOnline,
       });
       updateMessages(loggedInUserId, "", lastSentImageUrl, false);
     }
