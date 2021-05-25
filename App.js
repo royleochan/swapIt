@@ -10,6 +10,9 @@ import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 import AppNavigator from "navigation/AppNavigator";
 import authReducer from "store/reducers/auth";
+import sortReducer from "store/reducers/sort";
+import filterReducer from "store/reducers/filter";
+import productsReducer from "store/reducers/products";
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -20,6 +23,9 @@ const fetchFonts = () => {
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  sort: sortReducer,
+  filter: filterReducer,
+  products: productsReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

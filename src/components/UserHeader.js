@@ -1,58 +1,110 @@
-import React from "react";
-import { View, StyleSheet, Image } from "react-native";
-import Stars from "react-native-stars";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import React, { useState } from "react";
+import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { Rating } from "react-native-elements";
+import { EvilIcons } from "@expo/vector-icons";
+import useDebouncedCallback from "use-debounce/lib/useDebouncedCallback";
 
+import * as authActions from "store/actions/auth";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import UserStatistic from "components/UserStatistic";
+import useDidMountEffect from "hooks/useDidMountEffect";
 
 const UserHeader = (props) => {
-  const { selectedUser } = props;
-  const {
-    profilePic,
-    products,
-    followers,
-    following,
-    username,
-    location,
-    description,
-  } = selectedUser;
-  const dummyRating = 3.75;
+  const { selectedUser, navigateToReviews } = props;
+
+  const dispatch = useDispatch();
+  const loggedInUser = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.jwtToken);
+
+  const [actualIsFollowing, setActualIsFollowing] = useState(
+    loggedInUser.following.includes(selectedUser.id)
+  );
+  const [debouncedIsFollowing, setDebouncedIsFollowing] = useState(
+    loggedInUser.following.includes(selectedUser.id)
+  );
+  const debounced = useDebouncedCallback((val) => {
+    setDebouncedIsFollowing(val);
+  }, 1000);
+
+  useDidMountEffect(() => {
+    dispatch(
+      authActions.updateUserFollowing(
+        loggedInUser.id,
+        selectedUser.id,
+        token,
+        debouncedIsFollowing
+      )
+    );
+  }, [debouncedIsFollowing]);
 
   return (
     <View style={styles.container}>
-      <View style={styles.statisticsContainer}>
-        <Image source={{ uri: profilePic }} style={styles.profilePicture} />
-        <UserStatistic value={products.length}> Listings</UserStatistic>
-        <UserStatistic value={followers.length}> Followers</UserStatistic>
-        <UserStatistic value={following.length}> Following</UserStatistic>
-      </View>
-      <View style={styles.userDetailsContainer}>
-        <View style={styles.userInformationContainer}>
-          <DefaultText style={styles.username}>@{username}</DefaultText>
-          <DefaultText style={styles.location}>{location}</DefaultText>
+      {loggedInUser.id !== selectedUser.id && (
+        <View style={{ zIndex: 1 }}>
+          <TouchableOpacity
+            style={styles.followButton}
+            onPress={() => {
+              setActualIsFollowing(!actualIsFollowing);
+              debounced(!actualIsFollowing);
+            }}
+          >
+            <DefaultText style={styles.followText}>
+              {actualIsFollowing ? "Unfollow" : "Follow"}
+            </DefaultText>
+          </TouchableOpacity>
         </View>
-        <View style={styles.ratingContainer}>
-          <Stars
-            display={dummyRating}
-            count={5}
-            fullStar={
-              <AntDesign name="star" style={styles.filledStar} size={16} />
-            }
-            emptyStar={
-              <AntDesign name="staro" style={styles.emptyStar} size={16} />
-            }
+      )}
+      <View style={styles.topHeaderContainer}>
+        <Image
+          source={{ uri: selectedUser.profilePic }}
+          style={styles.profilePicture}
+        />
+        <View style={styles.userStatisticsContainer}>
+          <UserStatistic value={selectedUser.products.length}>
+            Listings
+          </UserStatistic>
+          <UserStatistic value={selectedUser.followers.length}>
+            Followers
+          </UserStatistic>
+          <UserStatistic value={selectedUser.following.length}>
+            Following
+          </UserStatistic>
+        </View>
+      </View>
+      <View style={styles.usernameReviewContainer}>
+        <DefaultText style={styles.username}>
+          @{selectedUser.username}
+        </DefaultText>
+        <TouchableOpacity
+          style={styles.ratingContainer}
+          onPress={() => navigateToReviews(selectedUser)}
+        >
+          <Rating
+            type="custom"
+            readonly
+            imageSize={20}
+            tintColor={Colors.gray}
+            ratingBackgroundColor={Colors.background}
+            ratingColor={Colors.star}
+            fractions={1}
+            startingValue={3.5}
           />
           <DefaultText style={styles.rating}>
-            {"   "}
-            {dummyRating} / 5
+            {selectedUser.rating}(0)
           </DefaultText>
-        </View>
+        </TouchableOpacity>
       </View>
-      <View style={styles.descriptionContainer}>
-        <DefaultText>{description}</DefaultText>
+      <View style={styles.locationContainer}>
+        <EvilIcons name="location" size={20} color={Colors.primary} />
+        <DefaultText style={styles.location}>
+          {selectedUser.location}
+        </DefaultText>
       </View>
+      <DefaultText style={styles.description}>
+        {selectedUser.description}
+      </DefaultText>
     </View>
   );
 };
@@ -61,56 +113,86 @@ export default UserHeader;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#E5E5E5",
+    backgroundColor: Colors.gray,
     borderTopLeftRadius: 20,
     borderTopEndRadius: 20,
     paddingHorizontal: "10%",
     justifyContent: "flex-start",
   },
-  statisticsContainer: {
-    justifyContent: "space-between",
-    flexDirection: "row",
+  followButton: {
+    backgroundColor: Colors.primary,
+    padding: 5,
+    width: 66,
+    height: 26,
+    borderRadius: 16,
+    justifyContent: "center",
     alignItems: "center",
-    paddingTop: 20,
+    position: "absolute",
+    right: 0,
+    marginTop: 14,
+    marginRight: 18,
+  },
+  followText: {
+    color: Colors.background,
+    alignSelf: "center",
+  },
+  topHeaderContainer: {
+    flexDirection: "row",
+    marginLeft: 24,
+    marginRight: 24,
+    marginTop: 24,
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   profilePicture: {
-    width: 75,
-    height: 75,
+    width: 70,
+    height: 70,
     borderRadius: 35,
   },
   userDetailsContainer: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    width: "60%",
+    marginRight: "15%",
+    marginTop: 14,
+  },
+  userStatistics: {
+    fontSize: 10,
+    color: Colors.primary,
+  },
+  usernameReviewContainer: {
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-  },
-  userInformationContainer: {
-    flexDirection: "column",
-    paddingTop: 10,
+    marginLeft: 24,
+    marginTop: 12,
   },
   username: {
     fontFamily: "latoBold",
     fontSize: 18,
-    paddingBottom: 5,
+  },
+  rating: {
+    marginRight: 24,
+    marginLeft: 6,
+  },
+  locationContainer: {
+    marginLeft: 20,
+    marginTop: 8,
+    flexDirection: "row",
   },
   location: {
-    paddingBottom: 10,
+    fontSize: 10,
+    marginTop: 2,
+  },
+  description: {
+    marginLeft: 25,
+    marginTop: 8,
+    fontSize: 10,
+    marginBottom: 24,
+    color: "black",
   },
   ratingContainer: {
     flexDirection: "row",
-    paddingBottom: 10,
     alignItems: "center",
-  },
-  filledStar: {
-    color: "#F4A91B",
-  },
-  emptyStar: {
-    color: "gray",
-  },
-  rating: {
-    fontSize: 12,
-    fontWeight: "bold",
-  },
-  descriptionContainer: {
-    marginBottom: 20,
   },
 });

@@ -34,7 +34,7 @@ const LoginScreen = (props) => {
   };
 
   const signupHandler = () => {
-    props.navigation.navigate("Signup");
+    props.navigation.push("Signup");
   };
 
   useEffect(() => {
@@ -108,10 +108,10 @@ const LoginScreen = (props) => {
       </View>
       <View style={styles.signupContainer}>
         <DefaultText style={styles.signupText}>
-          Don't have an account?{" "}
+          Don't have an account?
         </DefaultText>
         <TouchableOpacity onPress={signupHandler}>
-          <DefaultText style={styles.signupTextAccent}>Sign Up!</DefaultText>
+          <DefaultText style={styles.signupTextAccent}> Sign Up!</DefaultText>
         </TouchableOpacity>
       </View>
     </View>

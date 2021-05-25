@@ -5,14 +5,14 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
 
+import followingIcon from "assets/categories/following.png";
 import request from "utils/request";
-import WomenTop from "assets/svg/WomenTop";
-import MenTop from "assets/svg/MenTop";
 import Colors from "constants/Colors";
 import MaleCategories from "constants/MaleCategories";
 import FemaleCategories from "constants/FemaleCategories";
@@ -37,33 +37,32 @@ const HomeScreen = (props) => {
   const handleSubmit = () => {
     const searchQuery = query;
     setQuery("");
-    props.navigation.navigate("Results", searchQuery);
+    props.navigation.push("Results", searchQuery);
   };
 
   const navigateToProductDetails = (productData) => {
-    props.navigation.navigate("Product", productData);
+    props.navigation.push("Product", productData);
   };
 
-  const navigateToResults = (category) => {
-    props.navigation.navigate("Category", category);
+  const navigateToCategory = (category) => {
+    props.navigation.push("Category", category);
   };
 
   const navigateToProfile = (userData) => {
-    props.navigation.navigate("ProfileNavigator", {
-      screen: "Profile",
-      params: userData,
+    props.navigation.push("ProfileScreen", {
+      user: userData,
     });
   };
 
   const navigateToSearchUser = () => {
-    props.navigation.navigate("Search");
+    props.navigation.push("Search");
   };
 
   // Need to change to trending products
   const loadProducts = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const response = await request.get(`/api/products/user/all/${user.id}`);
+      const response = await request.get(`/api/products/all/${user.id}`);
       const resData = response.data.products;
       setTrendingProducts(resData);
     } catch (err) {
@@ -99,6 +98,14 @@ const HomeScreen = (props) => {
             horizontal={true}
             contentContainerStyle={styles.avatarsContainer}
           >
+            <TouchableOpacity
+              style={styles.avatarContainer}
+              key="Following"
+              onPress={() => navigateToCategory({ label: "Following" })}
+            >
+              <Image style={styles.categoryImage} source={followingIcon} />
+              <DefaultText style={styles.categoryLabel}>Following</DefaultText>
+            </TouchableOpacity>
             {MaleCategories.map((category) => {
               if (category.label == "Others") {
                 return;
@@ -107,9 +114,12 @@ const HomeScreen = (props) => {
                   <TouchableOpacity
                     style={styles.avatarContainer}
                     key={category.label}
-                    onPress={() => navigateToResults(category)}
+                    onPress={() => navigateToCategory(category)}
                   >
-                    <MenTop />
+                    <Image
+                      style={styles.categoryImage}
+                      source={category.icon}
+                    />
                     <DefaultText style={styles.categoryLabel}>
                       {category.label}
                     </DefaultText>
@@ -122,9 +132,9 @@ const HomeScreen = (props) => {
                 <TouchableOpacity
                   style={styles.avatarContainer}
                   key={category.label}
-                  onPress={() => navigateToResults(category)}
+                  onPress={() => navigateToCategory(category)}
                 >
-                  <WomenTop />
+                  <Image style={styles.categoryImage} source={category.icon} />
                   <DefaultText style={styles.categoryLabel}>
                     {category.label}
                   </DefaultText>
@@ -138,7 +148,7 @@ const HomeScreen = (props) => {
           <ScrollView
             showsHorizontalScrollIndicator={false}
             horizontal={true}
-            contentContainerStyle={styles.avatarsContainer}
+            contentContainerStyle={styles.recUsersContainer}
           >
             {recommendedUsers.map((user) => {
               return (
@@ -186,7 +196,7 @@ const HomeScreen = (props) => {
           size={23}
           color={Colors.primary}
           name="message1"
-          onPress={() => props.navigation.navigate("Messages")}
+          onPress={() => props.navigation.push("Messages")}
         />
       </View>
       {isFocusSearch && (
@@ -249,10 +259,10 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   section: {
-    marginLeft: 16,
     marginVertical: 12,
   },
   subheader: {
+    marginLeft: 14,
     fontFamily: "latoBold",
     fontSize: 24,
   },
@@ -264,19 +274,28 @@ const styles = StyleSheet.create({
   avatarContainer: {
     flexDirection: "column",
     alignItems: "center",
-    width: 100,
+    width: 115,
+  },
+  categoryImage: {
+    width: 66,
+    height: 66,
   },
   categoryLabel: {
     marginTop: 10,
   },
   list: {
     justifyContent: "center",
-    marginTop: 10,
   },
   searchUserContainer: {
     flexDirection: "row",
     fontSize: 16,
     margin: 8,
     alignItems: "center",
+  },
+  recUsersContainer: {
+    marginTop: 14,
+    flexDirection: "row",
+    flexGrow: 1,
+    marginLeft: 16,
   },
 });

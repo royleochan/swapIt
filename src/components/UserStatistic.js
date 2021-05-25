@@ -6,8 +6,8 @@ import DefaultText from "components/DefaultText";
 const UserStatistic = (props) => {
   return (
     <View style={styles.container}>
-      <DefaultText style={styles.number}>{props.value}</DefaultText>
-      <DefaultText style={styles.labelText}>{props.children}</DefaultText>
+      <DefaultText style={styles.number}>{props.value} </DefaultText>
+      <DefaultText>{props.children}</DefaultText>
     </View>
   );
 };
@@ -20,9 +20,5 @@ const styles = StyleSheet.create({
   },
   number: {
     fontFamily: "latoBold",
-    fontSize: 12,
-  },
-  labelText: {
-    fontSize: 12,
   },
 });

@@ -25,12 +25,12 @@ const SignupScreen = (props) => {
       ]);
     } else {
       delete data.confirmPassword;
-      props.navigation.navigate("SignupTwo", data);
+      props.navigation.push("SignupTwo", data);
     }
   };
 
   const loginHandler = () => {
-    props.navigation.navigate("Login");
+    props.navigation.push("Login");
   };
 
   return (
@@ -182,10 +182,10 @@ const SignupScreen = (props) => {
       </View>
       <View style={styles.signInContainer}>
         <DefaultText style={styles.signInText}>
-          Already have an account?{" "}
+          Already have an account?
         </DefaultText>
         <TouchableOpacity onPress={loginHandler}>
-          <DefaultText style={styles.signInTextAccent}>Sign in!</DefaultText>
+          <DefaultText style={styles.signInTextAccent}> Sign in!</DefaultText>
         </TouchableOpacity>
       </View>
     </View>

@@ -323,8 +323,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-    borderColor: Colors.gray,
-    borderWidth: 3,
+    borderColor: Colors.primary,
+    borderWidth: 0.8,
   },
   image: {
     width: "100%",
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     height: "10%",
     width: "100%",
     backgroundColor: Colors.gray,
-    padding: 26,
+    paddingHorizontal: 26,
   },
   errorText: {
     marginVertical: 5,

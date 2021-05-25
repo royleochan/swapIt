@@ -10,6 +10,7 @@ import ProfileScreen from "screens/ProfileScreen";
 import CategoryScreen from "screens/CategoryScreen";
 import ResultsScreen from "screens/ResultsScreen";
 import SearchUserScreen from "screens/SearchUserScreen";
+import ReviewsScreen from "screens/ReviewsScreen";
 
 const Stack = createStackNavigator();
 
@@ -55,6 +56,11 @@ const HomeNavigator = () => {
         name="Search"
         component={SearchUserScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Reviews"
+        component={ReviewsScreen}
+        options={DefaultNavOptions}
       />
     </Stack.Navigator>
   );

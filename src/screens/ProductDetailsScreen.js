@@ -9,7 +9,6 @@ import {
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useSelector } from "react-redux";
 import MaterialCommunity from "react-native-vector-icons/MaterialCommunityIcons";
-import Feather from "react-native-vector-icons/Feather";
 
 import request from "utils/request";
 import Colors from "constants/Colors";
@@ -29,8 +28,9 @@ const ProductDetailsScreen = (props) => {
     user,
   } = props.route.params;
 
-  const { showActionSheetWithOptions } = useActionSheet();
   const loggedInUser = useSelector((state) => state.auth.user);
+
+  const { showActionSheetWithOptions } = useActionSheet();
 
   // action sheet handler
   const showActionSheet = () => {
@@ -50,10 +50,18 @@ const ProductDetailsScreen = (props) => {
           await request.delete(`/api/products/${_id}`);
           props.navigation.goBack();
         } else if (buttonIndex === 1) {
-          props.navigation.navigate("EditProduct", props.route.params);
+          props.navigation.push("EditProduct", props.route.params);
         }
       }
     );
+  };
+
+  const navigateToCategory = (cat) => {
+    props.navigation.push("Category", { label: cat });
+  };
+
+  const navigateToProfile = (user) => {
+    props.navigation.push("ProfileScreen", { user: user });
   };
 
   return (
@@ -77,14 +85,22 @@ const ProductDetailsScreen = (props) => {
         )}
         <Image source={{ uri: imageUrl }} style={styles.image} />
         <View style={styles.detailsContainer}>
+          <View style={styles.textContainer}>
+            <DefaultText style={styles.title}>{title}</DefaultText>
+          </View>
+          <View style={styles.textContainer}>
+            <DefaultText style={styles.subTitle}>
+              S${minPrice} - {maxPrice}
+            </DefaultText>
+          </View>
           <TouchableOpacity
             style={styles.iconTextContainer}
             onPress={() => console.log("Show users who liked item")}
           >
             <MaterialCommunity
               name={"heart-outline"}
-              size={16}
-              color={"#d50101"}
+              size={15}
+              color={Colors.primary}
             />
             <DefaultText>
               {" "}
@@ -92,21 +108,18 @@ const ProductDetailsScreen = (props) => {
             </DefaultText>
           </TouchableOpacity>
           <View style={styles.textContainer}>
-            <DefaultText style={styles.title}>{title}</DefaultText>
+            <DefaultText>In </DefaultText>
+            <TouchableOpacity onPress={() => navigateToCategory(category)}>
+              <DefaultText style={styles.highlight}>{category}</DefaultText>
+            </TouchableOpacity>
           </View>
           <View style={styles.textContainer}>
-            <DefaultText style={styles.smallerGreyText}>By </DefaultText>
-            <DefaultText>@{user.username}</DefaultText>
-          </View>
-          <View style={styles.textContainer}>
-            <DefaultText style={styles.greyText}>In </DefaultText>
-            <DefaultText style={styles.text}>{category}</DefaultText>
-          </View>
-          <View style={styles.textContainer}>
-            <DefaultText style={styles.greyText}>$ </DefaultText>
-            <DefaultText style={styles.text}>
-              {minPrice} - {maxPrice}
-            </DefaultText>
+            <DefaultText>5 days ago by </DefaultText>
+            <TouchableOpacity onPress={() => navigateToProfile(user)}>
+              <DefaultText style={styles.highlight}>
+                @{user.username}
+              </DefaultText>
+            </TouchableOpacity>
           </View>
           <View style={styles.textContainer}>
             <DefaultText style={styles.greyText}>Description </DefaultText>
@@ -137,8 +150,11 @@ const styles = StyleSheet.create({
     marginLeft: Dimensions.get("window").width - 40,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontFamily: "latoBold",
+  },
+  subTitle: {
+    fontSize: 20,
   },
   image: {
     width: "100%",
@@ -147,16 +163,22 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
   },
   detailsContainer: {
-    padding: 24,
+    paddingHorizontal: 18,
+    paddingTop: 9,
   },
   textContainer: {
     marginVertical: 4,
+    flexDirection: "row",
   },
   iconTextContainer: {
     flexDirection: "row",
     alignItems: "center",
-    width: "14%",
-    marginVertical: 3,
+    justifyContent: "space-between",
+    width: "15%",
+    marginVertical: 4,
+  },
+  highlight: {
+    color: Colors.darkPink,
   },
   textContainer: {
     marginVertical: 3,

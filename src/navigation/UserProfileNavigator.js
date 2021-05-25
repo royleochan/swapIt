@@ -5,7 +5,8 @@ import { useSelector } from "react-redux";
 import ProfileScreen from "screens/ProfileScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
 import EditProductScreen from "screens/EditProductScreen";
-import SettingsScreen from "screens/SettingsScreen";
+import ReviewsScreen from "screens/ReviewsScreen";
+import CategoryScreen from "screens/CategoryScreen";
 import DefaultNavOptions from "navigation/options/DefaultNavOptions";
 
 const Stack = createStackNavigator();
@@ -32,8 +33,14 @@ const UserProfileNavigator = () => {
         options={DefaultNavOptions}
       />
       <Stack.Screen
-        name="Settings"
-        component={SettingsScreen}
+        name="Reviews"
+        component={ReviewsScreen}
+        options={DefaultNavOptions}
+      />
+      <Stack.Screen
+        name="Category"
+        component={CategoryScreen}
+        options={DefaultNavOptions}
       />
     </Stack.Navigator>
   );

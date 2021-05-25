@@ -24,7 +24,7 @@ const ExploreScreen = (props) => {
   const loadProducts = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await request.get(`/api/products/user/all/${user.id}`);
+      const response = await request.get(`/api/products/all/${user.id}`);
       const resData = response.data.products;
       setProducts(resData);
       setIsLoading(false);
