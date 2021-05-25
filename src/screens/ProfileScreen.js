@@ -13,15 +13,20 @@ const ProfileScreen = (props) => {
   const [userProducts, setUserProducts] = useState([]);
 
   // user is either the logged in user (default) or other users that the logged in user is visiting
-  const user = props.route.params.user;
   const loggedInUser = useSelector((state) => state.auth.user);
+  let selectedUser;
+  if (props.route.params) {
+    selectedUser = props.route.params.user;
+  } else {
+    selectedUser = loggedInUser;
+  }
 
   const navigateToProductDetails = (productData) => {
     props.navigation.push("Product", productData);
   };
 
-  const navigateToReviews = (user) => {
-    props.navigation.push("Reviews", user);
+  const navigateToReviews = () => {
+    props.navigation.push("Reviews", selectedUser);
   };
 
   const navigateToFollowing = () => {
@@ -36,7 +41,7 @@ const ProfileScreen = (props) => {
     setIsRefreshing(true);
     try {
       const response = await request
-        .get(`/api/products/user/${user._id}`)
+        .get(`/api/products/user/${selectedUser._id}`)
         .catch((error) => {
           throw new Error(error.response.data.message);
         });
@@ -55,7 +60,7 @@ const ProfileScreen = (props) => {
 
   // header back button if is not logged in user, else render header settings button
   useLayoutEffect(() => {
-    if (user.id !== loggedInUser.id) {
+    if (selectedUser.id !== loggedInUser.id) {
       props.navigation.setOptions({
         headerLeft: () => (
           <IconButton
@@ -92,7 +97,7 @@ const ProfileScreen = (props) => {
   return (
     <View style={styles.screenContainer}>
       <UserHeader
-        selectedUser={user.id === loggedInUser.id ? loggedInUser : user}
+        selectedUser={selectedUser}
         navigateToReviews={navigateToReviews}
         navigateToFollowers={navigateToFollowers}
         navigateToFollowing={navigateToFollowing}
@@ -107,10 +112,10 @@ const ProfileScreen = (props) => {
         keyExtractor={(item) => item.id}
         renderItem={(itemData) => (
           <ProductBox
-            productCreator={user}
+            productCreator={selectedUser}
             item={itemData.item}
             navigate={() =>
-              navigateToProductDetails({ ...itemData.item, user: user })
+              navigateToProductDetails({ ...itemData.item, user: selectedUser })
             }
           />
         )}

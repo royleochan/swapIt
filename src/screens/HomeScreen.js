@@ -50,7 +50,8 @@ const HomeScreen = (props) => {
 
   const navigateToProfile = (userData) => {
     props.navigation.push("ProfileScreen", {
-      user: userData,
+      screen: "Profile",
+      params: {user: userData}
     });
   };
 

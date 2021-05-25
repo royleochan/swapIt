@@ -79,7 +79,10 @@ const SearchUserScreen = (props) => {
               activeOpacity={0.9}
               underlayColor={"#F6F4F4"}
               onPress={() =>
-                props.navigation.push("ProfileScreen", { user: user })
+                props.navigation.push("ProfileScreen", {
+                  screen: "Profile",
+                  params: { user: user },
+                })
               }
             >
               <View style={styles.userRow}>

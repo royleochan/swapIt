@@ -24,7 +24,6 @@ const UserProfileNavigator = () => {
         name="Profile"
         component={ProfileScreen}
         options={{ headerTitle: () => <Header /> }}
-        initialParams={{ user: user }}
       />
       <Stack.Screen
         name="Product"
@@ -51,6 +50,12 @@ const UserProfileNavigator = () => {
         component={FollowTabNavigator}
         options={({ navigation }) => ({
           title: "@" + user.username,
+          headerStyle: { shadowColor: "transparent" },
+          headerTitleStyle: {
+            color: Colors.primary,
+            fontFamily: "latoBold",
+            fontSize: 20,
+          },
           headerLeft: () => (
             <IconButton
               style={{ marginLeft: 10 }}

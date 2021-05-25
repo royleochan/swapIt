@@ -61,7 +61,10 @@ const ProductDetailsScreen = (props) => {
   };
 
   const navigateToProfile = (user) => {
-    props.navigation.push("ProfileScreen", { user: user });
+    props.navigation.push("ProfileScreen", {
+      screen: "Profile",
+      params: { user: user },
+    });
   };
 
   return (
