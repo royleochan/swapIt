@@ -24,6 +24,10 @@ const ProfileScreen = (props) => {
     props.navigation.push("Reviews", user);
   };
 
+  const navigateToSettings = (user) => {
+    props.navigation.push("Settings", user);
+  }
+
   const loadProducts = async () => {
     setIsRefreshing(true);
     try {
@@ -67,7 +71,7 @@ const ProfileScreen = (props) => {
             size={26}
             color={Colors.primary}
             name="setting"
-            onPress={() => console.log("Go to settings")}
+            onPress={() => navigateToSettings(user)}
           />
         ),
       });
