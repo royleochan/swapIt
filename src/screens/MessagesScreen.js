@@ -16,6 +16,7 @@ import useDidMountEffect from "hooks/useDidMountEffect";
 import DefaultText from "components/DefaultText";
 import CustomSearchBar from "components/CustomSearchBar";
 import IconButton from "components/IconButton";
+import uuid from "react-native-uuid";
 
 const MessagesScreen = (props) => {
   const [socket] = useState(
@@ -41,6 +42,7 @@ const MessagesScreen = (props) => {
       );
       const searchChats = response.data.users.map((usr) => {
         return {
+          socket: socket,
           user: usr,
           chatId: null,
         };
@@ -53,14 +55,12 @@ const MessagesScreen = (props) => {
     }
   };
 
-  //Get an array of chats with the following format:
-  //{ user: The opposing party's user object,
-  //chatId: The ObjectId of the Chat object }
   const getChats = async () => {
     try {
       let response = await request.get(`/api/chats/rooms/${loggedInUserId}`);
       return response.data.rooms.chats.map((chat) => {
         return {
+          socket: socket,
           user: chat.users.find((usr) => usr.id !== loggedInUserId),
           chatId: chat.id,
           messages: chat.messages,
@@ -90,27 +90,23 @@ const MessagesScreen = (props) => {
           });
     });
     socket.on("new message", ({ creator, content, imageUrl }) => {
-      //Update last message for the chat with 'creator'
-      console.log(creator, ":", content);
+      const newMessageFromSchema = {
+        _id: uuid.v4(),
+        creator: creator,
+        content: content,
+        imageUrl: imageUrl,
+        seen: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+      let reqChat = userChats.find(chat => chat.user._id === creator);
+      reqChat.messages.push(newMessageFromSchema);
+      reqChat.numUnseen += 1;
     });
     return () => {
       socket.disconnect();
     };
   }, [])
-
-  //Initial loading of active chats
-  // useEffect(() => {
-  //   setIsLoading(true);
-  //   getChats()
-  //     .then((response) => {
-  //       setUserChats(response);
-  //       setIsLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       setIsLoading(false);
-  //       console.error(err);
-  //     });
-  // }, []);
 
   useDidMountEffect(() => {
     if (query !== "") {
