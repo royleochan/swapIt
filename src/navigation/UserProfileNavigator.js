@@ -71,7 +71,7 @@ const UserProfileNavigator = () => {
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={DefaultNavOptions}
+        options={NavOptions.DefaultNavOptions}
       />
     </Stack.Navigator>
   );
