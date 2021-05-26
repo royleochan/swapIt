@@ -8,8 +8,9 @@ import {
 } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useSelector } from "react-redux";
-import MaterialCommunity from "react-native-vector-icons/MaterialCommunityIcons";
+import { AntDesign } from "@expo/vector-icons";
 
+import parseTimeAgo from "utils/parseTimeAgo";
 import request from "utils/request";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
@@ -26,6 +27,7 @@ const ProductDetailsScreen = (props) => {
     maxPrice,
     category,
     user,
+    createdAt,
   } = props.route.params;
 
   const loggedInUser = useSelector((state) => state.auth.user);
@@ -100,11 +102,7 @@ const ProductDetailsScreen = (props) => {
             style={styles.iconTextContainer}
             onPress={() => console.log("Show users who liked item")}
           >
-            <MaterialCommunity
-              name={"heart-outline"}
-              size={15}
-              color={Colors.primary}
-            />
+            <AntDesign name={"hearto"} size={14} color={Colors.primary} />
             <DefaultText>
               {likes.length} {likes.length === 1 ? "like" : "likes"}
             </DefaultText>
@@ -116,7 +114,7 @@ const ProductDetailsScreen = (props) => {
             </TouchableOpacity>
           </View>
           <View style={styles.textContainer}>
-            <DefaultText>5 days ago by </DefaultText>
+            <DefaultText>{parseTimeAgo(createdAt)} by </DefaultText>
             <TouchableOpacity onPress={() => navigateToProfile(user)}>
               <DefaultText style={styles.highlight}>
                 @{user.username}

@@ -2,7 +2,6 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  useLayoutEffect,
 } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
