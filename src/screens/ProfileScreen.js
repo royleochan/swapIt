@@ -30,11 +30,17 @@ const ProfileScreen = (props) => {
   };
 
   const navigateToFollowing = () => {
-    props.navigation.push("Follow", { screen: "Following" });
+    props.navigation.push("Follow", {
+      screen: "Following",
+      params: { selectedUser: selectedUser },
+    });
   };
 
   const navigateToFollowers = () => {
-    props.navigation.push("Follow", { screen: "Followers" });
+    props.navigation.push("Follow", {
+      screen: "Followers",
+      params: { selectedUser: selectedUser },
+    });
   };
 
   const navigateToSettings = () => {

@@ -1,12 +1,10 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useSelector } from "react-redux";
 
-import Colors from "constants/Colors";
-import * as NavOptions from "navigation/options/DefaultNavOptions";
-import FollowTabNavigator from "navigation/FollowTabNavigator";
-import IconButton from "components/IconButton";
 import Header from "components/Header";
+import { DefaultNavOptions } from "navigation/options/DefaultNavOptions";
+import { FollowOptions } from "navigation/options/FollowOptions";
+import FollowTabNavigator from "navigation/FollowTabNavigator";
 import ProfileScreen from "screens/ProfileScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
 import EditProductScreen from "screens/EditProductScreen";
@@ -17,8 +15,6 @@ import SettingsScreen from "screens/SettingsScreen";
 const Stack = createStackNavigator();
 
 const UserProfileNavigator = () => {
-  const user = useSelector((state) => state.auth.user);
-
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -34,44 +30,27 @@ const UserProfileNavigator = () => {
       <Stack.Screen
         name="EditProduct"
         component={EditProductScreen}
-        options={NavOptions.DefaultNavOptions}
+        options={DefaultNavOptions}
       />
       <Stack.Screen
         name="Reviews"
         component={ReviewsScreen}
-        options={NavOptions.DefaultNavOptions}
+        options={DefaultNavOptions}
       />
       <Stack.Screen
         name="Category"
         component={CategoryScreen}
-        options={NavOptions.DefaultNavOptions}
+        options={DefaultNavOptions}
       />
       <Stack.Screen
         name="Follow"
         component={FollowTabNavigator}
-        options={({ navigation }) => ({
-          title: "@" + user.username,
-          headerStyle: { shadowColor: "transparent" },
-          headerTitleStyle: {
-            color: Colors.primary,
-            fontFamily: "latoBold",
-            fontSize: 20,
-          },
-          headerLeft: () => (
-            <IconButton
-              style={{ marginLeft: 10 }}
-              size={23}
-              color={Colors.primary}
-              name="arrowleft"
-              onPress={() => navigation.goBack()}
-            />
-          ),
-        })}
+        options={FollowOptions}
       />
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={NavOptions.DefaultNavOptions}
+        options={DefaultNavOptions}
       />
     </Stack.Navigator>
   );

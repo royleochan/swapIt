@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import * as NavOptions from "navigation/options/DefaultNavOptions";
+import { DefaultNavOptions } from "navigation/options/DefaultNavOptions";
 import UserProfileNavigator from "navigation/UserProfileNavigator";
 import HomeScreen from "screens/HomeScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
@@ -39,7 +39,7 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="Category"
         component={CategoryScreen}
-        options={NavOptions.DefaultNavOptions}
+        options={DefaultNavOptions}
       />
       <Stack.Screen
         name="Results"
