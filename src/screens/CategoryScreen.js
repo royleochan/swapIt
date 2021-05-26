@@ -11,11 +11,9 @@ import * as productsActions from "store/actions/products";
 import request from "utils/request";
 import filter from "utils/filter";
 import sort from "utils/sort";
-import Colors from "constants/Colors";
 import ProductBox from "components/ProductBox";
 import SortFilterMenu from "components/SortFilterMenu";
 import DefaultText from "components/DefaultText";
-import IconButton from "components/IconButton";
 
 const CategoryScreen = (props) => {
   const category = props.route.params.label;
