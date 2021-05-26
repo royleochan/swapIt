@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
+import { useNavigationState } from "@react-navigation/native";
 
 import request from "utils/request";
 import Colors from "constants/Colors";
@@ -9,6 +10,7 @@ import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
 
 const ProfileScreen = (props) => {
+  const stackIndex = useNavigationState((state) => state.index);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [userProducts, setUserProducts] = useState([]);
 
@@ -70,7 +72,7 @@ const ProfileScreen = (props) => {
 
   // header back button if is not logged in user, else render header settings button
   useLayoutEffect(() => {
-    if (selectedUser.id !== loggedInUser.id) {
+    if (stackIndex !== 0) {
       props.navigation.setOptions({
         headerLeft: () => (
           <IconButton

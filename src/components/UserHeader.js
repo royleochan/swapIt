@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Rating } from "react-native-elements";
 import { EvilIcons } from "@expo/vector-icons";
-import useDebouncedCallback from "use-debounce/lib/useDebouncedCallback";
 
-import * as authActions from "store/actions/auth";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import UserStatistic from "components/UserStatistic";
-import useDidMountEffect from "hooks/useDidMountEffect";
+import FollowButton from "components/FollowButton";
 
 const UserHeader = (props) => {
   const {
@@ -19,47 +17,18 @@ const UserHeader = (props) => {
     navigateToFollowing,
   } = props;
 
-  const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.jwtToken);
-
-  const [actualIsFollowing, setActualIsFollowing] = useState(
-    loggedInUser.following.includes(selectedUser.id)
-  );
-  const [debouncedIsFollowing, setDebouncedIsFollowing] = useState(
-    loggedInUser.following.includes(selectedUser.id)
-  );
-  const debounced = useDebouncedCallback((val) => {
-    setDebouncedIsFollowing(val);
-  }, 1000);
-
-  useDidMountEffect(() => {
-    dispatch(
-      authActions.updateUserFollowing(
-        loggedInUser.id,
-        selectedUser.id,
-        token,
-        debouncedIsFollowing
-      )
-    );
-  }, [debouncedIsFollowing]);
 
   return (
     <View style={styles.container}>
       {loggedInUser.id !== selectedUser.id && (
-        <View style={{ zIndex: 1 }}>
-          <TouchableOpacity
-            style={styles.followButton}
-            onPress={() => {
-              setActualIsFollowing(!actualIsFollowing);
-              debounced(!actualIsFollowing);
-            }}
-          >
-            <DefaultText style={styles.followText}>
-              {actualIsFollowing ? "Unfollow" : "Follow"}
-            </DefaultText>
-          </TouchableOpacity>
-        </View>
+        <FollowButton
+          style={styles.followButton}
+          selectedUser={selectedUser}
+          loggedInUser={loggedInUser}
+          token={token}
+        />
       )}
       <View style={styles.topHeaderContainer}>
         <Image
@@ -138,10 +107,6 @@ const styles = StyleSheet.create({
     right: 0,
     marginTop: 14,
     marginRight: 18,
-  },
-  followText: {
-    color: Colors.background,
-    alignSelf: "center",
   },
   topHeaderContainer: {
     flexDirection: "row",
