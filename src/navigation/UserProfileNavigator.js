@@ -20,7 +20,7 @@ const UserProfileNavigator = () => {
       <Stack.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ headerTitle: () => <Header /> }}
+        options={{ headerTitle: <Header /> }}
       />
       <Stack.Screen
         name="Product"

@@ -16,7 +16,7 @@ export default Header;
 
 const styles = StyleSheet.create({
   logoContainer: {
-    paddingTop: 15,
+    paddingTop: 11,
     width: "100%",
     height: 60,
   },
