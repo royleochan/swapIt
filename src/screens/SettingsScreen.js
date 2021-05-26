@@ -1,14 +1,17 @@
 import React, { useLayoutEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { useDispatch } from "react-redux";
 
 import SettingRow from "components/SettingRow";
 
+import * as authActions from "store/actions/auth";
 import Colors from "constants/Colors";
 import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 
 const SettingsScreen = (props) => {
   const user = props.route.params.selectedUser;
+  const dispatch = useDispatch();
 
   // header back button
   useLayoutEffect(() => {
@@ -63,13 +66,14 @@ const SettingsScreen = (props) => {
         size={22}
         navigate={() => console.log("About")}
       />
-      <SettingRow
-        iconSet="AntDesign"
-        iconName="logout"
-        rowTitle="Logout"
-        size={22}
-        navigate={() => console.log("Logout")}
-      />
+      <TouchableOpacity onPress={() => dispatch(authActions.logout())}>
+        <SettingRow
+          iconSet="AntDesign"
+          iconName="logout"
+          rowTitle="Logout"
+          size={22}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
