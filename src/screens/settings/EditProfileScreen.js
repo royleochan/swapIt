@@ -1,16 +1,16 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const EditUserScreen = (props) => {
+const EditProfileScreen = (props) => {
   const { loggedInUser } = props.route.params;
 
   return (
     <View>
-      <Text>Edit User screen</Text>
+      <Text>Edit Profile screen</Text>
     </View>
   );
 };
 
-export default EditUserScreen;
+export default EditProfileScreen;
 
 const styles = StyleSheet.create({});
