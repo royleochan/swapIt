@@ -7,10 +7,11 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
 
+import * as productsActions from "store/actions/products";
 import followingIcon from "assets/categories/following.png";
 import request from "utils/request";
 import Colors from "constants/Colors";
@@ -25,10 +26,11 @@ const HomeScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isFocusSearch, setIsFocusSearch] = useState(false);
   const [query, setQuery] = useState("");
-  const [trendingProducts, setTrendingProducts] = useState([]);
   const [recommendedUsers, setRecommendedUsers] = useState([]);
 
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+  const trendingProducts = useSelector((state) => state.products);
 
   const handleSearch = (text) => {
     setQuery(text);
@@ -51,7 +53,7 @@ const HomeScreen = (props) => {
   const navigateToProfile = (userData) => {
     props.navigation.push("ProfileScreen", {
       screen: "Profile",
-      params: {user: userData}
+      params: { user: userData },
     });
   };
 
@@ -65,12 +67,13 @@ const HomeScreen = (props) => {
     try {
       const response = await request.get(`/api/products/all/${user.id}`);
       const resData = response.data.products;
-      setTrendingProducts(resData);
+      dispatch(productsActions.updateProducts(resData));
     } catch (err) {
+      dispatch(productsActions.updateProducts([]));
       throw new Error(err);
     }
     setIsRefreshing(false);
-  }, [setIsRefreshing, setTrendingProducts]);
+  }, [setIsRefreshing]);
 
   // Need to change to recommended users
   const loadRecommendedUsers = useCallback(async () => {

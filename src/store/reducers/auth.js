@@ -1,4 +1,4 @@
-import { AUTHENTICATE, LOGOUT, UPDATEUSER, UPDATEUSERFOLLOWING } from "store/actions/auth";
+import { AUTHENTICATE, LOGOUT, UPDATEUSER, UPDATEUSERFOLLOWING, UPDATEUSERLIKES } from "store/actions/auth";
 
 const initialState = {
   isAuth: false,
@@ -21,7 +21,7 @@ export default (state = initialState, action) => {
         user: null,
         jwtToken: null,
       };
-    case UPDATEUSER, UPDATEUSERFOLLOWING:
+    case UPDATEUSER, UPDATEUSERFOLLOWING, UPDATEUSERLIKES:
       return {
         ...state,
         user: action.user,

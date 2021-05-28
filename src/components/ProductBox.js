@@ -4,6 +4,7 @@ import { AntDesign } from "@expo/vector-icons";
 
 import parseTimeAgo from "utils/parseTimeAgo";
 import Colors from "constants/Colors";
+import LikeButton from "components/LikeButton";
 import DefaultText from "components/DefaultText";
 
 const ProductBox = (props) => {
@@ -17,15 +18,14 @@ const ProductBox = (props) => {
       <View style={styles.titleLikeContainer}>
         <DefaultText style={styles.titleText}>{item.title}</DefaultText>
         <View style={styles.likesContainer}>
-          <AntDesign
-            name="hearto"
-            size={16}
+          <LikeButton
+            productId={item.id}
+            size={14}
+            numLikes={item.likes.length}
             color={Colors.accent}
-            style={styles.heart}
+            buttonStyle={styles.likeButton}
+            textStyle={styles.likesText}
           />
-          <DefaultText style={styles.likesText}>
-            {item.likes.length}
-          </DefaultText>
         </View>
       </View>
       <DefaultText style={styles.priceText}>
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     alignItems: "center",
   },
-  heart: {
+  likeButton: {
     alignSelf: "flex-start",
     marginTop: 5,
   },

@@ -2,6 +2,7 @@ export const AUTHENTICATE = "AUTHENTICATE";
 export const LOGOUT = "LOGOUT";
 export const UPDATEUSER = "UPDATEUSER";
 export const UPDATEUSERFOLLOWING = "UPDATEUSERFOLLOWING";
+export const UPDATEUSERLIKES = "UPDATEUSERLIKES";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -130,6 +131,36 @@ export const updateUserFollowing = (
 
       dispatch({
         type: UPDATEUSERFOLLOWING,
+        user: resData.user,
+      });
+    } catch (e) {
+      throw new Error(e.response.data.message);
+    }
+  };
+};
+
+export const updateUserLikes = (productId, loggedInUserId, token, isLike) => {
+  return async (dispatch) => {
+    try {
+      let response;
+      if (isLike) {
+        response = await request.patch(
+          `/api/products/like/${productId}`,
+          { userId: loggedInUserId },
+          token
+        );
+      } else {
+        response = await request.patch(
+          `/api/products/unlike/${productId}`,
+          { userId: loggedInUserId },
+          token
+        );
+      }
+
+      const resData = response.data;
+
+      dispatch({
+        type: UPDATEUSERLIKES,
         user: resData.user,
       });
     } catch (e) {
