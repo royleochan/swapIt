@@ -2,8 +2,8 @@ import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 import Colors from "constants/Colors";
-import FollowersScreen from "screens/FollowersScreen";
-import FollowingScreen from "screens/FollowingScreen";
+import FollowersScreen from "screens/profile/FollowersScreen";
+import FollowingScreen from "screens/profile/FollowingScreen";
 import { ParamsContext } from "navigation/context/ParamsContext";
 
 const TopTab = createMaterialTopTabNavigator();

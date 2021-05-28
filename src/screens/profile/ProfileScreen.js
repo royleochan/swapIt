@@ -46,7 +46,10 @@ const ProfileScreen = (props) => {
   };
 
   const navigateToSettings = () => {
-    props.navigation.push("Settings", selectedUser);
+    props.navigation.push("Settings", {
+      screen: "Settings",
+      params: { selectedUser: selectedUser },
+    });
   };
 
   const loadProducts = async () => {

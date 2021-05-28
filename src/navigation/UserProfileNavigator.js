@@ -5,12 +5,12 @@ import Header from "components/Header";
 import { DefaultNavOptions } from "navigation/options/DefaultNavOptions";
 import { FollowOptions } from "navigation/options/FollowOptions";
 import FollowTabNavigator from "navigation/FollowTabNavigator";
-import ProfileScreen from "screens/ProfileScreen";
+import SettingsNavigator from "navigation/SettingsNavigator";
+import ProfileScreen from "screens/profile/ProfileScreen";
+import EditProductScreen from "screens/profile/EditProductScreen";
+import ReviewsScreen from "screens/profile/ReviewsScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
-import EditProductScreen from "screens/EditProductScreen";
-import ReviewsScreen from "screens/ReviewsScreen";
 import CategoryScreen from "screens/CategoryScreen";
-import SettingsScreen from "screens/SettingsScreen";
 
 const Stack = createStackNavigator();
 
@@ -49,8 +49,8 @@ const UserProfileNavigator = () => {
       />
       <Stack.Screen
         name="Settings"
-        component={SettingsScreen}
-        options={DefaultNavOptions}
+        component={SettingsNavigator}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

@@ -36,7 +36,7 @@ const SettingRow = (props) => {
         <DefaultText style={styles.title}>{rowTitle}</DefaultText>
       </View>
       {rowTitle !== "Logout" && (
-        <TouchableOpacity onPress={() => navigate}>
+        <TouchableOpacity onPress={() => navigate()}>
           <MaterialIcons
             name="keyboard-arrow-right"
             color={Colors.glass}

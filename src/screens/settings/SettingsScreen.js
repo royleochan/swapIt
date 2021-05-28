@@ -6,27 +6,15 @@ import SettingRow from "components/SettingRow";
 
 import * as authActions from "store/actions/auth";
 import Colors from "constants/Colors";
-import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 
 const SettingsScreen = (props) => {
   const user = props.route.params.selectedUser;
   const dispatch = useDispatch();
 
-  // header back button
-  useLayoutEffect(() => {
-    props.navigation.setOptions({
-      headerLeft: () => (
-        <IconButton
-          style={{ marginLeft: 10 }}
-          size={23}
-          color={Colors.primary}
-          name="arrowleft"
-          onPress={() => props.navigation.goBack()}
-        />
-      ),
-    });
-  }, [props.navigation]);
+  const navigateToEditProfile = () => {
+    props.navigation.navigate("EditProfile", { loggedInUser: user });
+  };
 
   return (
     <View style={styles.screenContainer}>
@@ -36,7 +24,7 @@ const SettingsScreen = (props) => {
         iconName="account-edit-outline"
         rowTitle="Edit Profile"
         size={26}
-        navigate={() => console.log("Edit Profile")}
+        navigate={navigateToEditProfile}
       />
       <SettingRow
         iconSet="Feather"
