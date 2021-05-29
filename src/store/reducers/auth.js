@@ -21,7 +21,9 @@ export default (state = initialState, action) => {
         user: null,
         jwtToken: null,
       };
-    case UPDATEUSER, UPDATEUSERFOLLOWING, UPDATEUSERLIKES:
+    case UPDATEUSER:
+    case UPDATEUSERFOLLOWING:
+    case UPDATEUSERLIKES:
       return {
         ...state,
         user: action.user,
