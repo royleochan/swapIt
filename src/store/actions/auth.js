@@ -1,5 +1,6 @@
 export const AUTHENTICATE = "AUTHENTICATE";
 export const LOGOUT = "LOGOUT";
+export const REFRESHUSER = "REFRESHUSER";
 export const UPDATEUSER = "UPDATEUSER";
 export const UPDATEUSERFOLLOWING = "UPDATEUSERFOLLOWING";
 export const UPDATEUSERLIKES = "UPDATEUSERLIKES";
@@ -91,6 +92,15 @@ export const logout = () => {
   return async (dispatch) => {
     dispatch({
       type: LOGOUT,
+    });
+  };
+};
+
+export const refreshUser = (updatedUser) => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATEUSER,
+      user: updatedUser
     });
   };
 };
