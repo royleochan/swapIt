@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { REACT_APP_BACKEND_URL } from "@env";
 import {
   View,
@@ -28,11 +28,34 @@ const MessagesScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchedChats, setSearchedChats] = useState([]);
   const [userChats, setUserChats] = useState([]);
+  const userChatsRef = useRef(userChats);
 
   const loggedInUserId = useSelector((state) => state.auth.user.id);
 
   const handleSearch = (text) => {
     setQuery(text);
+  };
+  const newMessageHandler = (creator, content, imageUrl, seen) => {
+    const newMessageFromSchema = {
+      _id: uuid.v4(),
+      creator: creator,
+      content: content,
+      imageUrl: imageUrl,
+      seen: seen,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+    let prevUserChats = [...userChatsRef.current];
+    if (prevUserChats.length > 0) {
+      let reqChat = prevUserChats.find((chat) => {
+        return (chat.user._id === creator) || (loggedInUserId === creator);
+      });
+      reqChat.messages.push(newMessageFromSchema);
+      reqChat.numUnseen += 1;
+      setUserChats(prevUserChats);
+    } else {
+      console.error("userChats is empty!");
+    }
   };
 
   const searchHandler = async () => {
@@ -73,6 +96,10 @@ const MessagesScreen = (props) => {
   };
 
   useEffect(() => {
+    userChatsRef.current = userChats;
+  }, [userChats]);
+
+  useEffect(() => {
     socket.connect();
     socket.on("connect", () => {
       socket.emit("messages screen", loggedInUserId);
@@ -89,19 +116,8 @@ const MessagesScreen = (props) => {
             console.error(err);
           });
     });
-    socket.on("new message", ({ creator, content, imageUrl }) => {
-      const newMessageFromSchema = {
-        _id: uuid.v4(),
-        creator: creator,
-        content: content,
-        imageUrl: imageUrl,
-        seen: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-      let reqChat = userChats.find(chat => chat.user._id === creator);
-      reqChat.messages.push(newMessageFromSchema);
-      reqChat.numUnseen += 1;
+    socket.on("new message", ({ creator, content, imageUrl, seen }) => {
+      newMessageHandler(creator, content, imageUrl, seen);
     });
     return () => {
       socket.disconnect();
