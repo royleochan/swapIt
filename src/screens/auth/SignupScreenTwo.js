@@ -67,7 +67,7 @@ const SignupScreenTwo = (props) => {
   const submitHandler = async (data) => {
     setIsLoading(true);
     const imageUrl = await uploadImageHandler(pickedImage);
-    const formState = { ...data, ...formData, profilePic: imageUrl };
+    const formState = { ...data, ...formData, profilePic: imageUrl, token };
     try {
       await dispatch(authActions.signup(formState));
     } catch (err) {

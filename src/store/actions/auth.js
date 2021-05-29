@@ -95,12 +95,21 @@ export const logout = () => {
   };
 };
 
-export const updateUser = (user) => {
+export const updateUser = (updatedUserCredentials, loggedInUserId, token) => {
   return async (dispatch) => {
-    dispatch({
-      type: UPDATEUSER,
-      user,
-    });
+    try {
+      response = await request.patch(
+        `/api/users/${loggedInUserId}`,
+        updatedUserCredentials,
+        token
+      );
+      dispatch({
+        type: UPDATEUSER,
+        user: response.data.user,
+      });
+    } catch (e) {
+      throw new Error(e.response.data.message);
+    }
   };
 };
 
