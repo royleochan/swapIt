@@ -1,5 +1,5 @@
 import uuid from "react-native-uuid";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Actions, GiftedChat } from "react-native-gifted-chat";
 import { useSelector } from "react-redux";
 import { Icon } from "react-native-elements";
@@ -45,6 +45,7 @@ const ChatScreen = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [userOnline, setUserOnline] = useState(false);
+  const userOnlineRef = useRef(userOnline);
 
   //Validation Checks
   const isValidString = (inputString) => {
@@ -90,7 +91,7 @@ const ChatScreen = (props) => {
         image: imageUrl,
         createdAt: new Date(),
         sent: true,
-        received: userOnline,
+        received: userOnlineRef.current,
         system: isSystem,
         user: {
           _id: userId,
@@ -146,6 +147,10 @@ const ChatScreen = (props) => {
     return chatId;
   }
 
+  useEffect(() => {
+    userOnlineRef.current = userOnline;
+  }, [userOnline]);
+
   //Initialise socket connection and event listeners
   useEffect(() => {
     if (chatId === undefined || chatId === null) {
@@ -177,7 +182,10 @@ const ChatScreen = (props) => {
     socket.on("user connected", (user) => {
       if (user === userId) {
         setUserOnline(true);
-        socket.emit("respond connected", loggedInUserId);
+        socket.emit("respond connected", {
+          chatId: chatId,
+          currUser: loggedInUserId,
+        });
       }
     });
     socket.on("connected response", (user) => {
