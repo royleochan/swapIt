@@ -24,7 +24,7 @@ const ResultsScreen = (props) => {
   const storeProducts = useSelector((state) => state.products);
 
   const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", productData);
+    props.navigation.push("Product", { id: productData.id });
   };
 
   const searchHandler = useCallback(
@@ -92,12 +92,7 @@ const ResultsScreen = (props) => {
             <ProductBox
               item={itemData.item}
               productCreator={itemData.item.creator}
-              navigate={() =>
-                navigateToProductDetails({
-                  ...itemData.item,
-                  user: itemData.item.creator,
-                })
-              }
+              navigate={() => navigateToProductDetails(itemData.item)}
             />
           );
         }}

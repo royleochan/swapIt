@@ -43,7 +43,7 @@ const HomeScreen = (props) => {
   };
 
   const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", productData);
+    props.navigation.push("Product", { id: productData.id });
   };
 
   const navigateToCategory = (category) => {
@@ -228,12 +228,7 @@ const HomeScreen = (props) => {
               <ProductBox
                 item={itemData.item}
                 productCreator={itemData.item.creator}
-                navigate={() =>
-                  navigateToProductDetails({
-                    ...itemData.item,
-                    user: itemData.item.creator,
-                  })
-                }
+                navigate={() => navigateToProductDetails(itemData.item)}
               />
             );
           }}

@@ -24,7 +24,7 @@ const ProfileScreen = (props) => {
   }
 
   const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", productData);
+    props.navigation.push("Product", { id: productData.id });
   };
 
   const navigateToReviews = () => {
@@ -129,9 +129,7 @@ const ProfileScreen = (props) => {
           <ProductBox
             productCreator={selectedUser}
             item={itemData.item}
-            navigate={() =>
-              navigateToProductDetails({ ...itemData.item, user: selectedUser })
-            }
+            navigate={() => navigateToProductDetails(itemData.item)}
           />
         )}
       />

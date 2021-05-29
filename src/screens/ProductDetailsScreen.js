@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -8,27 +8,19 @@ import {
 } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useSelector } from "react-redux";
-import { AntDesign } from "@expo/vector-icons";
 
 import parseTimeAgo from "utils/parseTimeAgo";
 import request from "utils/request";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import IconButton from "components/IconButton";
+import LikeButton from "components/LikeButton";
+import Loader from "components/Loader";
 
 const ProductDetailsScreen = (props) => {
-  const {
-    _id,
-    title,
-    imageUrl,
-    description,
-    likes,
-    minPrice,
-    maxPrice,
-    category,
-    user,
-    createdAt,
-  } = props.route.params;
+  const { id, creatorId } = props.route.params;
+  const [product, setProduct] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const loggedInUser = useSelector((state) => state.auth.user);
 
@@ -49,10 +41,10 @@ const ProductDetailsScreen = (props) => {
       },
       async (buttonIndex) => {
         if (buttonIndex === 0) {
-          await request.delete(`/api/products/${_id}`);
+          await request.delete(`/api/products/${id}`);
           props.navigation.goBack();
         } else if (buttonIndex === 1) {
-          props.navigation.push("EditProduct", props.route.params);
+          props.navigation.push("EditProduct", product);
         }
       }
     );
@@ -62,72 +54,100 @@ const ProductDetailsScreen = (props) => {
     props.navigation.push("Category", { label: cat });
   };
 
-  const navigateToProfile = (user) => {
+  const navigateToProfile = () => {
     props.navigation.push("ProfileScreen", {
       screen: "Profile",
-      params: { user: user },
+      params: { userId: creatorId },
     });
   };
 
-  return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.imageContainer}>
-        <IconButton
-          style={styles.arrow}
-          size={23}
-          color={Colors.primary}
-          name="arrowleft"
-          onPress={() => props.navigation.goBack()}
-        />
-        {loggedInUser._id == user._id && (
+  const loadProduct = async () => {
+    try {
+      const response = await request.get(`/api/products/${id}`);
+      const resData = response.data;
+
+      setProduct(resData.product);
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    loadProduct();
+  }, []);
+
+  if (isLoading) {
+    return <Loader isLoading={isLoading} />;
+  } else {
+    return (
+      <View style={{ flex: 1 }}>
+        <View style={styles.imageContainer}>
           <IconButton
-            style={styles.ellipsis}
+            style={styles.arrow}
             size={23}
-            color={Colors.background}
-            name="ellipsis1"
-            onPress={showActionSheet}
+            color={Colors.primary}
+            name="arrowleft"
+            onPress={() => props.navigation.goBack()}
           />
-        )}
-        <Image source={{ uri: imageUrl }} style={styles.image} />
-        <View style={styles.detailsContainer}>
-          <View style={styles.textContainer}>
-            <DefaultText style={styles.title}>{title}</DefaultText>
-          </View>
-          <View style={styles.textContainer}>
-            <DefaultText style={styles.subTitle}>
-              S${minPrice} - {maxPrice}
-            </DefaultText>
-          </View>
-          <TouchableOpacity
-            style={styles.iconTextContainer}
-            onPress={() => console.log("Show users who liked item")}
-          >
-            <AntDesign name={"hearto"} size={14} color={Colors.primary} />
-            <DefaultText>
-              {likes.length} {likes.length === 1 ? "like" : "likes"}
-            </DefaultText>
-          </TouchableOpacity>
-          <View style={styles.textContainer}>
-            <DefaultText>In </DefaultText>
-            <TouchableOpacity onPress={() => navigateToCategory(category)}>
-              <DefaultText style={styles.highlight}>{category}</DefaultText>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.textContainer}>
-            <DefaultText>{parseTimeAgo(createdAt)} by </DefaultText>
-            <TouchableOpacity onPress={() => navigateToProfile(user)}>
-              <DefaultText style={styles.highlight}>
-                @{user.username}
+          {loggedInUser.id === product.creator.id && (
+            <IconButton
+              style={styles.ellipsis}
+              size={23}
+              color={Colors.background}
+              name="ellipsis1"
+              onPress={showActionSheet}
+            />
+          )}
+          <Image source={{ uri: product.imageUrl }} style={styles.image} />
+          <View style={styles.detailsContainer}>
+            <View style={styles.textContainer}>
+              <DefaultText style={styles.title}>{product.title}</DefaultText>
+            </View>
+            <View style={styles.textContainer}>
+              <DefaultText style={styles.subTitle}>
+                S${product.minPrice} - {product.maxPrice}
               </DefaultText>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.textContainer}>
-            <DefaultText>{description}</DefaultText>
+            </View>
+            <LikeButton
+              productId={id}
+              size={14}
+              numLikes={product.likes.length}
+              color={Colors.darkPink}
+              buttonStyle={styles.likeButton}
+              textStyle={styles.likesText}
+              type="details"
+              disabled={loggedInUser.id === product.creator.id}
+              loggedInUser={loggedInUser}
+            />
+            <View style={styles.textContainer}>
+              <DefaultText>In </DefaultText>
+              <TouchableOpacity
+                onPress={() => navigateToCategory(product.category)}
+              >
+                <DefaultText style={styles.highlight}>
+                  {product.category}
+                </DefaultText>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.textContainer}>
+              <DefaultText>{parseTimeAgo(product.createdAt)} by </DefaultText>
+              <TouchableOpacity
+                onPress={() => navigateToProfile(product.creator)}
+              >
+                <DefaultText style={styles.highlight}>
+                  @{product.creator.username}
+                </DefaultText>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.textContainer}>
+              <DefaultText>{product.description}</DefaultText>
+            </View>
           </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  }
 };
 
 export default ProductDetailsScreen;
@@ -176,11 +196,18 @@ const styles = StyleSheet.create({
   iconTextContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    width: "15%",
     marginVertical: 4,
   },
   highlight: {
     color: Colors.darkPink,
+  },
+  likeButton: {
+    alignSelf: "flex-start",
+  },
+  likesText: {
+    fontSize: 12,
+    color: Colors.darkPink,
+    marginLeft: 5,
+    alignSelf: "flex-start",
   },
 });

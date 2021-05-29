@@ -32,7 +32,6 @@ const LikeButton = (props) => {
   }, 1500);
 
   useDidMountEffect(() => {
-    console.log("request sent");
     dispatch(
       authActions.updateUserLikes(
         productId,
