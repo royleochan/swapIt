@@ -2,11 +2,10 @@ import React, { useLayoutEffect } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
 
-import SettingRow from "components/SettingRow";
-
 import * as authActions from "store/actions/auth";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
+import SettingRow from "components/SettingRow";
 
 const SettingsScreen = (props) => {
   const user = props.route.params.selectedUser;
