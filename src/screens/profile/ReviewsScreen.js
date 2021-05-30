@@ -1,27 +1,30 @@
-import React, { useLayoutEffect } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Rating } from "react-native-elements";
 
 import Colors from "constants/Colors";
-import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
+import ReviewRow from "components/ReviewRow";
 
 const ReviewsScreen = (props) => {
   const user = props.route.params.user;
 
   return (
     <View style={styles.screenContainer}>
-      <DefaultText style={styles.numberRating}>3.5</DefaultText>
-      <Rating
-        type="custom"
-        readonly
-        imageSize={20}
-        ratingBackgroundColor={Colors.background}
-        ratingColor={Colors.star}
-        fractions={1}
-        startingValue={3.5}
-      />
-      <DefaultText style={styles.numReviews}>Based on 5 reviews</DefaultText>
+      <View style={styles.header}>
+        <DefaultText style={styles.numberRating}>3.5</DefaultText>
+        <Rating
+          type="custom"
+          readonly
+          imageSize={20}
+          ratingBackgroundColor={Colors.background}
+          ratingColor={Colors.star}
+          fractions={1}
+          startingValue={3.5}
+        />
+        <DefaultText style={styles.numReviews}>Based on 5 reviews</DefaultText>
+      </View>
+      <ReviewRow />
     </View>
   );
 };
@@ -33,6 +36,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     backgroundColor: Colors.background,
+  },
+  header: {
+    paddingBottom: 18,
+    borderBottomColor: "rgba(196, 196, 196, 0.3)",
+    borderBottomWidth: 1,
   },
   numberRating: {
     alignSelf: "center",
