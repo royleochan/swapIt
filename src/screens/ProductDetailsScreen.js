@@ -117,7 +117,7 @@ const ProductDetailsScreen = (props) => {
               buttonStyle={styles.likeButton}
               textStyle={styles.likesText}
               type="details"
-              disabled={loggedInUser.id === product.creator.id}
+              creatorId={product.creator.id}
             />
             <View style={styles.textContainer}>
               <DefaultText>In </DefaultText>

@@ -9,8 +9,16 @@ import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 
 const LikeButton = (props) => {
-  const { productId, productLikes, size, color, buttonStyle, textStyle, type } =
-    props;
+  const {
+    productId,
+    productLikes,
+    size,
+    color,
+    buttonStyle,
+    textStyle,
+    creatorId,
+    type,
+  } = props;
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.jwtToken);
@@ -55,6 +63,7 @@ const LikeButton = (props) => {
           debounced(!actualIsLiked);
         }}
         color={color}
+        disabled={creatorId === loggedInUser.id}
       />
       {type === "box" && (
         <DefaultText style={{ ...textStyle }}>{numberOfLikes}</DefaultText>

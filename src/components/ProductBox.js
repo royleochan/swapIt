@@ -24,6 +24,7 @@ const ProductBox = (props) => {
           color={Colors.accent}
           buttonStyle={styles.likeButton}
           textStyle={styles.likesText}
+          creatorId={productCreator.id}
           type="box"
         />
       </View>
