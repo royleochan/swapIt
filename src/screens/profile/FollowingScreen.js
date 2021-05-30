@@ -77,11 +77,13 @@ const FollowingScreen = (props) => {
                   <DefaultText style={styles.name}>{user.name}</DefaultText>
                 </View>
               </TouchableOpacity>
-              <FollowButton
-                selectedUser={user}
-                loggedInUser={loggedInUser}
-                token={token}
-              />
+              {loggedInUser.id !== user.id && (
+                <FollowButton
+                  selectedUser={user}
+                  loggedInUser={loggedInUser}
+                  token={token}
+                />
+              )}
             </View>
           );
         }}

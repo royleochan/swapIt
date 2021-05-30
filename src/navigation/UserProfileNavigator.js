@@ -1,7 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import Header from "components/Header";
 import { DefaultNavOptions } from "navigation/options/DefaultNavOptions";
 import { FollowOptions } from "navigation/options/FollowOptions";
 import FollowTabNavigator from "navigation/FollowTabNavigator";
@@ -20,7 +19,7 @@ const UserProfileNavigator = () => {
       <Stack.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ headerTitle: <Header /> }}
+        options={DefaultNavOptions}
       />
       <Stack.Screen
         name="Product"

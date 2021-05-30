@@ -1,8 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -26,7 +22,10 @@ const CategoryScreen = (props) => {
   const storeProducts = useSelector((state) => state.products);
 
   const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", productData);
+    props.navigation.push("Product", {
+      id: productData.id,
+      creator: productData.creator,
+    });
   };
 
   const categoryHandler = useCallback(async () => {
@@ -80,10 +79,7 @@ const CategoryScreen = (props) => {
               item={itemData.item}
               productCreator={itemData.item.creator}
               navigate={() =>
-                navigateToProductDetails({
-                  ...itemData.item,
-                  user: itemData.item.creator,
-                })
+                navigateToProductDetails(itemData.item)
               }
             />
           );

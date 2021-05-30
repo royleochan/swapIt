@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigationState } from "@react-navigation/native";
 
+import * as authActions from "store/actions/auth";
 import request from "utils/request";
 import Colors from "constants/Colors";
 import UserHeader from "components/UserHeader";
@@ -13,6 +14,7 @@ const ProfileScreen = (props) => {
   const stackIndex = useNavigationState((state) => state.index);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [userProducts, setUserProducts] = useState([]);
+  const dispatch = useDispatch();
 
   // user is either the logged in user (default) or other users that the logged in user is visiting
   const loggedInUser = useSelector((state) => state.auth.user);
@@ -24,7 +26,10 @@ const ProfileScreen = (props) => {
   }
 
   const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", productData);
+    props.navigation.push("Product", {
+      id: productData.id,
+      creator: productData.creator,
+    });
   };
 
   const navigateToReviews = () => {
@@ -52,16 +57,18 @@ const ProfileScreen = (props) => {
     });
   };
 
-  const loadProducts = async () => {
+  const loadUserData = async () => {
     setIsRefreshing(true);
     try {
       const response = await request
-        .get(`/api/products/user/${selectedUser._id}`)
+        .get(`/api/users/${selectedUser._id}`)
         .catch((error) => {
           throw new Error(error.response.data.message);
         });
-      const resData = response.data.products;
-      setUserProducts(resData);
+      setUserProducts(response.data.user.products);
+      if (loggedInUser.id === response.data.user.id) {
+        dispatch(authActions.refreshUser(response.data.user));
+      }
       setIsRefreshing(false);
     } catch (err) {
       setUserProducts([]);
@@ -70,25 +77,14 @@ const ProfileScreen = (props) => {
   };
 
   useEffect(() => {
-    loadProducts();
+    loadUserData();
   }, []);
 
   // header back button if is not logged in user, else render header settings button
   useLayoutEffect(() => {
-    if (stackIndex !== 0) {
+    if (stackIndex === 0 && loggedInUser.id === selectedUser.id) {
       props.navigation.setOptions({
-        headerLeft: () => (
-          <IconButton
-            style={{ marginLeft: 10 }}
-            size={23}
-            color={Colors.primary}
-            name="arrowleft"
-            onPress={() => props.navigation.goBack()}
-          />
-        ),
-      });
-    } else {
-      props.navigation.setOptions({
+        headerLeft: () => <View></View>,
         headerRight: () => (
           <IconButton
             style={{ marginRight: 10 }}
@@ -102,23 +98,18 @@ const ProfileScreen = (props) => {
     }
   }, [props.navigation]);
 
-  useEffect(() => {
-    const unsubscribe = props.navigation.addListener("focus", () => {
-      loadProducts();
-    });
-    return unsubscribe;
-  }, [props.navigation]);
-
   return (
     <View style={styles.screenContainer}>
-      <UserHeader
-        selectedUser={selectedUser}
-        navigateToReviews={navigateToReviews}
-        navigateToFollowers={navigateToFollowers}
-        navigateToFollowing={navigateToFollowing}
-      />
       <FlatList
-        onRefresh={loadProducts}
+        ListHeaderComponent={
+          <UserHeader
+            selectedUser={selectedUser}
+            navigateToReviews={navigateToReviews}
+            navigateToFollowers={navigateToFollowers}
+            navigateToFollowing={navigateToFollowing}
+          />
+        }
+        onRefresh={loadUserData}
         refreshing={isRefreshing}
         columnWrapperStyle={styles.list}
         data={userProducts}
@@ -129,9 +120,7 @@ const ProfileScreen = (props) => {
           <ProductBox
             productCreator={selectedUser}
             item={itemData.item}
-            navigate={() =>
-              navigateToProductDetails({ ...itemData.item, user: selectedUser })
-            }
+            navigate={() => navigateToProductDetails(itemData.item)}
           />
         )}
       />

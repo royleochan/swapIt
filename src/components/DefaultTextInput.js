@@ -38,5 +38,6 @@ const styles = StyleSheet.create({
     fontFamily: "lato",
     color: Colors.primary,
     marginLeft: 40,
+    width: "50%",
   },
 });

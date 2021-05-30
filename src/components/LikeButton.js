@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import useDebouncedCallback from "use-debounce/lib/useDebouncedCallback";
 
@@ -10,29 +11,26 @@ import DefaultText from "components/DefaultText";
 const LikeButton = (props) => {
   const {
     productId,
-    numLikes,
+    productLikes,
     size,
     color,
     buttonStyle,
     textStyle,
+    creatorId,
+    type,
   } = props;
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.jwtToken);
 
-  const [numberOfLikes, setNumberOfLikes] = useState(numLikes);
-  const [actualIsLiked, setActualIsLiked] = useState(
-    loggedInUser.likes.includes(productId)
-  );
-  const [debouncedIsLiked, setDebouncedIsLiked] = useState(
-    loggedInUser.likes.includes(productId)
-  );
+  const [numberOfLikes, setNumberOfLikes] = useState(productLikes.length);
+  const [actualIsLiked, setActualIsLiked] = useState();
+  const [debouncedIsLiked, setDebouncedIsLiked] = useState();
   const debounced = useDebouncedCallback((val) => {
     setDebouncedIsLiked(val);
   }, 1500);
 
   useDidMountEffect(() => {
-    console.log("request sent");
     dispatch(
       authActions.updateUserLikes(
         productId,
@@ -43,22 +41,48 @@ const LikeButton = (props) => {
     );
   }, [debouncedIsLiked]);
 
+  useEffect(() => {
+    setActualIsLiked(loggedInUser.likes.includes(productId));
+  }, [loggedInUser]);
+
+  useEffect(() => {
+    setNumberOfLikes(productLikes.length);
+  }, [productLikes]);
+
   return (
-    <>
+    <View style={styles.likesContainer}>
       <IconButton
         name={actualIsLiked ? "heart" : "hearto"}
         size={size}
         style={{ ...buttonStyle }}
         onPress={() => {
           setActualIsLiked(!actualIsLiked);
-          setNumberOfLikes(!actualIsLiked ? numLikes + 1 : numLikes - 1);
+          setNumberOfLikes(
+            !actualIsLiked ? numberOfLikes + 1 : numberOfLikes - 1
+          );
           debounced(!actualIsLiked);
         }}
         color={color}
+        disabled={creatorId === loggedInUser.id}
       />
-      <DefaultText style={{ ...textStyle }}>{numberOfLikes}</DefaultText>
-    </>
+      {type === "box" && (
+        <DefaultText style={{ ...textStyle }}>{numberOfLikes}</DefaultText>
+      )}
+      {type === "details" && (
+        <DefaultText style={{ ...textStyle }}>
+          {numberOfLikes} {numberOfLikes === 1 ? "like" : "likes"}
+        </DefaultText>
+      )}
+    </View>
   );
 };
 
 export default LikeButton;
+
+const styles = StyleSheet.create({
+  likesContainer: {
+    flexDirection: "row",
+    paddingTop: 5,
+    alignItems: "center",
+  },
+});
