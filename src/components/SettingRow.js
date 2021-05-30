@@ -12,40 +12,44 @@ import DefaultText from "components/DefaultText";
 const SettingRow = (props) => {
   const { iconSet, iconName, rowTitle, navigate, size } = props;
   return (
-    <View style={styles.rowContainer}>
-      <View style={styles.iconTextContainer}>
-        {(iconSet === "MaterialCommunity" && (
-          <MaterialCommunity
-            name={iconName}
-            size={size}
-            color={Colors.primary}
-          />
-        )) ||
-          (iconSet === "Feather" && (
-            <Feather name={iconName} size={size} color={Colors.primary} />
+    <TouchableOpacity onPress={() => navigate()}>
+      <View style={styles.rowContainer}>
+        <View style={styles.iconTextContainer}>
+          {(iconSet === "MaterialCommunity" && (
+            <MaterialCommunity
+              name={iconName}
+              size={size}
+              color={Colors.primary}
+            />
           )) ||
-          (iconSet === "MaterialIcons" && (
-            <MaterialIcons name={iconName} size={size} color={Colors.primary} />
-          )) ||
-          (iconSet === "Ionicons" && (
-            <Ionicons name={iconName} size={size} color={Colors.primary} />
-          )) ||
-          (iconSet === "AntDesign" && (
-            <AntDesign name={iconName} size={size} color={Colors.primary} />
-          ))}
-        <DefaultText style={styles.title}>{rowTitle}</DefaultText>
-      </View>
-      {rowTitle !== "Logout" && (
-        <TouchableOpacity onPress={() => navigate()}>
+            (iconSet === "Feather" && (
+              <Feather name={iconName} size={size} color={Colors.primary} />
+            )) ||
+            (iconSet === "MaterialIcons" && (
+              <MaterialIcons
+                name={iconName}
+                size={size}
+                color={Colors.primary}
+              />
+            )) ||
+            (iconSet === "Ionicons" && (
+              <Ionicons name={iconName} size={size} color={Colors.primary} />
+            )) ||
+            (iconSet === "AntDesign" && (
+              <AntDesign name={iconName} size={size} color={Colors.primary} />
+            ))}
+          <DefaultText style={styles.title}>{rowTitle}</DefaultText>
+        </View>
+        {rowTitle !== "Logout" && (
           <MaterialIcons
             name="keyboard-arrow-right"
             color={Colors.glass}
             size={28}
             style={styles.arrowIcon}
           />
-        </TouchableOpacity>
-      )}
-    </View>
+        )}
+      </View>
+    </TouchableOpacity>
   );
 };
 
