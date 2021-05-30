@@ -1,6 +1,5 @@
 import React, { useLayoutEffect, useState, useEffect } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { Avatar } from "react-native-elements";
+import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,7 +21,7 @@ const EditProfileScreen = (props) => {
   const loggedInUser = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.jwtToken);
   const { showActionSheetWithOptions } = useActionSheet();
-  const [pickedImage, setPickedImage] = useState();
+  const [pickedImage, setPickedImage] = useState(loggedInUser.profilePic);
   const [isLoading, setIsLoading] = useState(false);
 
   const { control, handleSubmit, errors } = useForm();
@@ -33,8 +32,13 @@ const EditProfileScreen = (props) => {
 
   // action sheet handler
   const showActionSheet = () => {
-    const options = ["Take Photo", "Choose From Library", "Cancel"];
-    const cancelButtonIndex = 2;
+    const options = [
+      "Take Photo",
+      "Choose From Library",
+      "Remove Current",
+      "Cancel",
+    ];
+    const cancelButtonIndex = 3;
 
     showActionSheetWithOptions(
       {
@@ -49,8 +53,15 @@ const EditProfileScreen = (props) => {
           selectedImage = await takeImage();
         } else if (buttonIndex === 1) {
           selectedImage = await chooseFromLibrary();
+        } else if (buttonIndex === 2) {
+          setPickedImage("https://i.imgur.com/tiRSkS8.jpg");
+          return;
+        } else if (buttonIndex == 3) {
+          setPickedImage(loggedInUser.profilePic);
+          return;
         }
-        setPickedImage(selectedImage.uri);
+
+        setPickedImage(selectedImage);
       }
     );
   };
@@ -68,15 +79,15 @@ const EditProfileScreen = (props) => {
         />
       ),
     });
-  }, [props.navigation]);
+  }, [props.navigation, pickedImage]);
 
   const saveHandler = async (data) => {
     setIsLoading(true);
     let imageUrl;
-    if (pickedImage !== undefined) {
+    if (typeof pickedImage === "object") {
       imageUrl = await uploadImageHandler(pickedImage);
     } else {
-      imageUrl = loggedInUser.profilePic;
+      imageUrl = pickedImage;
     }
     const formState = { ...data, profilePic: imageUrl };
     try {
@@ -100,13 +111,12 @@ const EditProfileScreen = (props) => {
       <View style={styles.screenContainer}>
         <View style={styles.imageContainer}>
           <View style={styles.profilePic}>
-            <Avatar
-              rounded
-              size={96}
-              source={{
-                uri: loggedInUser.profilePic,
-              }}
-            />
+            {typeof pickedImage === "object" && (
+              <Image style={styles.image} source={{ uri: pickedImage.uri }} />
+            )}
+            {typeof pickedImage === "string" && (
+              <Image style={styles.image} source={{ uri: pickedImage }} />
+            )}
           </View>
           <TouchableOpacity onPress={showActionSheet}>
             <DefaultText>Change Profile Picture</DefaultText>
@@ -203,6 +213,11 @@ const styles = StyleSheet.create({
   imageContainer: {
     paddingVertical: 30,
     alignItems: "center",
+  },
+  image: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
   },
   profilePic: {
     paddingBottom: 15,
