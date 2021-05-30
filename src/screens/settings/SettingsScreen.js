@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
 
@@ -12,7 +12,11 @@ const SettingsScreen = (props) => {
   const dispatch = useDispatch();
 
   const navigateToEditProfile = () => {
-    props.navigation.navigate("EditProfile", { loggedInUser: user });
+    props.navigation.navigate("EditProfile");
+  };
+
+  const navigateToHelpAndSupport = () => {
+    props.navigation.navigate("HelpAndSupport");
   };
 
   return (
@@ -37,7 +41,7 @@ const SettingsScreen = (props) => {
         iconName="support-agent"
         rowTitle="Help & Support"
         size={26}
-        navigate={() => console.log("Help & Support")}
+        navigate={navigateToHelpAndSupport}
       />
       <SettingRow
         iconSet="Ionicons"
