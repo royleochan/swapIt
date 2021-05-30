@@ -22,7 +22,10 @@ const CategoryScreen = (props) => {
   const storeProducts = useSelector((state) => state.products);
 
   const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", { id: productData.id });
+    props.navigation.push("Product", {
+      id: productData.id,
+      creator: productData.creator,
+    });
   };
 
   const categoryHandler = useCallback(async () => {
@@ -76,7 +79,7 @@ const CategoryScreen = (props) => {
               item={itemData.item}
               productCreator={itemData.item.creator}
               navigate={() =>
-                navigateToProductDetails({ id: itemData.item.id })
+                navigateToProductDetails(itemData.item)
               }
             />
           );

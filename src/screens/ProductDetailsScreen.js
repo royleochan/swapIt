@@ -18,7 +18,7 @@ import LikeButton from "components/LikeButton";
 import Loader from "components/Loader";
 
 const ProductDetailsScreen = (props) => {
-  const { id, creatorId } = props.route.params;
+  const { id, creator } = props.route.params;
   const [product, setProduct] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -57,7 +57,7 @@ const ProductDetailsScreen = (props) => {
   const navigateToProfile = () => {
     props.navigation.push("ProfileScreen", {
       screen: "Profile",
-      params: { userId: creatorId },
+      params: { user: creator },
     });
   };
 
@@ -112,13 +112,12 @@ const ProductDetailsScreen = (props) => {
             <LikeButton
               productId={id}
               size={14}
-              numLikes={product.likes.length}
+              productLikes={product.likes}
               color={Colors.darkPink}
               buttonStyle={styles.likeButton}
               textStyle={styles.likesText}
               type="details"
               disabled={loggedInUser.id === product.creator.id}
-              loggedInUser={loggedInUser}
             />
             <View style={styles.textContainer}>
               <DefaultText>In </DefaultText>

@@ -26,7 +26,10 @@ const ProfileScreen = (props) => {
   }
 
   const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", { id: productData.id });
+    props.navigation.push("Product", {
+      id: productData.id,
+      creator: productData.creator,
+    });
   };
 
   const navigateToReviews = () => {
@@ -79,20 +82,9 @@ const ProfileScreen = (props) => {
 
   // header back button if is not logged in user, else render header settings button
   useLayoutEffect(() => {
-    if (stackIndex !== 0) {
+    if (stackIndex === 0 && loggedInUser.id === selectedUser.id) {
       props.navigation.setOptions({
-        headerLeft: () => (
-          <IconButton
-            style={{ marginLeft: 10 }}
-            size={23}
-            color={Colors.primary}
-            name="arrowleft"
-            onPress={() => props.navigation.goBack()}
-          />
-        ),
-      });
-    } else {
-      props.navigation.setOptions({
+        headerLeft: () => <View></View>,
         headerRight: () => (
           <IconButton
             style={{ marginRight: 10 }}
