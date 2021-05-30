@@ -17,16 +17,15 @@ const ProductBox = (props) => {
       </TouchableOpacity>
       <View style={styles.titleLikeContainer}>
         <DefaultText style={styles.titleText}>{item.title}</DefaultText>
-        <View style={styles.likesContainer}>
-          <LikeButton
-            productId={item.id}
-            size={14}
-            numLikes={item.likes.length}
-            color={Colors.accent}
-            buttonStyle={styles.likeButton}
-            textStyle={styles.likesText}
-          />
-        </View>
+        <LikeButton
+          productId={item.id}
+          size={14}
+          productLikes={item.likes}
+          color={Colors.accent}
+          buttonStyle={styles.likeButton}
+          textStyle={styles.likesText}
+          type="box"
+        />
       </View>
       <DefaultText style={styles.priceText}>
         S${item.minPrice} - {item.maxPrice}
@@ -69,11 +68,6 @@ const styles = StyleSheet.create({
   titleLikeContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  likesContainer: {
-    flexDirection: "row",
-    paddingTop: 5,
-    alignItems: "center",
   },
   likeButton: {
     alignSelf: "flex-start",
