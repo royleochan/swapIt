@@ -3,7 +3,8 @@ import { TouchableOpacity, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
 const IconButton = (props) => {
-  const { onPress, name, color, style, backgroundColor, size } = props;
+  const { onPress, name, color, style, backgroundColor, size, disabled } =
+    props;
 
   return (
     <TouchableOpacity
@@ -14,6 +15,7 @@ const IconButton = (props) => {
       }}
       onPress={onPress}
       activeOpacity={0.85}
+      disabled={disabled}
     >
       <AntDesign name={name} size={size} color={color} />
     </TouchableOpacity>
