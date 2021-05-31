@@ -57,14 +57,13 @@ const SettingsScreen = (props) => {
         size={22}
         navigate={() => console.log("About")}
       />
-      <TouchableOpacity onPress={() => dispatch(authActions.logout())}>
-        <SettingRow
-          iconSet="AntDesign"
-          iconName="logout"
-          rowTitle="Logout"
-          size={22}
-        />
-      </TouchableOpacity>
+      <SettingRow
+        iconSet="AntDesign"
+        iconName="logout"
+        rowTitle="Logout"
+        size={22}
+        navigate={() => dispatch(authActions.logout())}
+      />
     </View>
   );
 };
