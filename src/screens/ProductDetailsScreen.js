@@ -42,7 +42,10 @@ const ProductDetailsScreen = (props) => {
       async (buttonIndex) => {
         if (buttonIndex === 0) {
           await request.delete(`/api/products/${id}`);
-          props.navigation.goBack();
+          props.navigation.reset({
+            index: 0,
+            routes: [{ name: "Profile" }],
+          });
         } else if (buttonIndex === 1) {
           props.navigation.push("EditProduct", product);
         }

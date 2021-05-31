@@ -25,7 +25,6 @@ import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
 import DropDown from "components/DropDown";
 import Loader from "components/Loader";
-import IconButton from "components/IconButton";
 import Colors from "constants/Colors";
 
 const EditProductScreen = (props) => {
@@ -97,7 +96,10 @@ const EditProductScreen = (props) => {
       setFemaleCategory(null);
       reset({ title: "", description: "" });
       setIsLoading(false);
-      props.navigation.push("Profile");
+      props.navigation.reset({
+        index: 0,
+        routes: [{ name: "Profile" }],
+      });
     } catch (err) {
       throw new Error(err);
     }
