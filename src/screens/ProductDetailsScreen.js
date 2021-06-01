@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  FlatList,
 } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useSelector } from "react-redux";
@@ -16,11 +17,14 @@ import DefaultText from "components/DefaultText";
 import IconButton from "components/IconButton";
 import LikeButton from "components/LikeButton";
 import Loader from "components/Loader";
+import MatchRow from "components/MatchRow";
 
 const ProductDetailsScreen = (props) => {
+  const windowHeight = Dimensions.get("window").height;
   const { id, creator } = props.route.params;
   const [product, setProduct] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loggedInUser = useSelector((state) => state.auth.user);
 
@@ -65,14 +69,17 @@ const ProductDetailsScreen = (props) => {
   };
 
   const loadProduct = async () => {
+    setIsRefreshing(true);
     try {
       const response = await request.get(`/api/products/${id}`);
       const resData = response.data;
 
       setProduct(resData.product);
       setIsLoading(false);
+      setIsRefreshing(false);
     } catch (err) {
       console.log(err);
+      setIsRefreshing(false);
     }
   };
 
@@ -80,74 +87,95 @@ const ProductDetailsScreen = (props) => {
     loadProduct();
   }, []);
 
+  const DetailsComponent = () => {
+    return (
+      <View>
+        <IconButton
+          style={styles.arrow}
+          size={23}
+          color={Colors.primary}
+          name="arrowleft"
+          onPress={() => props.navigation.goBack()}
+        />
+        {loggedInUser.id === product.creator.id && (
+          <IconButton
+            style={styles.ellipsis}
+            size={23}
+            color={Colors.background}
+            name="ellipsis1"
+            onPress={showActionSheet}
+          />
+        )}
+        <Image
+          source={{ uri: product.imageUrl }}
+          style={{ width: "100%", height: windowHeight / 2 }}
+        />
+        <View style={styles.detailsContainer}>
+          <View style={styles.textContainer}>
+            <DefaultText style={styles.title}>{product.title}</DefaultText>
+          </View>
+          <View style={styles.textContainer}>
+            <DefaultText style={styles.subTitle}>
+              S${product.minPrice} - {product.maxPrice}
+            </DefaultText>
+          </View>
+          <LikeButton
+            productId={id}
+            size={14}
+            productLikes={product.likes}
+            color={Colors.darkPink}
+            buttonStyle={styles.likeButton}
+            textStyle={styles.likesText}
+            type="details"
+            creatorId={product.creator.id}
+          />
+          <View style={styles.textContainer}>
+            <DefaultText>In </DefaultText>
+            <TouchableOpacity
+              onPress={() => navigateToCategory(product.category)}
+            >
+              <DefaultText style={styles.highlight}>
+                {product.category}
+              </DefaultText>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.textContainer}>
+            <DefaultText>{parseTimeAgo(product.createdAt)} by </DefaultText>
+            <TouchableOpacity
+              onPress={() => navigateToProfile(product.creator)}
+            >
+              <DefaultText style={styles.highlight}>
+                @{product.creator.username}
+              </DefaultText>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.textContainer}>
+            <DefaultText>{product.description}</DefaultText>
+          </View>
+          {loggedInUser.id === product.creator.id && (
+            <View style={styles.matchesTitle}>
+              <DefaultText style={styles.title}>Matches</DefaultText>
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  };
+
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
   } else {
     return (
-      <View style={{ flex: 1 }}>
-        <View style={styles.imageContainer}>
-          <IconButton
-            style={styles.arrow}
-            size={23}
-            color={Colors.primary}
-            name="arrowleft"
-            onPress={() => props.navigation.goBack()}
-          />
-          {loggedInUser.id === product.creator.id && (
-            <IconButton
-              style={styles.ellipsis}
-              size={23}
-              color={Colors.background}
-              name="ellipsis1"
-              onPress={showActionSheet}
-            />
-          )}
-          <Image source={{ uri: product.imageUrl }} style={styles.image} />
-          <View style={styles.detailsContainer}>
-            <View style={styles.textContainer}>
-              <DefaultText style={styles.title}>{product.title}</DefaultText>
-            </View>
-            <View style={styles.textContainer}>
-              <DefaultText style={styles.subTitle}>
-                S${product.minPrice} - {product.maxPrice}
-              </DefaultText>
-            </View>
-            <LikeButton
-              productId={id}
-              size={14}
-              productLikes={product.likes}
-              color={Colors.darkPink}
-              buttonStyle={styles.likeButton}
-              textStyle={styles.likesText}
-              type="details"
-              creatorId={product.creator.id}
-            />
-            <View style={styles.textContainer}>
-              <DefaultText>In </DefaultText>
-              <TouchableOpacity
-                onPress={() => navigateToCategory(product.category)}
-              >
-                <DefaultText style={styles.highlight}>
-                  {product.category}
-                </DefaultText>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.textContainer}>
-              <DefaultText>{parseTimeAgo(product.createdAt)} by </DefaultText>
-              <TouchableOpacity
-                onPress={() => navigateToProfile(product.creator)}
-              >
-                <DefaultText style={styles.highlight}>
-                  @{product.creator.username}
-                </DefaultText>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.textContainer}>
-              <DefaultText>{product.description}</DefaultText>
-            </View>
-          </View>
-        </View>
-      </View>
+      <FlatList
+        ListHeaderComponent={<DetailsComponent />}
+        onRefresh={loadProduct}
+        refreshing={isRefreshing}
+        data={product.matches}
+        horizontal={false}
+        numColumns={1}
+        keyExtractor={(item) => item.id}
+        renderItem={(itemData) => <MatchRow product={itemData.item} />}
+      />
     );
   }
 };
@@ -156,16 +184,16 @@ export default ProductDetailsScreen;
 
 const styles = StyleSheet.create({
   arrow: {
-    zIndex: 10,
+    zIndex: 1,
     position: "absolute",
-    marginTop: 50,
-    marginLeft: 10,
+    left: 20,
+    top: 50,
   },
   ellipsis: {
-    zIndex: 10,
+    zIndex: 1,
     position: "absolute",
-    marginTop: 50,
-    marginLeft: Dimensions.get("window").width - 40,
+    top: 50,
+    right: 20,
   },
   title: {
     fontSize: 24,
@@ -174,22 +202,9 @@ const styles = StyleSheet.create({
   subTitle: {
     fontSize: 20,
   },
-  image: {
-    width: "100%",
-    height: "100%",
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-  },
-  imageContainer: {
-    height: "60%",
-    borderBottomStartRadius: 30,
-    borderBottomEndRadius: 30,
-    backgroundColor: Colors.background,
-    zIndex: 1,
-  },
   detailsContainer: {
-    paddingHorizontal: 18,
-    paddingTop: 9,
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   textContainer: {
     marginVertical: 4,
@@ -205,11 +220,16 @@ const styles = StyleSheet.create({
   },
   likeButton: {
     alignSelf: "flex-start",
+    marginVertical: 5,
   },
   likesText: {
     fontSize: 12,
-    color: Colors.darkPink,
     marginLeft: 5,
     alignSelf: "flex-start",
+    marginVertical: 5,
+  },
+  matchesTitle: {
+    marginTop: 20,
+    marginBottom: 20,
   },
 });
