@@ -15,6 +15,10 @@ const SettingsScreen = (props) => {
     props.navigation.navigate("EditProfile");
   };
 
+  const navigateToChangePassword = () => {
+    props.navigation.navigate("ChangePassword");
+  };
+
   const navigateToHelpAndSupport = () => {
     props.navigation.navigate("HelpAndSupport");
   };
@@ -34,7 +38,7 @@ const SettingsScreen = (props) => {
         iconName="lock"
         rowTitle="Change Password"
         size={24}
-        navigate={() => console.log("Change Password")}
+        navigate={navigateToChangePassword}
       />
       <SettingRow
         iconSet="MaterialIcons"
