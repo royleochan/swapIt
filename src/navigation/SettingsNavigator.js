@@ -6,6 +6,7 @@ import SettingsScreen from "screens/settings/SettingsScreen";
 import EditProfileScreen from "screens/settings/EditProfileScreen";
 import HelpAndSupportScreen from "screens/settings/HelpAndSupportScreen";
 import ReportScreen from "screens/settings/ReportScreen";
+import ChangePasswordScreen from "screens/settings/ChangePasswordScreen";
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,11 @@ const SettingsNavigator = () => {
       <Stack.Screen
         name="Report"
         component={ReportScreen}
+        options={DefaultNavOptions}
+      />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePasswordScreen}
         options={DefaultNavOptions}
       />
     </Stack.Navigator>
