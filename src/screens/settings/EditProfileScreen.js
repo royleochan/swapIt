@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState, useEffect } from "react";
-import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, Text } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -215,13 +215,18 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
     alignItems: "center",
   },
+  profilePic: {
+    paddingBottom: 15,
+  },
   image: {
     width: 110,
     height: 110,
     borderRadius: 55,
   },
-  profilePic: {
-    paddingBottom: 15,
+  errorText: {
+    marginLeft: 40,
+    marginTop: 5,
+    color: Colors.darkPink,
   },
   descriptionContainer: {
     height: 100,
