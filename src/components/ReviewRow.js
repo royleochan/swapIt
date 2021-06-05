@@ -10,7 +10,7 @@ const ReviewRow = () => {
   const reviewer = {
     name: "Roy Chan",
     profilePic:
-      "https://res.cloudinary.com/dey8rgnvh/image/upload/v1597938408/qtdgn69johypeadagidn.jpg",
+      "https://swap-it.s3.ap-southeast-1.amazonaws.com/3bd736ed-0272-42ef-9b1f-d7002d1d8826",
   };
 
   const review = {

@@ -5,6 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
+  DUMMY_PROFILE_PIC_URL,
   takeImage,
   chooseFromLibrary,
   uploadImageHandler,
@@ -54,7 +55,7 @@ const EditProfileScreen = (props) => {
         } else if (buttonIndex === 1) {
           selectedImage = await chooseFromLibrary();
         } else if (buttonIndex === 2) {
-          setPickedImage("https://i.imgur.com/tiRSkS8.jpg");
+          setPickedImage(DUMMY_PROFILE_PIC_URL);
           return;
         } else if (buttonIndex == 3) {
           setPickedImage(loggedInUser.profilePic);

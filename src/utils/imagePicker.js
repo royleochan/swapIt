@@ -1,12 +1,9 @@
-import {
-  REACT_APP_CLOUDINARY_URL,
-  REACT_APP_CLOUDINARY_UPLOAD_PRESET,
-} from "@env";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
 
-const DUMMY_PROFILE_PIC_URL =
-  "https://res.cloudinary.com/dey8rgnvh/image/upload/v1608621412/test_xmobg3.png";
+import request from "utils/request";
+
+const DUMMY_PROFILE_PIC_URL = "https://i.imgur.com/tiRSkS8.jpg";
 
 const verifyCameraPermissions = async () => {
   const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
@@ -43,7 +40,6 @@ const takeImage = async () => {
   }
   const image = await ImagePicker.launchCameraAsync({
     allowsEditing: true,
-    base64: true,
     aspect: [10, 10],
     quality: 1,
   });
@@ -59,7 +55,6 @@ const chooseFromLibrary = async () => {
   const image = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: true,
-    base64: true,
     aspect: [10, 10],
     quality: 1,
   });
@@ -72,22 +67,29 @@ const uploadImageHandler = async (image) => {
     return DUMMY_PROFILE_PIC_URL;
   }
 
-  let base64Img = `data:image/jpg;base64,${image.base64}`;
-  let data = {
-    file: base64Img,
-    upload_preset: REACT_APP_CLOUDINARY_UPLOAD_PRESET,
-  };
+  // get secure s3 url from server
+  const res = await request.get("/api/s3Url");
+  const { url } = res.data;
 
-  const response = await fetch(REACT_APP_CLOUDINARY_URL, {
-    body: JSON.stringify(data),
-    headers: {
-      "content-type": "application/json",
-    },
-    method: "POST",
+  // convert image uri to blob
+  const resp = await fetch(image.uri);
+  const imageBody = await resp.blob();
+
+  // upload to s3 bucket
+  await fetch(url, {
+    method: "PUT",
+    body: imageBody,
   });
 
-  const resData = await response.json();
-  return resData.url;
+  const imageUrl = url.split("?")[0];
+  return imageUrl;
 };
 
-export { verifyCameraPermissions, verifyLibraryPermissions, takeImage, chooseFromLibrary, uploadImageHandler };
+export {
+  DUMMY_PROFILE_PIC_URL,
+  verifyCameraPermissions,
+  verifyLibraryPermissions,
+  takeImage,
+  chooseFromLibrary,
+  uploadImageHandler,
+};

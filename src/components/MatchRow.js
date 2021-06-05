@@ -51,11 +51,11 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-end",
   },
   avatarInfoContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
   },
   infoContainer: {
     marginLeft: 20,
