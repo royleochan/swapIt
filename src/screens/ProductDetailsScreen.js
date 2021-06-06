@@ -174,7 +174,14 @@ const ProductDetailsScreen = (props) => {
         horizontal={false}
         numColumns={1}
         keyExtractor={(item) => item.id}
-        renderItem={(itemData) => <MatchRow product={itemData.item} />}
+        renderItem={(itemData) => {
+          loggedInUser.id === product.creator.id && (
+            <MatchRow
+              product={itemData.item.product}
+              match={itemData.item.match}
+            />
+          );
+        }}
       />
     );
   }
@@ -187,12 +194,12 @@ const styles = StyleSheet.create({
     zIndex: 1,
     position: "absolute",
     left: 20,
-    top: 50,
+    top: 40,
   },
   ellipsis: {
     zIndex: 1,
     position: "absolute",
-    top: 50,
+    top: 40,
     right: 20,
   },
   title: {
