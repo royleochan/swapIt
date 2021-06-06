@@ -5,9 +5,14 @@ import { Rating } from "react-native-elements";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import ReviewRow from "components/ReviewRow";
+import MainButton from "components/MainButton";
 
 const ReviewsScreen = (props) => {
   const user = props.route.params.user;
+
+  const navigateToCreateReview = () => {
+    props.navigation.navigate("CreateReview");
+  };
 
   return (
     <View style={styles.screenContainer}>
@@ -23,6 +28,15 @@ const ReviewsScreen = (props) => {
           startingValue={3.5}
         />
         <DefaultText style={styles.numReviews}>Based on 5 reviews</DefaultText>
+        <View style={styles.buttonContainer}>
+          <MainButton
+            style={styles.button}
+            styleText={styles.buttonText}
+            onPress={navigateToCreateReview}
+          >
+            Leave Review
+          </MainButton>
+        </View>
       </View>
       <ReviewRow />
     </View>
@@ -52,5 +66,18 @@ const styles = StyleSheet.create({
   numReviews: {
     alignSelf: "center",
     marginTop: 10,
+  },
+  buttonContainer: {
+    alignItems: "flex-end",
+    paddingTop: 20,
+    marginRight: 20,
+  },
+  button: {
+    width: 120,
+    height: 35,
+    backgroundColor: Colors.primary,
+  },
+  buttonText: {
+    fontSize: 12,
   },
 });
