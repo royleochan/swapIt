@@ -1,22 +1,43 @@
-import React from "react";
-import { StyleSheet, View, TextInput, Text } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text, View, TextInput } from "react-native";
+import { Rating } from "react-native-elements";
 import { useForm, Controller } from "react-hook-form";
 
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
 
-const ReportScreen = (props) => {
-  const title = props.route.params;
+const CreateReviewScreen = () => {
+  const [userRating, setUserRating] = useState();
   const { control, handleSubmit, errors } = useForm();
 
   const submitHandler = async (data) => {
+    console.log(userRating);
     console.log(data.description);
   };
 
   return (
     <View style={styles.screenContainer}>
-      <DefaultText style={styles.headerText}>{title}</DefaultText>
+      <DefaultText style={styles.headerText}>Leave a Review</DefaultText>
+      <View style={styles.ratingContainer}>
+        <DefaultText style={styles.labelText}>Rate the Swapper</DefaultText>
+        {/* {userRating !== undefined && (
+          <DefaultText style={styles.labelText}>{userRating} / 5</DefaultText>
+        )} */}
+        <Rating
+          type="custom"
+          imageSize={28}
+          ratingBackgroundColor={Colors.background}
+          ratingColor={Colors.star}
+          fractions={0}
+          startingValue={0}
+          onFinishRating={(rating) => setUserRating(rating)}
+          style={styles.rating}
+        />
+      </View>
+      <DefaultText style={styles.labelText}>
+        Describe Your Experience
+      </DefaultText>
       <View style={styles.textInputContainer}>
         <Controller
           name="description"
@@ -26,7 +47,6 @@ const ReportScreen = (props) => {
           render={({ onChange, value }) => (
             <TextInput
               style={styles.textInput}
-              placeholder="Description"
               multiline={true}
               value={value}
               onChangeText={(value) => {
@@ -52,7 +72,7 @@ const ReportScreen = (props) => {
   );
 };
 
-export default ReportScreen;
+export default CreateReviewScreen;
 
 const styles = StyleSheet.create({
   screenContainer: {
@@ -64,6 +84,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: "latoBold",
     padding: 20,
+  },
+  ratingContainer: {
+    alignItems: "flex-start",
+  },
+  labelText: {
+    fontSize: 14,
+    paddingBottom: 20,
+    paddingLeft: 20,
+  },
+  rating: {
+    paddingBottom: 20,
+    paddingLeft: 20,
   },
   textInputContainer: {
     marginHorizontal: 20,
