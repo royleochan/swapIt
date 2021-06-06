@@ -8,6 +8,7 @@ import IconButton from "components/IconButton";
 import MatchButton from "components/MatchButton";
 
 const MatchRow = (props) => {
+  const { match } = props;
   const { title, minPrice, maxPrice, imageUrl, creator } = props.product;
 
   return (
@@ -47,19 +48,21 @@ export default MatchRow;
 
 const styles = StyleSheet.create({
   rowContainer: {
-    marginBottom: 20,
-    marginLeft: 20,
+    marginBottom: 30,
+    paddingBottom: 26,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
+    borderBottomColor: "rgba(196, 196, 196, 0.3)",
+    borderBottomWidth: 3,
   },
   avatarInfoContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
+    marginLeft: 20,
   },
   infoContainer: {
     marginLeft: 20,
-    width: 160,
   },
   title: {
     fontFamily: "latoBold",

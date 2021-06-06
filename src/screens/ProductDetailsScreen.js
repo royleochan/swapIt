@@ -174,13 +174,18 @@ const ProductDetailsScreen = (props) => {
         horizontal={false}
         numColumns={1}
         keyExtractor={(item) => item.id}
+        scrollIndicatorInsets={{ right: 1 }}
         renderItem={(itemData) => {
-          loggedInUser.id === product.creator.id && (
-            <MatchRow
-              product={itemData.item.product}
-              match={itemData.item.match}
-            />
-          );
+          if (loggedInUser.id === product.creator.id) {
+            return (
+              <MatchRow
+                product={itemData.item.product}
+                match={itemData.item.match}
+              />
+            );
+          } else {
+            return <View></View>;
+          }
         }}
       />
     );
