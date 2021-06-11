@@ -1,21 +1,52 @@
-import React from "react";
-import { StyleSheet, View, TextInput, Text } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View, TextInput, Text, Alert } from "react-native";
+import { useSelector } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
 
+import request from "utils/request";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
+import Loader from "components/Loader";
 
 const ReportScreen = (props) => {
-  const title = props.route.params;
-  const { control, handleSubmit, errors } = useForm();
+  const { title, subject } = props.route.params;
+  const { control, handleSubmit, errors, reset } = useForm();
+
+  const loggedInUser = useSelector((state) => state.auth.user);
+  const { email } = loggedInUser;
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const cleanUp = () => {
+    setIsLoading(false);
+    reset();
+  };
 
   const submitHandler = async (data) => {
-    console.log(data.description);
+    const { description } = data;
+    try {
+      setIsLoading(true);
+      await request.post("/api/reports/new", {
+        subject,
+        email,
+        description,
+      });
+      Alert.alert(
+        "Report Sent!",
+        "Thank you for your report. You should be receiving an email shortly. Do check the spam folder if you can't find it in your inbox.",
+        [{ text: "Okay", onPress: () => cleanUp() }]
+      );
+    } catch (err) {
+      Alert.alert("Failed to send report!", "Please try again later.", [
+        { text: "Okay", onPress: () => cleanUp() },
+      ]);
+    }
   };
 
   return (
     <View style={styles.screenContainer}>
+      {isLoading && <Loader isLoading={isLoading} />}
       <DefaultText style={styles.headerText}>{title}</DefaultText>
       <View style={styles.textInputContainer}>
         <Controller

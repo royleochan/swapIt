@@ -14,7 +14,12 @@ const HelpAndSupportScreen = (props) => {
         iconName="deleteuser"
         rowTitle="Report a User"
         size={26}
-        navigate={() => props.navigation.navigate("Report", "Report a User")}
+        navigate={() =>
+          props.navigation.navigate("Report", {
+            title: "Report a User",
+            subject: "Report User",
+          })
+        }
       />
       <SettingRow
         iconSet="AntDesign"
@@ -22,7 +27,10 @@ const HelpAndSupportScreen = (props) => {
         rowTitle="Problems With My Account"
         size={24}
         navigate={() =>
-          props.navigation.navigate("Report", "Problems With My Account")
+          props.navigation.navigate("Report", {
+            title: "Problems with my Account",
+            subject: "Account Problems",
+          })
         }
       />
       <SettingRow
@@ -31,7 +39,10 @@ const HelpAndSupportScreen = (props) => {
         rowTitle="Report a Technical Issue"
         size={22}
         navigate={() =>
-          props.navigation.navigate("Report", "Report a Technical Issue")
+          props.navigation.navigate("Report", {
+            title: "Report a Technical Issue",
+            subject: "Bug",
+          })
         }
       />
       <SettingRow
@@ -40,7 +51,10 @@ const HelpAndSupportScreen = (props) => {
         rowTitle="General Enquiries"
         size={24}
         navigate={() =>
-          props.navigation.navigate("Report", "General Enquiries")
+          props.navigation.navigate("Report", {
+            title: "General Enquires",
+            subject: "General",
+          })
         }
       />
       <SettingRow
@@ -48,7 +62,12 @@ const HelpAndSupportScreen = (props) => {
         iconName="chatbubble-ellipses-outline"
         rowTitle="Others"
         size={24}
-        navigate={() => props.navigation.navigate("Report", "Others")}
+        navigate={() =>
+          props.navigation.navigate("Report", {
+            title: "Others",
+            subject: "Others",
+          })
+        }
       />
     </View>
   );
