@@ -9,7 +9,7 @@ import MatchButton from "components/MatchButton";
 
 const MatchRow = (props) => {
   const { match } = props;
-  const { title, minPrice, maxPrice, imageUrl, creator } = props.product;
+  const { id, title, minPrice, maxPrice, imageUrl, creator } = props.product;
 
   return (
     <View style={styles.rowContainer}>
@@ -38,7 +38,7 @@ const MatchRow = (props) => {
           name="message1"
           onPress={() => console.log("navigate")}
         />
-        <MatchButton />
+        <MatchButton match={match} productId={id} />
       </View>
     </View>
   );
