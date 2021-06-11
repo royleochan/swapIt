@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   headerText: {
-    fontSize: 26,
+    fontSize: 24,
     fontFamily: "latoBold",
     padding: 20,
   },

@@ -53,8 +53,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    borderBottomColor: "rgba(196, 196, 196, 0.3)",
-    borderBottomWidth: 3,
+    borderBottomColor: "rgba(196, 196, 196, 0.7)",
+    borderBottomWidth: 1,
   },
   avatarInfoContainer: {
     flexDirection: "row",

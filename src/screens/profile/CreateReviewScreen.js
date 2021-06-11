@@ -1,53 +1,43 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Text, Alert } from "react-native";
-import { useSelector } from "react-redux";
+import { StyleSheet, Text, View, TextInput } from "react-native";
+import { Rating } from "react-native-elements";
 import { useForm, Controller } from "react-hook-form";
 
-import request from "utils/request";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
-import Loader from "components/Loader";
 
-const ReportScreen = (props) => {
-  const { title, subject } = props.route.params;
-  const { control, handleSubmit, errors, reset } = useForm();
-
-  const loggedInUser = useSelector((state) => state.auth.user);
-  const { email } = loggedInUser;
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const cleanUp = () => {
-    setIsLoading(false);
-    reset();
-  };
+const CreateReviewScreen = () => {
+  const [userRating, setUserRating] = useState();
+  const { control, handleSubmit, errors } = useForm();
 
   const submitHandler = async (data) => {
-    const { description } = data;
-    try {
-      setIsLoading(true);
-      await request.post("/api/reports/new", {
-        subject,
-        email,
-        description,
-      });
-      Alert.alert(
-        "Report Sent!",
-        "Thank you for your report. You should be receiving an email shortly. Do check the spam folder if you can't find it in your inbox.",
-        [{ text: "Okay", onPress: () => cleanUp() }]
-      );
-    } catch (err) {
-      Alert.alert("Failed to send report!", "Please try again later.", [
-        { text: "Okay", onPress: () => cleanUp() },
-      ]);
-    }
+    console.log(userRating);
+    console.log(data.description);
   };
 
   return (
     <View style={styles.screenContainer}>
-      {isLoading && <Loader isLoading={isLoading} />}
-      <DefaultText style={styles.headerText}>{title}</DefaultText>
+      <DefaultText style={styles.headerText}>Leave a Review</DefaultText>
+      <View style={styles.ratingContainer}>
+        <DefaultText style={styles.labelText}>Rate the Swapper</DefaultText>
+        {/* {userRating !== undefined && (
+          <DefaultText style={styles.labelText}>{userRating} / 5</DefaultText>
+        )} */}
+        <Rating
+          type="custom"
+          imageSize={28}
+          ratingBackgroundColor={Colors.background}
+          ratingColor={Colors.star}
+          fractions={0}
+          startingValue={0}
+          onFinishRating={(rating) => setUserRating(rating)}
+          style={styles.rating}
+        />
+      </View>
+      <DefaultText style={styles.labelText}>
+        Describe Your Experience
+      </DefaultText>
       <View style={styles.textInputContainer}>
         <Controller
           name="description"
@@ -57,7 +47,6 @@ const ReportScreen = (props) => {
           render={({ onChange, value }) => (
             <TextInput
               style={styles.textInput}
-              placeholder="Description"
               multiline={true}
               value={value}
               onChangeText={(value) => {
@@ -83,7 +72,7 @@ const ReportScreen = (props) => {
   );
 };
 
-export default ReportScreen;
+export default CreateReviewScreen;
 
 const styles = StyleSheet.create({
   screenContainer: {
@@ -95,6 +84,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: "latoBold",
     padding: 20,
+  },
+  ratingContainer: {
+    alignItems: "flex-start",
+  },
+  labelText: {
+    fontSize: 14,
+    paddingBottom: 20,
+    paddingLeft: 20,
+  },
+  rating: {
+    paddingBottom: 20,
+    paddingLeft: 20,
   },
   textInputContainer: {
     marginHorizontal: 20,
