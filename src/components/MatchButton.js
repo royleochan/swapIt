@@ -17,18 +17,20 @@ const MatchButton = (props) => {
   }, 1500);
 
   useDidMountEffect(() => {
-    let bodyParams;
-    // call api call
-    const {
-      isConfirmed,
-      productOneId,
-      productOneIsRequested,
-      productOneIsReviewed,
-      productTwoIsRequested,
-      productTwoIsReviewed,
-    } = actualState;
+    const { type, pid } = actualState;
+    const sendRequest = async () => {
+      try {
+        const response = await request.patch(
+          `/api/matches/request/${type}/${match._id}`,
+          { pid }
+        );
+        console.log(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-    // await request.patch(`/api/matches/${match._id}`, bodyParams);
+    sendRequest();
   }, [debouncedState]);
 
   const Button = () => {
@@ -54,25 +56,45 @@ const MatchButton = (props) => {
       } else if (isConfirmed) {
         buttonTitle = "Make Review";
         onPressFunction = () => {
-          setActualState({ ...match, productOneIsReviewed: true });
+          setActualState({
+            ...match,
+            productOneIsReviewed: true,
+            type: "review",
+            pid: productOneId,
+          });
           debounced({ ...match, productOneIsReviewed: true });
         };
       } else if (productTwoIsRequested) {
         buttonTitle = "Accept Request";
         onPressFunction = () => {
-          setActualState({ ...match, isConfirmed: true });
+          setActualState({
+            ...match,
+            isConfirmed: true,
+            type: "accept",
+            pid: productOneId,
+          });
           debounced({ ...match, isConfirmed: true });
         };
       } else if (productOneIsRequested) {
         buttonTitle = "Requested";
         onPressFunction = () => {
-          setActualState({ ...match, productOneIsRequested: false });
+          setActualState({
+            ...match,
+            productOneIsRequested: false,
+            type: "cancel",
+            pid: productOneId,
+          });
           debounced({ ...match, productOneIsRequested: false });
         };
       } else {
         buttonTitle = "Send Match Request";
         onPressFunction = () => {
-          setActualState({ ...match, productOneIsRequested: true });
+          setActualState({
+            ...match,
+            productOneIsRequested: true,
+            type: "send",
+            pid: productOneId,
+          });
           debounced({ ...match, productOneIsRequested: true });
         };
       }
@@ -83,28 +105,48 @@ const MatchButton = (props) => {
           setActualState({ ...match, productTwoIsReviewed: true });
           debounced({ ...match, productTwoIsReviewed: true });
         };
-      } else if (productOneIsRequested) {
-        buttonTitle = "Accept Request";
-        onPressFunction = () => {
-          setActualState({ ...match, isConfirmed: true });
-          debounced({ ...match, isConfirmed: true });
-        };
       } else if (isConfirmed) {
         buttonTitle = "Make Review";
         onPressFunction = () => {
-          setActualState({ ...match, productTwoIsReviewed: true });
+          setActualState({
+            ...match,
+            productTwoIsReviewed: true,
+            type: "review",
+            pid: productOneId,
+          });
           debounced({ ...match, productTwoIsReviewed: true });
+        };
+      } else if (productOneIsRequested) {
+        buttonTitle = "Accept Request";
+        onPressFunction = () => {
+          setActualState({
+            ...match,
+            isConfirmed: true,
+            type: "accept",
+            pid: productOneId,
+          });
+          debounced({ ...match, isConfirmed: true });
         };
       } else if (productTwoIsRequested) {
         buttonTitle = "Requested";
         onPressFunction = () => {
-          setActualState({ ...match, productTwoIsRequested: false });
+          setActualState({
+            ...match,
+            productTwoIsRequested: false,
+            type: "cancel",
+            pid: productOneId,
+          });
           debounced({ ...match, productTwoIsRequested: false });
         };
       } else {
         buttonTitle = "Send Match Request";
         onPressFunction = () => {
-          setActualState({ ...match, productTwoIsRequested: true });
+          setActualState({
+            ...match,
+            productTwoIsRequested: true,
+            type: "send",
+            pid: productOneId,
+          });
           debounced({ ...match, productTwoIsRequested: true });
         };
       }
