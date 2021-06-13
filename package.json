@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^3.8.0",
-    "@react-native-async-storage/async-storage": "^1.13.0",
+    "@react-native-async-storage/async-storage": "^1.15.5",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-picker/picker": "1.9.11",
     "@react-navigation/bottom-tabs": "^5.11.2",
@@ -32,6 +32,7 @@
     "react-native-elements": "^3.1.0",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-gifted-chat": "^0.16.3",
+    "react-native-onboarding-swiper": "^1.1.4",
     "react-native-picker-select": "^8.0.4",
     "react-native-raw-bottom-sheet": "^2.2.0",
     "react-native-reanimated": "~2.1.0",
