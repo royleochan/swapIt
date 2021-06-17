@@ -78,7 +78,7 @@ const ProductDetailsScreen = (props) => {
       setIsLoading(false);
       setIsRefreshing(false);
     } catch (err) {
-      console.log(err);
+      console.log(err.response.data.message);
       setIsRefreshing(false);
     }
   };

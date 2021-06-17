@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import useDebouncedCallback from "use-debounce/lib/useDebouncedCallback";
 
@@ -16,8 +16,15 @@ const MatchButton = (props) => {
     setDebouncedState(val);
   }, 1500);
 
+  useEffect(() => {
+    setActualState(match);
+  }, [match]);
+
   useDidMountEffect(() => {
     const { type, pid } = actualState;
+    console.log(type);
+    console.log(match._id);
+    console.log(pid);
     const sendRequest = async () => {
       try {
         const response = await request.patch(
@@ -26,7 +33,7 @@ const MatchButton = (props) => {
         );
         console.log(response.data);
       } catch (err) {
-        console.log(err);
+        console.log(err.response.data.message);
       }
     };
 
