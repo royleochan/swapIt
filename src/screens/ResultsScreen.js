@@ -11,6 +11,7 @@ import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 import SortFilterMenu from "components/SortFilterMenu";
+import CustomFlatList from "components/CustomFlatList";
 
 const ResultsScreen = (props) => {
   const [query, setQuery] = useState(props.route.params);
@@ -81,13 +82,10 @@ const ResultsScreen = (props) => {
         </View>
       </View>
       <SortFilterMenu />
-      {isLoading && <ActivityIndicator size={36} style={styles.loading} />}
-      <FlatList
+      <CustomFlatList
         onRefresh={() => searchHandler(query)}
-        refreshing={isRefreshing}
         columnWrapperStyle={styles.list}
         data={products}
-        horizontal={false}
         numColumns={2}
         keyExtractor={(item) => item.id}
         renderItem={(itemData) => {
@@ -99,7 +97,7 @@ const ResultsScreen = (props) => {
             />
           );
         }}
-      ></FlatList>
+      />
     </View>
   );
 };
