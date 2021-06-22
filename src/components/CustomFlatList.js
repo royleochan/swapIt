@@ -15,9 +15,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
-  headerComponent: {
-    paddingTop: 20,
-  },
 });
 
 const CustomFlatList = (props) => {
@@ -63,7 +60,7 @@ const CustomFlatList = (props) => {
 
   let progress;
   if (offsetY <= 0 && !isRefreshing) {
-    progress = -offsetY / refreshingHeight;
+    progress = offsetY / -refreshingHeight;
   }
 
   const {
@@ -90,15 +87,12 @@ const CustomFlatList = (props) => {
             style={{ paddingTop: extraPaddingTop }}
           ></Animated.View>
         }
-        style={{ paddingTop: 20 }}
-        ListHeaderComponentStyle={styles.headerComponent}
-        refreshing={false}
+        style={{ paddingTop: 20, backgroundColor: "transparent" }}
         columnWrapperStyle={columnWrapperStyle}
         data={data}
         horizontal={false}
         numColumns={numColumns}
         keyExtractor={(item) => item.id}
-        scrollIndicatorInsets={scrollIndicatorInsets}
         renderItem={renderItem}
         onScroll={onScroll}
         onResponderRelease={onRelease}

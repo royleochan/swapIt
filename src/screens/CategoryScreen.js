@@ -1,117 +1,133 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  FlatList,
+  Text,
+  StyleSheet,
+  Animated,
+  Easing,
+} from 'react-native';
+import LottieView from 'lottie-react-native';
 
-import * as productsActions from "store/actions/products";
-import request from "utils/request";
-import filter from "utils/filter";
-import sort from "utils/sort";
-import ProductBox from "components/ProductBox";
-import SortFilterMenu from "components/SortFilterMenu";
-import DefaultText from "components/DefaultText";
+const fruitsAnimation = require("../../assets/loader/clothes-loader.json");
 
-const CategoryScreen = (props) => {
-  const category = props.route.params.label;
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [products, setProducts] = useState([]);
+const fruits = [
+  'Apple',
+  'Orange',
+  'Watermelon',
+  'Avocado',
+  'Blueberry',
+  'Coconut',
+  'Durian',
+  'Mango',
+];
 
-  const dispatch = useDispatch();
-  const loggedInUserId = useSelector((state) => state.auth.user.id);
-  const sortState = useSelector((state) => state.sort);
-  const filterState = useSelector((state) => state.filter);
-  const storeProducts = useSelector((state) => state.products);
-
-  const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", {
-      id: productData.id,
-      creator: productData.creator,
-    });
-  };
-
-  const categoryHandler = useCallback(async () => {
-    setIsRefreshing(true);
-    try {
-      let response;
-      if (category === "Following") {
-        response = await request.get(`/api/products/all/${loggedInUserId}`);
-      } else {
-        response = await request.get(`/api/products/category/${category}`);
-      }
-      const resData = response.data.products;
-      dispatch(productsActions.updateProducts(resData));
-      setProducts(resData);
-    } catch (err) {
-      dispatch(productsActions.updateProducts([]));
-      setProducts([]);
-    }
-    setIsRefreshing(false);
-  }, [setIsRefreshing, dispatch]);
-
-  useEffect(() => {
-    categoryHandler();
-  }, []);
-
-  useEffect(() => {
-    setProducts(sort(filter(storeProducts, filterState), sortState));
-  }, [filterState]);
-
-  useEffect(() => {
-    setProducts(sort([...products], sortState));
-  }, [sortState]);
-
-  return (
-    <View style={styles.screenContainer}>
-      <View style={styles.header}>
-        <DefaultText style={styles.title}>{category}</DefaultText>
-      </View>
-      <SortFilterMenu />
-      <FlatList
-        onRefresh={categoryHandler}
-        refreshing={isRefreshing}
-        columnWrapperStyle={styles.list}
-        data={products}
-        horizontal={false}
-        numColumns={2}
-        keyExtractor={(item) => item.id}
-        renderItem={(itemData) => {
-          return (
-            <ProductBox
-              item={itemData.item}
-              productCreator={itemData.item.creator}
-              navigate={() =>
-                navigateToProductDetails(itemData.item)
-              }
-            />
-          );
-        }}
-      ></FlatList>
-    </View>
-  );
-};
-
-export default CategoryScreen;
-
+const refreshingHeight = 100;
 const styles = StyleSheet.create({
-  screenContainer: {
-    flex: 1,
-    backgroundColor: "white",
+  flatlist: {
+
   },
-  header: {
-    marginTop: 30,
-    marginLeft: 16,
+  row: {
+    height: 100,
+    justifyContent: 'center',
+    padding: 20,
+    borderBottomWidth: 3,
+    borderBottomColor: 'black',
   },
-  title: {
-    fontFamily: "latoBold",
-    fontSize: 24,
+  rowTitle: {
+    fontSize: 30,
+    fontWeight: 'bold',
   },
-  searchBar: {
-    width: "80%",
-  },
-  mainContainer: {
-    marginTop: 10,
-  },
-  list: {
-    justifyContent: "center",
-    marginTop: 10,
+
+  lottieView: {
+    height: refreshingHeight,
+    position: 'absolute',
+    top: 10,
+    left: 0,
+    right: 0,
   },
 });
+
+function FruitList() {
+  const [offsetY, setOffsetY] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [extraPaddingTop] = useState(new Animated.Value(0));
+
+  const lottieViewRef = useRef(null);
+
+  useEffect(() => {
+    if (isRefreshing) {
+      Animated.timing(extraPaddingTop, {
+        toValue: refreshingHeight,
+        duration: 0,
+      }).start();
+      lottieViewRef.current.play();
+    } else {
+      Animated.timing(extraPaddingTop, {
+        toValue: 0,
+        duration: 400,
+        easing: Easing.elastic(1.3),
+      }).start();
+    }
+  }, [isRefreshing]);
+
+  function renderItem({ item }) {
+    return (
+      <View key={item} style={styles.row}>
+        <Text style={styles.rowTitle}>{item}</Text>
+      </View>
+    );
+  }
+
+  function onScroll(event) {
+    const { nativeEvent } = event;
+    const { contentOffset } = nativeEvent;
+    const { y } = contentOffset;
+    setOffsetY(y);
+  }
+
+  function onRelease() {
+    if (offsetY <= -refreshingHeight && !isRefreshing) {
+      setIsRefreshing(true);
+      setTimeout(() => {
+        setIsRefreshing(false);
+      }, 3000);
+    }
+  }
+
+  let progress = 0;
+  if (offsetY < 0 && !isRefreshing) {
+    progress = offsetY / -refreshingHeight;
+  }
+
+  return (
+    <View>
+      <LottieView
+        ref={lottieViewRef}
+        style={styles.lottieView}
+        source={fruitsAnimation}
+        progress={progress}
+      />
+      <FlatList
+        data={fruits}
+        renderItem={renderItem}
+        style={[
+          styles.flatlist,
+          {
+            paddingTop: 20,
+          },
+        ]}
+        onScroll={onScroll}
+        onResponderRelease={onRelease}
+        ListHeaderComponent={(
+          <Animated.View style={{
+            paddingTop: extraPaddingTop,
+          }}
+          />
+        )}
+      />
+    </View>
+  );
+}
+
+export default FruitList;

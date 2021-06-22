@@ -60,6 +60,7 @@ export default ProductBox;
 const styles = StyleSheet.create({
   container: {
     padding: 15,
+    backgroundColor: "white"
   },
   itemImage: {
     width: 160,
