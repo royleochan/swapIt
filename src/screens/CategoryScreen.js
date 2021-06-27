@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Alert } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
 import * as productsActions from "store/actions/products";
@@ -41,8 +41,10 @@ const CategoryScreen = (props) => {
       dispatch(productsActions.updateProducts(resData));
       setProducts(resData);
     } catch (err) {
+      setIsRefreshing(false);
       dispatch(productsActions.updateProducts([]));
       setProducts([]);
+      Alert.alert("Request failed", `${err.response.data.message}`, [{ text: "Okay" }]);
     }
     setIsRefreshing(false);
   }, [setIsRefreshing, dispatch]);

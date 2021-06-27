@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, Platform, Alert } from "react-native";
 import { useSelector } from "react-redux";
 import Swiper from "react-native-deck-swiper";
 
@@ -29,7 +29,14 @@ const ExploreScreen = (props) => {
       setProducts(resData);
       setIsLoading(false);
     } catch (err) {
-      throw new Error(err);
+      Alert.alert("Request failed", `${err.response.data.message}`, [
+        {
+          text: "Okay",
+          onPress: () => {
+            setIsLoading(false);
+          },
+        },
+      ]);
     }
   }, [setProducts]);
 
@@ -45,67 +52,73 @@ const ExploreScreen = (props) => {
     <View style={styles.container}>
       {!isLoading && (
         <>
-          <View style={styles.swiperContainer}>
-            <Swiper
-              ref={useSwiper}
-              cards={products}
-              renderCard={(product) => {
-                return <SwipeProduct item={product} />;
-              }}
-              useViewOverflow={Platform.OS === "ios"}
-              infinite={true}
-              verticalSwipe={false}
-              onSwipedRight={(cardIndex) => {
-                likeProduct(cardIndex);
-              }}
-              overlayLabels={{
-                left: {
-                  title: "SKIP",
-                  element: <OverlayLabel label="SKIP" color={Colors.accent} />,
-                  style: {
-                    wrapper: styles.overlayWrapper,
-                  },
-                },
-                right: {
-                  title: "LIKE",
-                  element: (
-                    <OverlayLabel label="LIKE" color={Colors.background} />
-                  ),
-                  style: {
-                    wrapper: {
-                      ...styles.overlayWrapper,
-                      alignItems: "flex-start",
-                      marginLeft: 30,
+          {!products.length === 0 && (
+            <View style={styles.swiperContainer}>
+              <Swiper
+                ref={useSwiper}
+                cards={products}
+                renderCard={(product) => {
+                  return <SwipeProduct item={product} />;
+                }}
+                useViewOverflow={Platform.OS === "ios"}
+                infinite={true}
+                verticalSwipe={false}
+                onSwipedRight={(cardIndex) => {
+                  likeProduct(cardIndex);
+                }}
+                overlayLabels={{
+                  left: {
+                    title: "SKIP",
+                    element: (
+                      <OverlayLabel label="SKIP" color={Colors.accent} />
+                    ),
+                    style: {
+                      wrapper: styles.overlayWrapper,
                     },
                   },
-                },
-              }}
-              animateOverlayLabelsOpacity
-              animateCardOpacity
-              stackSize={4}
-              cardVerticalMargin={60}
-              cardIndex={0}
-              backgroundColor={Colors.background}
-            />
-          </View>
-          <View style={styles.buttonsContainer}>
-            <IconButton
-              name="close"
-              size={20}
-              style={styles.iconButton}
-              onPress={handleOnSwipedLeft}
-              color={Colors.background}
-              backgroundColor={Colors.primary}
-            />
-            <IconButton
-              name="heart"
-              size={20}
-              style={styles.iconButton}
-              onPress={handleOnSwipedRight}
-              color={Colors.accent}
-              backgroundColor={Colors.background}
-            />
-          </View>
+                  right: {
+                    title: "LIKE",
+                    element: (
+                      <OverlayLabel label="LIKE" color={Colors.background} />
+                    ),
+                    style: {
+                      wrapper: {
+                        ...styles.overlayWrapper,
+                        alignItems: "flex-start",
+                        marginLeft: 30,
+                      },
+                    },
+                  },
+                }}
+                animateOverlayLabelsOpacity
+                animateCardOpacity
+                stackSize={4}
+                cardVerticalMargin={60}
+                cardIndex={0}
+                backgroundColor={Colors.background}
+              />
+            </View>
+          )}
+          {!products.length === 0 && (
+            <View style={styles.buttonsContainer}>
+              <IconButton
+                name="close"
+                size={20}
+                style={styles.iconButton}
+                onPress={handleOnSwipedLeft}
+                color={Colors.background}
+                backgroundColor={Colors.primary}
+              />
+              <IconButton
+                name="heart"
+                size={20}
+                style={styles.iconButton}
+                onPress={handleOnSwipedRight}
+                color={Colors.accent}
+                backgroundColor={Colors.background}
+              />
+            </View>
+          )}
         </>
       )}
     </View>
