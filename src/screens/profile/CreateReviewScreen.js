@@ -1,19 +1,35 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, TextInput } from "react-native";
+import { useSelector } from "react-redux";
 import { Rating } from "react-native-elements";
 import { useForm, Controller } from "react-hook-form";
 
 import Colors from "constants/Colors";
+import request from "utils/request";
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
 
-const CreateReviewScreen = () => {
+const CreateReviewScreen = (props) => {
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
+  const { pid, matchId, reviewed } = props.route.params;
   const [userRating, setUserRating] = useState();
   const { control, handleSubmit, errors } = useForm();
 
   const submitHandler = async (data) => {
-    console.log(userRating);
-    console.log(data.description);
+    const { description } = data;
+    try {
+      const response = await request.post("/api/reviews", {
+        description,
+        rating: userRating,
+        creator: loggedInUserId,
+        pid,
+        matchId,
+        reviewed,
+      });
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -21,15 +37,15 @@ const CreateReviewScreen = () => {
       <DefaultText style={styles.headerText}>Leave a Review</DefaultText>
       <View style={styles.ratingContainer}>
         <DefaultText style={styles.labelText}>Rate the Swapper</DefaultText>
-        {/* {userRating !== undefined && (
+        {userRating !== undefined && (
           <DefaultText style={styles.labelText}>{userRating} / 5</DefaultText>
-        )} */}
+        )}
         <Rating
           type="custom"
           imageSize={28}
           ratingBackgroundColor={Colors.background}
           ratingColor={Colors.star}
-          fractions={0}
+          fractions={1}
           startingValue={0}
           onFinishRating={(rating) => setUserRating(rating)}
           style={styles.rating}

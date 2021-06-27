@@ -8,8 +8,8 @@ import IconButton from "components/IconButton";
 import MatchButton from "components/MatchButton";
 
 const MatchRow = (props) => {
-  const { match } = props;
-  const { id, title, minPrice, maxPrice, imageUrl, creator } = props.product;
+  const { match, navigateToCreateReview, ownProduct } = props;
+  const { title, minPrice, maxPrice, imageUrl, creator } = props.product;
 
   return (
     <View style={styles.rowContainer}>
@@ -38,7 +38,12 @@ const MatchRow = (props) => {
           name="message1"
           onPress={() => console.log("navigate")}
         />
-        <MatchButton match={match} productId={id} />
+        <MatchButton
+          match={match}
+          navigateToCreateReview={navigateToCreateReview}
+          ownProduct={ownProduct}
+          reviewed={creator.id}
+        />
       </View>
     </View>
   );

@@ -61,6 +61,10 @@ const ProductDetailsScreen = (props) => {
     props.navigation.push("Category", { label: cat });
   };
 
+  const navigateToCreateReview = (pid, matchId, reviewed) => {
+    props.navigation.push("CreateReview", { pid, matchId, reviewed });
+  };
+
   const navigateToProfile = () => {
     props.navigation.push("ProfileScreen", {
       screen: "Profile",
@@ -179,8 +183,10 @@ const ProductDetailsScreen = (props) => {
           if (loggedInUser.id === product.creator.id) {
             return (
               <MatchRow
+                ownProduct={product.id}
                 product={itemData.item.product}
                 match={itemData.item.match}
+                navigateToCreateReview={navigateToCreateReview}
               />
             );
           } else {
