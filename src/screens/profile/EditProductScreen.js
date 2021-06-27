@@ -101,7 +101,14 @@ const EditProductScreen = (props) => {
         routes: [{ name: "Profile" }],
       });
     } catch (err) {
-      throw new Error(err);
+      Alert.alert("Request failed", `${err.response.data.message}`, [
+        {
+          text: "Okay",
+          onPress: () => {
+            setIsLoading(false);
+          },
+        },
+      ]);
     }
   };
 

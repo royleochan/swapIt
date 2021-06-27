@@ -135,7 +135,14 @@ const UploadScreen = (props) => {
       setFemaleCategory(null);
       setIsLoading(false);
     } catch (err) {
-      throw new Error(err);
+      Alert.alert("Request failed", `${err.response.data.message}`, [
+        {
+          text: "Okay",
+          onPress: () => {
+            setIsLoading(false);
+          },
+        },
+      ]);
     }
   };
 
@@ -357,7 +364,7 @@ const styles = StyleSheet.create({
     width: "95%",
     height: 25,
     borderRadius: 8,
-    paddingHorizontal: 2,
+    paddingHorizontal: 5,
     backgroundColor: Colors.glass,
     opacity: 0.3,
   },
@@ -365,7 +372,7 @@ const styles = StyleSheet.create({
     width: "95%",
     height: 100,
     borderRadius: 8,
-    paddingHorizontal: 2,
+    paddingHorizontal: 5,
     backgroundColor: Colors.glass,
     opacity: 0.3,
   },
@@ -374,10 +381,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   priceRangeInput: {
-    width: "10%",
+    width: "15%",
     height: 40,
     borderRadius: 8,
-    paddingHorizontal: 2,
+    paddingHorizontal: 5,
     backgroundColor: Colors.glass,
     opacity: 0.3,
   },

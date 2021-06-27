@@ -27,7 +27,7 @@ const LoginScreen = (props) => {
     try {
       await dispatch(authActions.authenticate(data.username, data.password));
     } catch (err) {
-      Alert.alert("Login failed!", `${err}`, [
+      Alert.alert("Login failed", `${err.message}`, [
         { text: "Okay", onPress: () => setIsLoading(false) },
       ]);
     }

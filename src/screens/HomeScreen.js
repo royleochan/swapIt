@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Alert
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
@@ -72,8 +73,9 @@ const HomeScreen = (props) => {
       const resData = response.data.products;
       dispatch(productsActions.updateProducts(resData));
     } catch (err) {
+      setIsRefreshing(false);
       dispatch(productsActions.updateProducts([]));
-      throw new Error(err);
+      Alert.alert("Request failed", `${err.response.data.message}`, [{ text: "Okay" }]);
     }
     setIsRefreshing(false);
   }, [setIsRefreshing]);

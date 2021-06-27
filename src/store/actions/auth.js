@@ -26,7 +26,7 @@ export const authenticate = (username, password) => {
           } else if (errorId === "INVALID_PASSWORD") {
             message = "This password is not valid!";
           }
-          throw new Error(message);
+          throw (message);
         });
 
       const resData = res.data;
@@ -100,7 +100,7 @@ export const refreshUser = (updatedUser) => {
   return async (dispatch) => {
     dispatch({
       type: UPDATEUSER,
-      user: updatedUser
+      user: updatedUser,
     });
   };
 };
