@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
 import * as productsActions from "store/actions/products";
@@ -11,12 +11,10 @@ import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 import SortFilterMenu from "components/SortFilterMenu";
-import CustomFlatList from "components/CustomFlatList";
 
 const ResultsScreen = (props) => {
   const [query, setQuery] = useState(props.route.params);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
 
   const dispatch = useDispatch();
@@ -33,6 +31,7 @@ const ResultsScreen = (props) => {
 
   const searchHandler = useCallback(
     async (searchQuery) => {
+      setIsRefreshing(true);
       try {
         const response = await request.get(
           `/api/products/search/${searchQuery}`
@@ -44,13 +43,13 @@ const ResultsScreen = (props) => {
         dispatch(productsActions.updateProducts([]));
         setProducts([]);
       }
-      setIsLoading(false);
+      setIsRefreshing(false);
     },
-    [setIsLoading, setProducts]
+    [setIsRefreshing, setProducts]
   );
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsRefreshing(true);
     // Executes searchHandler after 1000ms, returns a positive integer which uniquely identifies the timer created
     const timer = setTimeout(() => searchHandler(query), 1000);
 
@@ -82,10 +81,12 @@ const ResultsScreen = (props) => {
         </View>
       </View>
       <SortFilterMenu />
-      <CustomFlatList
+      <FlatList
         onRefresh={() => searchHandler(query)}
+        refreshing={isRefreshing}
         columnWrapperStyle={styles.list}
         data={products}
+        horizontal={false}
         numColumns={2}
         keyExtractor={(item) => item.id}
         renderItem={(itemData) => {
@@ -97,7 +98,7 @@ const ResultsScreen = (props) => {
             />
           );
         }}
-      />
+      ></FlatList>
     </View>
   );
 };
@@ -126,9 +127,6 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 24,
-  },
-  loading: {
-    marginTop: 10,
   },
   searchBar: {
     width: "80%",
