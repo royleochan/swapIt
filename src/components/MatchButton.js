@@ -7,7 +7,14 @@ import DefaultText from "components/DefaultText";
 import SpinningLoader from "components/SpinningLoader";
 
 const MatchButton = (props) => {
-  const { style, match, navigateToCreateReview, ownProduct, reviewed } = props;
+  const {
+    style,
+    match,
+    navigateToCreateReview,
+    navigateToCompletedReview,
+    ownProduct,
+    reviewed,
+  } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [matchState, setMatchState] = useState(match);
 
@@ -47,6 +54,7 @@ const MatchButton = (props) => {
     if (productOneId === ownProduct) {
       if (productOneIsReviewed) {
         buttonTitle = "Review Made!";
+        onPressFunction = () => navigateToCompletedReview(match.id);
       } else if (isConfirmed) {
         buttonTitle = "Make Review";
         onPressFunction = () =>
@@ -64,6 +72,7 @@ const MatchButton = (props) => {
     } else {
       if (productTwoIsReviewed) {
         buttonTitle = "Review Made!";
+        onPressFunction = () => navigateToCompletedReview(match.id);
       } else if (isConfirmed) {
         buttonTitle = "Make Review";
         onPressFunction = () =>

@@ -8,7 +8,12 @@ import IconButton from "components/IconButton";
 import MatchButton from "components/MatchButton";
 
 const MatchRow = (props) => {
-  const { match, navigateToCreateReview, ownProduct } = props;
+  const {
+    match,
+    navigateToCreateReview,
+    navigateToCompletedReview,
+    ownProduct,
+  } = props;
   const { title, minPrice, maxPrice, imageUrl, creator } = props.product;
 
   return (
@@ -41,6 +46,7 @@ const MatchRow = (props) => {
         <MatchButton
           match={match}
           navigateToCreateReview={navigateToCreateReview}
+          navigateToCompletedReview={navigateToCompletedReview}
           ownProduct={ownProduct}
           reviewed={creator.id}
         />

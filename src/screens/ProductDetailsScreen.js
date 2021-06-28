@@ -65,6 +65,10 @@ const ProductDetailsScreen = (props) => {
     props.navigation.push("CreateReview", { pid, matchId, reviewed });
   };
 
+  const navigateToCompletedReview = (matchId) => {
+    props.navigation.push("CompletedReview", { matchId });
+  };
+
   const navigateToProfile = () => {
     props.navigation.push("ProfileScreen", {
       screen: "Profile",
@@ -187,6 +191,7 @@ const ProductDetailsScreen = (props) => {
                 product={itemData.item.product}
                 match={itemData.item.match}
                 navigateToCreateReview={navigateToCreateReview}
+                navigateToCompletedReview={navigateToCompletedReview}
               />
             );
           } else {
