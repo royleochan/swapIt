@@ -26,7 +26,7 @@ const CreateReviewScreen = (props) => {
         matchId,
         reviewed,
       });
-      console.log(response);
+      console.log(response); // todo: navigate away to created review screen
     } catch (err) {
       console.log(err);
     }

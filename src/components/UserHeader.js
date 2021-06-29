@@ -67,10 +67,10 @@ const UserHeader = (props) => {
             ratingBackgroundColor={Colors.background}
             ratingColor={Colors.star}
             fractions={1}
-            startingValue={3.5}
+            startingValue={selectedUser.reviewRating}
           />
           <DefaultText style={styles.rating}>
-            {selectedUser.rating}(0)
+            ({selectedUser.reviews.length})
           </DefaultText>
         </TouchableOpacity>
       </View>

@@ -33,7 +33,7 @@ const ProfileScreen = (props) => {
   };
 
   const navigateToReviews = () => {
-    props.navigation.push("Reviews", selectedUser);
+    props.navigation.push("Reviews", { selectedUser });
   };
 
   const navigateToFollowing = () => {

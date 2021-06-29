@@ -5,19 +5,18 @@ import { Rating } from "react-native-elements";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import ReviewRow from "components/ReviewRow";
-import MainButton from "components/MainButton";
 
 const ReviewsScreen = (props) => {
-  const user = props.route.params.user;
+  const { selectedUser } = props.route.params;
 
-  const navigateToCreateReview = () => {
-    props.navigation.navigate("CreateReview");
-  };
+  // todo: Send request to fetch all reviews, also use flatlist for pull to refresh
 
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>
-        <DefaultText style={styles.numberRating}>3.5</DefaultText>
+        <DefaultText style={styles.numberRating}>
+          {selectedUser.reviewRating}
+        </DefaultText>
         <Rating
           type="custom"
           readonly
@@ -25,18 +24,11 @@ const ReviewsScreen = (props) => {
           ratingBackgroundColor={Colors.background}
           ratingColor={Colors.star}
           fractions={1}
-          startingValue={3.5}
+          startingValue={selectedUser.reviewRating}
         />
-        <DefaultText style={styles.numReviews}>Based on 5 reviews</DefaultText>
-        <View style={styles.buttonContainer}>
-          <MainButton
-            style={styles.button}
-            styleText={styles.buttonText}
-            onPress={navigateToCreateReview}
-          >
-            Leave Review
-          </MainButton>
-        </View>
+        <DefaultText style={styles.numReviews}>
+          Based on {selectedUser.reviews.length} reviews
+        </DefaultText>
       </View>
       <ReviewRow />
     </View>
@@ -66,18 +58,5 @@ const styles = StyleSheet.create({
   numReviews: {
     alignSelf: "center",
     marginTop: 10,
-  },
-  buttonContainer: {
-    alignItems: "flex-end",
-    paddingTop: 20,
-    marginRight: 20,
-  },
-  button: {
-    width: 120,
-    height: 35,
-    backgroundColor: Colors.primary,
-  },
-  buttonText: {
-    fontSize: 12,
   },
 });
