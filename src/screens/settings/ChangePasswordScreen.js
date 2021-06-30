@@ -9,6 +9,7 @@ import MainButton from "components/MainButton";
 const ChangePasswordScreen = () => {
   const { control, handleSubmit, errors } = useForm();
 
+  // todo: handle api logic
   const submitHandler = async (data) => {
     console.log(data.currentPassword);
     console.log(data.newPassword);

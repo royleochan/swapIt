@@ -1,18 +1,15 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
 import { Rating } from "react-native-elements";
 
+import request from "utils/request";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import ReviewRow from "components/ReviewRow";
 
-const ReviewsScreen = (props) => {
-  const { selectedUser } = props.route.params;
-
-  // todo: Send request to fetch all reviews, also use flatlist for pull to refresh
-
+const ReviewHeader = ({ selectedUser }) => {
   return (
-    <View style={styles.screenContainer}>
+    <>
       <View style={styles.header}>
         <DefaultText style={styles.numberRating}>
           {selectedUser.reviewRating}
@@ -27,10 +24,45 @@ const ReviewsScreen = (props) => {
           startingValue={selectedUser.reviewRating}
         />
         <DefaultText style={styles.numReviews}>
-          Based on {selectedUser.reviews.length} reviews
+          Based on {selectedUser.reviews.length}
+          {selectedUser.reviews.length === 1 ? " review" : " reviews"}
         </DefaultText>
       </View>
-      <ReviewRow />
+    </>
+  );
+};
+
+const ReviewsScreen = (props) => {
+  const { selectedUser } = props.route.params;
+  const [reviews, setReviews] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchReviews = async () => {
+    setIsRefreshing(true);
+    try {
+      const response = await request.get(`/api/reviews/${selectedUser.id}`);
+      setReviews(response.data.reviews);
+    } catch (err) {
+      console.log(err);
+    }
+    setIsRefreshing(false);
+  };
+
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  return (
+    <View style={styles.screenContainer}>
+      <FlatList
+        ListHeaderComponent={<ReviewHeader selectedUser={selectedUser} />}
+        onRefresh={fetchReviews}
+        refreshing={isRefreshing}
+        data={reviews}
+        horizontal={false}
+        keyExtractor={(item) => item.id}
+        renderItem={(itemData) => <ReviewRow review={itemData.item} />}
+      />
     </View>
   );
 };

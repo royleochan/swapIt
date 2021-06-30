@@ -3,22 +3,13 @@ import { StyleSheet, View } from "react-native";
 import { Avatar } from "react-native-elements";
 import { Rating } from "react-native-elements";
 
+import parseDateToYYYYMMDD from "utils/date";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 
-const ReviewRow = () => {
-  const reviewer = {
-    name: "Roy Chan",
-    profilePic:
-      "https://swap-it.s3.ap-southeast-1.amazonaws.com/3bd736ed-0272-42ef-9b1f-d7002d1d8826",
-  };
-
-  const review = {
-    rating: 5,
-    description:
-      "Remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently",
-    date: "28/12/2020",
-  };
+const ReviewRow = (props) => {
+  const { review } = props;
+  const { creator, description, rating, createdAt } = review;
 
   return (
     <View style={styles.rowContainer}>
@@ -28,12 +19,12 @@ const ReviewRow = () => {
             rounded
             size={60}
             source={{
-              uri: reviewer.profilePic,
+              uri: creator.profilePic,
             }}
           />
           <View style={styles.reviewerNameAndRating}>
             <DefaultText style={styles.reviewerName}>
-              {reviewer.name}
+              {creator.name}
             </DefaultText>
             <View style={styles.rating}>
               <Rating
@@ -43,14 +34,16 @@ const ReviewRow = () => {
                 ratingBackgroundColor={Colors.background}
                 ratingColor={Colors.star}
                 fractions={1}
-                startingValue={review.rating}
+                startingValue={rating}
               />
             </View>
           </View>
         </View>
-        <DefaultText style={styles.date}>{review.date}</DefaultText>
+        <DefaultText style={styles.date}>
+          {parseDateToYYYYMMDD(createdAt)}
+        </DefaultText>
       </View>
-      <DefaultText style={styles.description}>{review.description}</DefaultText>
+      <DefaultText style={styles.description}>{description}</DefaultText>
     </View>
   );
 };

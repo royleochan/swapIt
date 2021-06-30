@@ -52,7 +52,7 @@ const ExploreScreen = (props) => {
     <View style={styles.container}>
       {!isLoading && (
         <>
-          {!products.length === 0 && (
+          {products.length > 0 && (
             <View style={styles.swiperContainer}>
               <Swiper
                 ref={useSwiper}
@@ -99,7 +99,7 @@ const ExploreScreen = (props) => {
               />
             </View>
           )}
-          {!products.length === 0 && (
+          {products.length > 0 && (
             <View style={styles.buttonsContainer}>
               <IconButton
                 name="close"

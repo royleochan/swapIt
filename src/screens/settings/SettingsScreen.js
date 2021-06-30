@@ -52,14 +52,14 @@ const SettingsScreen = (props) => {
         iconName="notifications-outline"
         rowTitle="Notifications"
         size={24}
-        navigate={() => console.log("Notifications")}
+        navigate={() => console.log("Notifications")} // todo: set notification settings
       />
       <SettingRow
         iconSet="AntDesign"
         iconName="questioncircleo"
         rowTitle="About"
         size={22}
-        navigate={() => console.log("About")}
+        navigate={() => console.log("About")} // todo: make about screen
       />
       <SettingRow
         iconSet="AntDesign"

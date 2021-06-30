@@ -15,10 +15,14 @@ const CreateReviewScreen = (props) => {
   const [userRating, setUserRating] = useState();
   const { control, handleSubmit, errors } = useForm();
 
+  const navigateToCompletedReviewScreen = () => {
+    return props.navigation.push("CompletedReview", { matchId });
+  };
+
   const submitHandler = async (data) => {
     const { description } = data;
     try {
-      const response = await request.post("/api/reviews", {
+      await request.post("/api/reviews", {
         description,
         rating: userRating,
         creator: loggedInUserId,
@@ -26,7 +30,7 @@ const CreateReviewScreen = (props) => {
         matchId,
         reviewed,
       });
-      console.log(response); // todo: navigate away to created review screen
+      navigateToCompletedReviewScreen();
     } catch (err) {
       console.log(err);
     }
