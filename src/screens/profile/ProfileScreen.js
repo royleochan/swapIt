@@ -115,7 +115,7 @@ const ProfileScreen = (props) => {
         data={userProducts}
         horizontal={false}
         numColumns={2}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         renderItem={(itemData) => (
           <ProductBox
             productCreator={selectedUser}
