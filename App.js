@@ -7,12 +7,22 @@ import ReduxThunk from "redux-thunk";
 import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import * as Notifications from "expo-notifications";
 
 import AppNavigator from "navigation/AppNavigator";
 import authReducer from "store/reducers/auth";
 import sortReducer from "store/reducers/sort";
 import filterReducer from "store/reducers/filter";
 import productsReducer from "store/reducers/products";
+
+// Settings for foreground notifications
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 const fetchFonts = () => {
   return Font.loadAsync({

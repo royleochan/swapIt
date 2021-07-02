@@ -6,7 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  Alert
+  Alert,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
@@ -15,6 +15,7 @@ import { AntDesign } from "@expo/vector-icons";
 import * as productsActions from "store/actions/products";
 import followingIcon from "assets/categories/following.png";
 import request from "utils/request";
+import registerForPushNotificationsAsync from "utils/notification";
 import Colors from "constants/Colors";
 import MaleCategories from "constants/MaleCategories";
 import FemaleCategories from "constants/FemaleCategories";
@@ -75,7 +76,9 @@ const HomeScreen = (props) => {
     } catch (err) {
       setIsRefreshing(false);
       dispatch(productsActions.updateProducts([]));
-      Alert.alert("Request failed", `${err.response.data.message}`, [{ text: "Okay" }]);
+      Alert.alert("Request failed", `${err.response.data.message}`, [
+        { text: "Okay" },
+      ]);
     }
     setIsRefreshing(false);
   }, [setIsRefreshing]);
@@ -92,6 +95,7 @@ const HomeScreen = (props) => {
   }, [setRecommendedUsers]);
 
   useEffect(() => {
+    registerForPushNotificationsAsync();
     loadProducts();
     loadRecommendedUsers();
   }, []);
