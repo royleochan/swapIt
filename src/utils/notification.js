@@ -2,7 +2,9 @@ import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
-export default registerForPushNotificationsAsync = async () => {
+import request from "utils/request";
+
+export default registerForPushNotificationsAsync = async (uid, jwtToken) => {
   let token;
 
   if (Constants.isDevice) {
@@ -32,6 +34,21 @@ export default registerForPushNotificationsAsync = async () => {
     });
   }
 
+  // update token in the database
   console.log("Push Token: " + token);
-  return token;
+  let user;
+  try {
+    const response = await request.patch(
+      `/api/users/pushToken/${uid}`,
+      {
+        pushToken: token,
+      },
+      jwtToken
+    );
+    user = response.data.user;
+  } catch (err) {
+    console.log(err.response.data);
+  }
+
+  return user;
 };

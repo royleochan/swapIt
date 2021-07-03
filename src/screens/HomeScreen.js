@@ -13,6 +13,7 @@ import { Avatar } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
 
 import * as productsActions from "store/actions/products";
+import * as authActions from "store/actions/auth";
 import followingIcon from "assets/categories/following.png";
 import request from "utils/request";
 import registerForPushNotificationsAsync from "utils/notification";
@@ -32,6 +33,7 @@ const HomeScreen = (props) => {
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+  const jwtToken = useSelector((state) => state.auth.jwtToken);
   const trendingProducts = useSelector((state) => state.products);
 
   const handleSearch = (text) => {
@@ -66,6 +68,15 @@ const HomeScreen = (props) => {
     props.navigation.push("Search");
   };
 
+  // Update redux user after getting push token
+  const getPushToken = async () => {
+    const updatedUser = await registerForPushNotificationsAsync(
+      user.id,
+      jwtToken
+    );
+    dispatch(authActions.refreshUser(updatedUser));
+  };
+
   // Need to change to trending products
   const loadProducts = useCallback(async () => {
     setIsRefreshing(true);
@@ -95,7 +106,7 @@ const HomeScreen = (props) => {
   }, [setRecommendedUsers]);
 
   useEffect(() => {
-    registerForPushNotificationsAsync();
+    getPushToken();
     loadProducts();
     loadRecommendedUsers();
   }, []);
