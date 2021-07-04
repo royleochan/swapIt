@@ -20,7 +20,6 @@ export default registerForPushNotificationsAsync = async (uid, jwtToken) => {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log("Push Token: " + token);
   } else {
     alert("Must use physical device for Push Notifications");
   }
