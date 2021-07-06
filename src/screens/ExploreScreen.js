@@ -6,6 +6,7 @@ import Swiper from "react-native-deck-swiper";
 import Colors from "constants/Colors";
 import request from "utils/request";
 import IconButton from "components/IconButton";
+import DefaultText from "components/DefaultText";
 import OverlayLabel from "components/OverlayLabel";
 import SwipeProduct from "components/SwipeProduct";
 
@@ -50,6 +51,9 @@ const ExploreScreen = (props) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <DefaultText style={styles.header}>Explore</DefaultText>
+      </View>
       {!isLoading && (
         <>
           {products.length > 0 && (
@@ -93,7 +97,7 @@ const ExploreScreen = (props) => {
                 animateOverlayLabelsOpacity
                 animateCardOpacity
                 stackSize={4}
-                cardVerticalMargin={60}
+                cardVerticalMargin={20}
                 cardIndex={0}
                 backgroundColor={Colors.background}
               />
@@ -129,8 +133,16 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.background,
   },
+  headerContainer: {
+    marginLeft: 24,
+    marginTop: 64,
+  },
+  header: {
+    fontFamily: "latoBold",
+    fontSize: 28,
+  },
   swiperContainer: {
-    height: "85%",
+    height: "70%",
   },
   overlayWrapper: {
     flexDirection: "column",
@@ -144,7 +156,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     paddingHorizontal: "15%",
-    height: "15%",
+    height: "19%",
   },
   iconButton: {
     borderRadius: 50,

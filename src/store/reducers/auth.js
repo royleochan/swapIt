@@ -1,4 +1,11 @@
-import { AUTHENTICATE, LOGOUT, REFRESHUSER, UPDATEUSER, UPDATEUSERFOLLOWING, UPDATEUSERLIKES } from "store/actions/auth";
+import {
+  AUTHENTICATE,
+  LOGOUT,
+  REFRESHUSER,
+  UPDATEUSER,
+  UPDATEUSERFOLLOWING,
+  UPDATEUSERLIKES,
+} from "store/actions/auth";
 
 const initialState = {
   isAuth: false,

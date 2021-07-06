@@ -1,20 +1,39 @@
 const parseTimeAgo = (createdAt) => {
-  const currentDateTime = new Date();
-  const createdDateTime = new Date(createdAt);
-  const msPerDay = 24 * 60 * 60 * 1000; // Number of milliseconds per day
-  let daysLeft =
-    (currentDateTime.getTime() - createdDateTime.getTime()) / msPerDay;
-  daysLeft = Math.round(daysLeft);
+  let currentDateTime = new Date();
+  let createdDateTime = new Date(createdAt);
+  let d = Math.abs(currentDateTime - createdDateTime) / 1000;
+  let r = {};
+  let s = {
+    year: 31536000,
+    month: 2592000,
+    week: 604800, // uncomment row to ignore
+    day: 86400, // feel free to add your own row
+    hour: 3600,
+    minute: 60,
+    second: 1,
+  };
 
-  if (daysLeft <= 30) {
-    return `${daysLeft} ${daysLeft === 1 ? "day" : "days"} ago`;
-  } else if (daysLeft <= 365) {
-    const numMonths = Math.floor(daysLeft / 30);
-    return `${numMonths} ${numMonths === 1 ? "month" : "months"} ago`;
+  Object.keys(s).forEach(function (key) {
+    r[key] = Math.floor(d / s[key]);
+    d -= r[key] * s[key];
+  });
+
+  // for example: {year:0,month:0,week:1,day:2,hour:34,minute:56,second:7}
+  const { year, month, week, day, hour, minute, second } = r;
+  if (year >= 1) {
+    return `${year} ${year === 1 ? "year" : "years"} ago`;
+  } else if (month >= 1) {
+    return `${month} ${month === 1 ? "month" : "months"} ago`;
+  } else if (week >= 1) {
+    return `${week} ${week === 1 ? "week" : "weeks"} ago`;
+  } else if (day >= 1) {
+    return `${day} ${day === 1 ? "day" : "days"} ago`;
+  } else if (hour >= 1) {
+    return `${hour} ${hour === 1 ? "hour" : "hours"} ago`;
+  } else if (minute >= 1) {
+    return `${minute} ${minute === 1 ? "minute" : "minutes"} ago`;
   } else {
-    const numYears = Math.floor(daysLeft / 365);
-
-    return `${numYears} ${numYears === 1 ? "year" : "years"} ago`;
+    return `${second} ${second === 1 ? "second" : "seconds"} ago`;
   }
 };
 

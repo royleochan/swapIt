@@ -1,8 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
+import { View, StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
 
+import DefaultText from "components/DefaultText";
 import Colors from "constants/Colors";
 import AlertsScreen from "screens/AlertsScreen";
 import HomeNavigator from "navigation/HomeNavigator";
@@ -12,7 +14,7 @@ import ExploreScreen from "screens/ExploreScreen";
 
 // Icons for the bottom tab navigator
 const DefaultIcon = (props) => {
-  const { name, color, focused } = props;
+  const { name, focused } = props;
   let iconName;
   switch (name) {
     case "Home":
@@ -30,7 +32,9 @@ const DefaultIcon = (props) => {
           )}
           {focused && (
             <>
-              <Text style={focused ? styles.activeLabel : null}>Explore</Text>
+              <DefaultText style={focused ? styles.activeLabel : null}>
+                Explore
+              </DefaultText>
               <Entypo name="dot-single" size={16} color={Colors.primary} />
             </>
           )}
@@ -53,7 +57,9 @@ const DefaultIcon = (props) => {
       )}
       {focused && (
         <>
-          <Text style={focused ? styles.activeLabel : null}>{name}</Text>
+          <DefaultText style={focused ? styles.activeLabel : null}>
+            {name}
+          </DefaultText>
           <Entypo name="dot-single" size={16} color={Colors.primary} />
         </>
       )}
@@ -64,6 +70,10 @@ const DefaultIcon = (props) => {
 const BottomTab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
+  const unreadNotifications = useSelector(
+    (state) => state.notifications.notifications
+  ).filter((notification) => !notification.isRead);
+
   return (
     <BottomTab.Navigator
       tabBarOptions={{
@@ -80,7 +90,14 @@ const BottomTabNavigator = () => {
       <BottomTab.Screen name="Home" component={HomeNavigator} />
       <BottomTab.Screen name="Explore" component={ExploreScreen} />
       <BottomTab.Screen name="Upload" component={UploadNavigator} />
-      <BottomTab.Screen name="Alerts" component={AlertsScreen} />
+      <BottomTab.Screen
+        name="Alerts"
+        component={AlertsScreen}
+        options={{
+          tabBarBadge:
+            unreadNotifications.length > 0 ? unreadNotifications.length : null,
+        }}
+      />
       <BottomTab.Screen name="Profile" component={UserProfileNavigator} />
     </BottomTab.Navigator>
   );
@@ -90,14 +107,13 @@ export default BottomTabNavigator;
 
 const styles = StyleSheet.create({
   activeIconContainer: {
-    paddingTop: 12,
+    paddingTop: 14,
     justifyContent: "center",
     alignItems: "center",
   },
   activeLabel: {
-    color: Colors.primary,
     fontFamily: "latoBold",
-    padding: 0,
-    width: '100%'
+    width: "100%",
+    fontSize: 12,
   },
 });

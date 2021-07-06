@@ -14,6 +14,7 @@ import authReducer from "store/reducers/auth";
 import sortReducer from "store/reducers/sort";
 import filterReducer from "store/reducers/filter";
 import productsReducer from "store/reducers/products";
+import notificationsReducer from "store/reducers/notifications";
 
 // Settings for foreground notifications
 Notifications.setNotificationHandler({
@@ -36,6 +37,7 @@ const rootReducer = combineReducers({
   sort: sortReducer,
   filter: filterReducer,
   products: productsReducer,
+  notifications: notificationsReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

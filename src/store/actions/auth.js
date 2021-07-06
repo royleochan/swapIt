@@ -26,7 +26,7 @@ export const authenticate = (username, password) => {
           } else if (errorId === "INVALID_PASSWORD") {
             message = "This password is not valid!";
           }
-          throw (message);
+          throw message;
         });
 
       const resData = res.data;

@@ -24,7 +24,7 @@ export default SwipeProduct;
 
 const styles = StyleSheet.create({
   card: {
-    height: "80%",
+    height: "65%",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
