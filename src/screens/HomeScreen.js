@@ -14,7 +14,6 @@ import { AntDesign } from "@expo/vector-icons";
 
 import * as productsActions from "store/actions/products";
 import * as authActions from "store/actions/auth";
-import * as notificationActions from "store/actions/notifications";
 import followingIcon from "assets/categories/following.png";
 import request from "utils/request";
 import registerForPushNotificationsAsync from "utils/notification";
@@ -110,7 +109,6 @@ const HomeScreen = (props) => {
     getPushToken();
     loadProducts();
     loadRecommendedUsers();
-    dispatch(notificationActions.fetchNotifications(user.id));
   }, []);
 
   // List Header Component //
