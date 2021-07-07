@@ -16,7 +16,7 @@ import filterReducer from "store/reducers/filter";
 import productsReducer from "store/reducers/products";
 import notificationsReducer from "store/reducers/notifications";
 
-// Settings for foreground notifications
+// Set settings for foreground notifications //
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -25,6 +25,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
+// Load fonts required //
 const fetchFonts = () => {
   return Font.loadAsync({
     lato: require("assets/fonts/Lato-Regular.ttf"),
@@ -32,6 +33,7 @@ const fetchFonts = () => {
   });
 };
 
+// Setup redux store //
 const rootReducer = combineReducers({
   auth: authReducer,
   sort: sortReducer,
@@ -43,8 +45,10 @@ const rootReducer = combineReducers({
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
 export default function App() {
+  // Init //
   const [dataLoaded, setDataLoaded] = useState(false);
 
+  // Main component //
   if (!dataLoaded) {
     return (
       <AppLoading
