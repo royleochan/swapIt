@@ -12,7 +12,7 @@ import UploadNavigator from "navigation/UploadNavigator";
 import UserProfileNavigator from "navigation/UserProfileNavigator";
 import ExploreScreen from "screens/ExploreScreen";
 
-// Icons for the bottom tab navigator
+// Icons for the bottom tab navigator //
 const DefaultIcon = (props) => {
   const { name, focused } = props;
   let iconName;
@@ -70,10 +70,12 @@ const DefaultIcon = (props) => {
 const BottomTab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
+  // Init //
   const unreadNotifications = useSelector(
     (state) => state.notifications.notifications
   ).filter((notification) => !notification.isRead);
 
+  // Main Component //
   return (
     <BottomTab.Navigator
       tabBarOptions={{

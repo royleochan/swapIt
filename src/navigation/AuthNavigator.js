@@ -10,8 +10,10 @@ import OnboardingScreen from "screens/onboarding/OnboardingScreen";
 const Stack = createStackNavigator();
 
 const AuthNavigator = () => {
+  // Init //
   const [isFirstLaunch, setIsFirstLaunch] = useState(null);
 
+  // Handles setting already launched state for conditionally rendering onboarding screen //
   useEffect(() => {
     AsyncStorage.getItem("alreadyLaunched").then((value) => {
       if (value === null) {
@@ -27,6 +29,7 @@ const AuthNavigator = () => {
     return null;
   }
 
+  // Main Component //
   return (
     <Stack.Navigator headerMode="none">
       {isFirstLaunch && (
