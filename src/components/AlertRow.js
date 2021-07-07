@@ -23,17 +23,9 @@ const AlertRow = (props) => {
   } = props.notification;
 
   const dispatch = useDispatch();
-  const loggedInUserId = useSelector((state) => state.auth.user.id);
-  const jwtToken = useSelector((state) => state.auth.jwtToken);
 
   const dismissNotification = (notificationId) => {
-    dispatch(
-      notificationActions.dismissNotification(
-        notificationId,
-        loggedInUserId,
-        jwtToken
-      )
-    );
+    dispatch(notificationActions.dismissNotification(notificationId));
   };
 
   return (

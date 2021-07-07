@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
 
+import * as notificationActions from "store/actions/notifications";
 import * as productsActions from "store/actions/products";
 import * as authActions from "store/actions/auth";
 import followingIcon from "assets/categories/following.png";
@@ -102,6 +103,7 @@ const HomeScreen = (props) => {
     getPushToken();
     loadProducts();
     loadRecommendedUsers();
+    dispatch(notificationActions.fetchNotifications());
   }, []);
 
   // Other functions //

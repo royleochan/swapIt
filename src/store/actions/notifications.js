@@ -3,8 +3,9 @@ export const MARK_ALL_NOTIFICATIONS = "MARK_ALL_NOTIFICATIONS";
 export const DISMISS_NOTIFICATION = "DISMISS_NOTIFICATION";
 import request from "utils/request";
 
-export const fetchNotifications = (loggedInUserId) => {
-  return async (dispatch) => {
+export const fetchNotifications = () => {
+  return async (dispatch, getState) => {
+    const loggedInUserId = getState().auth.user.id;
     try {
       const response = await request.get(
         `/api/notifications/${loggedInUserId}`
@@ -19,18 +20,18 @@ export const fetchNotifications = (loggedInUserId) => {
   };
 };
 
-export const markAllNotificationsAsRead = (
-  notificationIds,
-  userId,
-  jwtToken
-) => {
-  return async (dispatch) => {
+export const markAllNotificationsAsRead = (notificationIds) => {
+  return async (dispatch, getState) => {
+    const { auth } = getState();
+    const userId = auth.user.id;
+    const jwtToken = auth.jwtToken;
+
     try {
       dispatch({
         type: MARK_ALL_NOTIFICATIONS,
         notificationIds,
       });
-      
+
       const response = await request.patch(
         "/api/notifications",
         {
@@ -45,8 +46,12 @@ export const markAllNotificationsAsRead = (
   };
 };
 
-export const dismissNotification = (notificationId, userId, jwtToken) => {
-  return async (dispatch) => {
+export const dismissNotification = (notificationId) => {
+  return async (dispatch, getState) => {
+    const { auth } = getState();
+    const userId = auth.user.id;
+    const jwtToken = auth.jwtToken;
+
     try {
       dispatch({
         type: DISMISS_NOTIFICATION,

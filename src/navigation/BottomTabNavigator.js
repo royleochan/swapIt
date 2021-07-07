@@ -1,9 +1,10 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { View, StyleSheet } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { View, StyleSheet, AppState } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
 
+import * as notificationActions from "store/actions/notifications";
 import DefaultText from "components/DefaultText";
 import Colors from "constants/Colors";
 import AlertsScreen from "screens/AlertsScreen";
@@ -74,6 +75,31 @@ const BottomTabNavigator = () => {
   const unreadNotifications = useSelector(
     (state) => state.notifications.notifications
   ).filter((notification) => !notification.isRead);
+
+  const appState = useRef(AppState.currentState);
+
+  const dispatch = useDispatch();
+
+  // Handles fetching notifications when the app comes into the foreground (app has 3 states: foreground, background and closed) //
+  useEffect(() => {
+    AppState.addEventListener("change", _handleAppStateChange);
+
+    return () => {
+      AppState.removeEventListener("change", _handleAppStateChange);
+    };
+  }, []);
+
+  const _handleAppStateChange = (nextAppState) => {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
+      console.log("App has come to the foreground!");
+      dispatch(notificationActions.fetchNotifications());
+    }
+
+    appState.current = nextAppState;
+  };
 
   // Main Component //
   return (

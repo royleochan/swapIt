@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AppState } from "react-native";
 
 import SignupScreen from "screens/auth/SignupScreen";
 import SignupScreenTwo from "screens/auth/SignupScreenTwo";

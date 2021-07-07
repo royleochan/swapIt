@@ -12,8 +12,6 @@ const AlertsScreen = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const dispatch = useDispatch();
-  const loggedInUserId = useSelector((state) => state.auth.user.id);
-  const jwtToken = useSelector((state) => state.auth.jwtToken);
   const notifications = useSelector(
     (state) => state.notifications.notifications
   );
@@ -23,7 +21,7 @@ const AlertsScreen = () => {
 
   const loadNotifications = async () => {
     setIsRefreshing(true);
-    await dispatch(notificationActions.fetchNotifications(loggedInUserId));
+    await dispatch(notificationActions.fetchNotifications());
     setIsRefreshing(false);
   };
 
@@ -36,9 +34,7 @@ const AlertsScreen = () => {
       return () =>
         dispatch(
           notificationActions.markAllNotificationsAsRead(
-            unreadNotifications.map((notification) => notification._id),
-            loggedInUserId,
-            jwtToken
+            unreadNotifications.map((notification) => notification._id)
           )
         );
     }, [])
