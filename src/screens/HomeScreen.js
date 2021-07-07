@@ -26,6 +26,7 @@ import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
 
 const HomeScreen = (props) => {
+  // Init //
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isFocusSearch, setIsFocusSearch] = useState(false);
   const [query, setQuery] = useState("");
@@ -36,16 +37,7 @@ const HomeScreen = (props) => {
   const jwtToken = useSelector((state) => state.auth.jwtToken);
   const trendingProducts = useSelector((state) => state.products);
 
-  const handleSearch = (text) => {
-    setQuery(text);
-  };
-
-  const handleSubmit = () => {
-    const searchQuery = query;
-    setQuery("");
-    props.navigation.push("Results", searchQuery);
-  };
-
+  // Navigation functions //
   const navigateToProductDetails = (productData) => {
     props.navigation.push("Product", {
       id: productData.id,
@@ -68,7 +60,7 @@ const HomeScreen = (props) => {
     props.navigation.push("Search");
   };
 
-  // Update redux user after getting push token
+  // Update redux user after getting push token //
   const getPushToken = async () => {
     const updatedUser = await registerForPushNotificationsAsync(
       user.id,
@@ -77,7 +69,7 @@ const HomeScreen = (props) => {
     dispatch(authActions.refreshUser(updatedUser));
   };
 
-  // Need to change to trending products
+  // Need to change to trending products //
   const loadProducts = useCallback(async () => {
     setIsRefreshing(true);
     try {
@@ -94,7 +86,7 @@ const HomeScreen = (props) => {
     setIsRefreshing(false);
   }, [setIsRefreshing]);
 
-  // Need to change to recommended users
+  // Need to change to recommended users //
   const loadRecommendedUsers = useCallback(async () => {
     try {
       const response = await request.get(`/api/users/${user.id}`);
@@ -105,11 +97,23 @@ const HomeScreen = (props) => {
     }
   }, [setRecommendedUsers]);
 
+  // Run side effects //
   useEffect(() => {
     getPushToken();
     loadProducts();
     loadRecommendedUsers();
   }, []);
+
+  // Other functions //
+  const handleSearch = (text) => {
+    setQuery(text);
+  };
+
+  const handleSubmit = () => {
+    const searchQuery = query;
+    setQuery("");
+    props.navigation.push("Results", searchQuery);
+  };
 
   // List Header Component //
   const ListHeader = () => {
@@ -203,6 +207,7 @@ const HomeScreen = (props) => {
     );
   };
 
+  // Main Component //
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>

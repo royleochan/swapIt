@@ -13,7 +13,7 @@ const AppNavigator = () => {
   // Init //
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.auth.isAuth);
-  const loggedInUserId = useSelector((state) => state.auth.user.id);
+  const loggedInUser = useSelector((state) => state.auth.user);
   const appState = useRef(AppState.currentState);
 
   // Handles auto-login //
@@ -43,7 +43,7 @@ const AppNavigator = () => {
       isAuthenticated
     ) {
       console.log("App has come to the foreground!");
-      dispatch(notificationActions.fetchNotifications(loggedInUserId));
+      dispatch(notificationActions.fetchNotifications(loggedInUser.id));
     }
 
     appState.current = nextAppState;
