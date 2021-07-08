@@ -6,83 +6,91 @@ import { useNavigationState } from "@react-navigation/native";
 import * as authActions from "store/actions/auth";
 import request from "utils/request";
 import Colors from "constants/Colors";
+import Loader from "components/Loader";
 import UserHeader from "components/UserHeader";
 import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
 
 const ProfileScreen = (props) => {
+  // Init //
   const stackIndex = useNavigationState((state) => state.index);
+  const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [userProducts, setUserProducts] = useState([]);
+  const [userData, setUserData] = useState();
   const dispatch = useDispatch();
 
-  // user is either the logged in user (default) or other users that the logged in user is visiting
-  const loggedInUser = useSelector((state) => state.auth.user);
-  let selectedUser;
+  // user is either the logged in user (default) or other users that the logged in user is visiting obtained from route params
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
+  let selectedUserId;
   if (props.route.params) {
-    selectedUser = props.route.params.user;
+    selectedUserId = props.route.params.userId;
   } else {
-    selectedUser = loggedInUser;
+    selectedUserId = loggedInUserId;
   }
 
+  // Navigation Functions //
   const navigateToProductDetails = (productData) => {
     props.navigation.push("Product", {
       id: productData.id,
-      creator: productData.creator,
+      creator: productData.creator, //TODO use id instead
     });
   };
 
   const navigateToReviews = () => {
-    props.navigation.push("Reviews", { selectedUser });
+    props.navigation.push("Reviews", { selectedUserId });
   };
 
   const navigateToFollowing = () => {
     props.navigation.push("Follow", {
       screen: "Following",
-      params: { selectedUser: selectedUser },
+      params: {
+        selectedUserId,
+      },
     });
   };
 
   const navigateToFollowers = () => {
     props.navigation.push("Follow", {
       screen: "Followers",
-      params: { selectedUser: selectedUser },
+      params: {
+        selectedUserId,
+      },
     });
   };
 
   const navigateToSettings = () => {
-    props.navigation.push("Settings", {
-      screen: "Settings",
-      params: { selectedUser: selectedUser },
-    });
+    props.navigation.push("Settings");
   };
 
+  // Other Functions //
   const loadUserData = async () => {
     setIsRefreshing(true);
     try {
       const response = await request
-        .get(`/api/users/${selectedUser._id}`)
+        .get(`/api/users/${selectedUserId}`)
         .catch((error) => {
           throw new Error(error.response.data.message);
         });
-      setUserProducts(response.data.user.products);
-      if (loggedInUser.id === response.data.user.id) {
+      setUserData(response.data.user);
+      if (loggedInUserId === response.data.user.id) {
         dispatch(authActions.refreshUser(response.data.user));
       }
-      setIsRefreshing(false);
     } catch (err) {
       setUserProducts([]);
+    } finally {
+      setIsLoading(false);
       setIsRefreshing(false);
     }
   };
 
+  // Side Effects //
   useEffect(() => {
     loadUserData();
   }, []);
 
-  // header back button if is not logged in user, else render header settings button
+  // if isLoggedInUser, render settings button in the header
   useLayoutEffect(() => {
-    if (stackIndex === 0 && loggedInUser.id === selectedUser.id) {
+    if (stackIndex === 0 && loggedInUserId === selectedUserId) {
       props.navigation.setOptions({
         headerLeft: () => <View></View>,
         headerRight: () => (
@@ -98,12 +106,16 @@ const ProfileScreen = (props) => {
     }
   }, [props.navigation]);
 
+  if (isLoading) {
+    return <Loader isLoading={isLoading} />;
+  }
+
   return (
     <View style={styles.screenContainer}>
       <FlatList
         ListHeaderComponent={
           <UserHeader
-            selectedUser={selectedUser}
+            selectedUser={userData}
             navigateToReviews={navigateToReviews}
             navigateToFollowers={navigateToFollowers}
             navigateToFollowing={navigateToFollowing}
@@ -112,13 +124,13 @@ const ProfileScreen = (props) => {
         onRefresh={loadUserData}
         refreshing={isRefreshing}
         columnWrapperStyle={styles.list}
-        data={userProducts}
+        data={userData.products}
         horizontal={false}
         numColumns={2}
         keyExtractor={(item) => item._id}
         renderItem={(itemData) => (
           <ProductBox
-            productCreator={selectedUser}
+            productCreator={userData}
             item={itemData.item}
             navigate={() => navigateToProductDetails(itemData.item)}
           />

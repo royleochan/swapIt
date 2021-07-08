@@ -4,16 +4,16 @@ import { Rating } from "react-native-elements";
 
 import request from "utils/request";
 import Colors from "constants/Colors";
+import Loader from "components/Loader";
 import DefaultText from "components/DefaultText";
 import ReviewRow from "components/ReviewRow";
 
-const ReviewHeader = ({ selectedUser }) => {
+// Review Header Component //
+const ReviewHeader = ({ reviewRating, reviewsLength }) => {
   return (
     <>
       <View style={styles.header}>
-        <DefaultText style={styles.numberRating}>
-          {selectedUser.reviewRating}
-        </DefaultText>
+        <DefaultText style={styles.numberRating}>{reviewRating}</DefaultText>
         <Rating
           type="custom"
           readonly
@@ -21,46 +21,62 @@ const ReviewHeader = ({ selectedUser }) => {
           ratingBackgroundColor={Colors.background}
           ratingColor={Colors.star}
           fractions={1}
-          startingValue={selectedUser.reviewRating}
+          startingValue={reviewRating}
         />
         <DefaultText style={styles.numReviews}>
-          Based on {selectedUser.reviews.length}
-          {selectedUser.reviews.length === 1 ? " review" : " reviews"}
+          Based on {reviewsLength}
+          {reviewsLength === 1 ? " review" : " reviews"}
         </DefaultText>
       </View>
     </>
   );
 };
 
+// Main Component //
 const ReviewsScreen = (props) => {
-  const { selectedUser } = props.route.params;
-  const [reviews, setReviews] = useState([]);
+  // Init //
+  const { selectedUserId } = props.route.params;
+  const [reviewsInfo, setReviewsInfo] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // Functions //
   const fetchReviews = async () => {
     setIsRefreshing(true);
     try {
-      const response = await request.get(`/api/reviews/${selectedUser.id}`);
-      setReviews(response.data.reviews);
+      const response = await request.get(`/api/reviews/${selectedUserId}`);
+      setReviewsInfo(response.data);
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsRefreshing(false);
+      setIsLoading(false);
     }
-    setIsRefreshing(false);
   };
 
+  // Side Effects //
   useEffect(() => {
     fetchReviews();
   }, []);
 
+  if (isLoading) {
+    return <Loader isLoading={isLoading} />;
+  }
+
   return (
     <View style={styles.screenContainer}>
       <FlatList
-        ListHeaderComponent={<ReviewHeader selectedUser={selectedUser} />}
+        ListHeaderComponent={
+          <ReviewHeader
+            reviewRating={reviewsInfo.reviewRating}
+            reviewsLength={reviewsInfo.reviews.length}
+          />
+        }
         onRefresh={fetchReviews}
         refreshing={isRefreshing}
-        data={reviews}
+        data={reviewsInfo.reviews}
         horizontal={false}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         renderItem={(itemData) => <ReviewRow review={itemData.item} />}
       />
     </View>

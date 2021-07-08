@@ -8,7 +8,6 @@ import DefaultText from "components/DefaultText";
 import SettingRow from "components/SettingRow";
 
 const SettingsScreen = (props) => {
-  const user = props.route.params.selectedUser;
   const dispatch = useDispatch();
 
   const navigateToEditProfile = () => {

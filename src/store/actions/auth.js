@@ -126,23 +126,25 @@ export const updateUser = (updatedUserCredentials, loggedInUserId, token) => {
 export const updateUserFollowing = (
   loggedInUserId,
   selectedUserId,
-  token,
   isFollow
 ) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const { auth } = getState();
+    const jwtToken = auth.jwtToken;
+
     try {
       let response;
       if (isFollow) {
         response = await request.patch(
           `/api/users/follow/${selectedUserId}`,
           { loggedInUserId: loggedInUserId },
-          token
+          jwtToken
         );
       } else {
         response = await request.patch(
           `/api/users/unfollow/${selectedUserId}`,
           { loggedInUserId: loggedInUserId },
-          token
+          jwtToken
         );
       }
 

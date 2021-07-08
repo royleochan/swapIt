@@ -6,52 +6,63 @@ import { Avatar } from "react-native-elements";
 import { ParamsContext } from "navigation/context/ParamsContext";
 import Colors from "constants/Colors";
 import request from "utils/request";
+import Loader from "components/Loader";
 import DefaultText from "components/DefaultText";
 import FollowButton from "components/FollowButton";
 
 const FollowingScreen = (props) => {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [users, setUsers] = useState([]);
+  // Init //
   const { params } = useContext(ParamsContext);
+  const { selectedUserId } = params;
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [following, setFollowing] = useState([]);
 
-  const { selectedUser } = params;
-  const loggedInUser = useSelector((state) => state.auth.user);
-  const token = useSelector((state) => state.auth.jwtToken);
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
 
-  const navigateToProfile = (user) => {
-    props.navigation.push("Profile", { user: user });
+  // Navigation Function //
+  const navigateToProfile = (userId) => {
+    props.navigation.push("Profile", { userId });
   };
 
-  const loadUsers = async () => {
+  // Other Functions //
+  const loadFollowing = async () => {
     try {
+      setIsRefreshing(true);
       const response = await request.get(
-        `/api/users/following/${selectedUser._id}`
+        `/api/users/following/${selectedUserId}`
       );
-
-      setUsers(response.data.users.following);
-      setIsRefreshing(false);
+      setFollowing(response.data.result.following);
     } catch (err) {
-      setUsers([]);
+      console.log(err.response.data.message);
+    } finally {
+      setIsLoading(false);
       setIsRefreshing(false);
     }
   };
 
+  // Side Effects //
+  useEffect(() => {
+    loadFollowing();
+  }, []);
+
   useLayoutEffect(() => {
     props.navigation.setOptions({
-      title: `Following (${selectedUser.following.length})`,
+      title: `Following (${following.length})`,
     });
-  }, [props.navigation]);
+  }, [props.navigation, following]);
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
+  // Render //
+  if (isLoading) {
+    return <Loader isLoading={isLoading} />;
+  }
 
   return (
     <View style={styles.screenContainer}>
       <FlatList
-        onRefresh={loadUsers}
+        onRefresh={loadFollowing}
         refreshing={isRefreshing}
-        data={users}
+        data={following}
         horizontal={false}
         numColumns={1}
         keyExtractor={(item) => item.id}
@@ -61,7 +72,7 @@ const FollowingScreen = (props) => {
             <View style={styles.rowContainer}>
               <TouchableOpacity
                 style={styles.avatarUsernameContainer}
-                onPress={() => navigateToProfile(user)}
+                onPress={() => navigateToProfile(user.id)}
               >
                 <Avatar
                   rounded
@@ -77,12 +88,8 @@ const FollowingScreen = (props) => {
                   <DefaultText style={styles.name}>{user.name}</DefaultText>
                 </View>
               </TouchableOpacity>
-              {loggedInUser.id !== user.id && (
-                <FollowButton
-                  selectedUser={user}
-                  loggedInUser={loggedInUser}
-                  token={token}
-                />
+              {loggedInUserId !== user.id && (
+                <FollowButton selectedUserId={user.id} />
               )}
             </View>
           );

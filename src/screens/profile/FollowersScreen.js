@@ -6,42 +6,55 @@ import { Avatar } from "react-native-elements";
 import { ParamsContext } from "navigation/context/ParamsContext";
 import Colors from "constants/Colors";
 import request from "utils/request";
+import Loader from "components/Loader";
 import DefaultText from "components/DefaultText";
 import FollowButton from "components/FollowButton";
 
 const FollowersScreen = (props) => {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [users, setUsers] = useState([]);
+  // Init //
   const { params } = useContext(ParamsContext);
+  const { selectedUserId } = params;
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [followers, setFollowers] = useState([]);
+  const [username, setUsername] = useState("");
 
-  const { selectedUser } = params;
-  const loggedInUser = useSelector((state) => state.auth.user);
-  const token = useSelector((state) => state.auth.jwtToken);
+  const loggedInUserId = useSelector((state) => state.auth.user);
 
-  const navigateToProfile = (user) => {
-    props.navigation.push("Profile", { user: user });
+  // Navigation Function //
+  const navigateToProfile = (userId) => {
+    props.navigation.push("Profile", { userId });
   };
 
-  const loadUsers = async () => {
+  // Other Functions //
+  const loadFollowers = async () => {
     try {
+      setIsRefreshing(true);
       const response = await request.get(
-        `/api/users/followers/${selectedUser._id}`
+        `/api/users/followers/${selectedUserId}`
       );
 
-      setUsers(response.data.users.followers);
-      setIsRefreshing(false);
+      setFollowers(response.data.result.followers);
+      setUsername(response.data.result.username);
     } catch (err) {
-      setUsers([]);
+      console.log(err.response.data.message);
+    } finally {
       setIsRefreshing(false);
+      setIsLoading(false);
     }
   };
+
+  // Side Effects //
+  useEffect(() => {
+    loadFollowers();
+  }, []);
 
   // set the username header in followers screen, don't have to do it in following screen
   useLayoutEffect(() => {
     const userProfileStackNavigator = props.navigation.dangerouslyGetParent();
     if (userProfileStackNavigator) {
       userProfileStackNavigator.setOptions({
-        title: `@${selectedUser.username}`,
+        title: `@${username}`,
         headerTitleStyle: {
           color: Colors.primary,
           fontFamily: "latoBold",
@@ -49,21 +62,23 @@ const FollowersScreen = (props) => {
         },
       });
     }
-    props.navigation.setOptions({
-      title: `Followers (${selectedUser.followers.length})`,
-    });
-  }, [props.navigation]);
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
+    props.navigation.setOptions({
+      title: `Followers (${followers.length})`,
+    });
+  }, [props.navigation, username, followers]);
+
+  // Render //
+  if (isLoading) {
+    return <Loader isLoading={isLoading} />;
+  }
 
   return (
     <View style={styles.screenContainer}>
       <FlatList
-        onRefresh={loadUsers}
+        onRefresh={loadFollowers}
         refreshing={isRefreshing}
-        data={users}
+        data={followers}
         horizontal={false}
         numColumns={1}
         keyExtractor={(item) => item.id}
@@ -73,7 +88,7 @@ const FollowersScreen = (props) => {
             <View style={styles.rowContainer}>
               <TouchableOpacity
                 style={styles.avatarUsernameContainer}
-                onPress={() => navigateToProfile(user)}
+                onPress={() => navigateToProfile(user.id)}
               >
                 <Avatar
                   rounded
@@ -89,12 +104,8 @@ const FollowersScreen = (props) => {
                   <DefaultText style={styles.name}>{user.name}</DefaultText>
                 </View>
               </TouchableOpacity>
-              {loggedInUser.id !== user.id && (
-                <FollowButton
-                  selectedUser={user}
-                  loggedInUser={loggedInUser}
-                  token={token}
-                />
+              {loggedInUserId !== user.id && (
+                <FollowButton selectedUserId={user.id} />
               )}
             </View>
           );

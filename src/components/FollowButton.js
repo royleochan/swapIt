@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import useDebouncedCallback from "use-debounce/lib/useDebouncedCallback";
 
 import * as authActions from "store/actions/auth";
@@ -9,30 +9,33 @@ import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 
 const FollowButton = (props) => {
-  const { loggedInUser, selectedUser, token, style } = props;
+  // Init //
+  const { selectedUserId, style } = props;
   const dispatch = useDispatch();
+  const loggedInUser = useSelector((state) => state.auth.user);
 
   const [actualIsFollowing, setActualIsFollowing] = useState(
-    loggedInUser.following.includes(selectedUser.id)
+    loggedInUser.following.includes(selectedUserId)
   );
   const [debouncedIsFollowing, setDebouncedIsFollowing] = useState(
-    loggedInUser.following.includes(selectedUser.id)
+    loggedInUser.following.includes(selectedUserId)
   );
   const debounced = useDebouncedCallback((val) => {
     setDebouncedIsFollowing(val);
   }, 1000);
 
+  // Side Effects //
   useDidMountEffect(() => {
     dispatch(
       authActions.updateUserFollowing(
         loggedInUser.id,
-        selectedUser.id,
-        token,
+        selectedUserId,
         debouncedIsFollowing
       )
     );
   }, [debouncedIsFollowing]);
 
+  // Render //
   return (
     <View style={{ zIndex: 1 }}>
       <TouchableOpacity
