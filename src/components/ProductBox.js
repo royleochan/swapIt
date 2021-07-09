@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Image, View, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-import parseTimeAgo from "utils/parseTimeAgo";
+import { parseTimeAgo } from "utils/date";
 import Colors from "constants/Colors";
 import LikeButton from "components/LikeButton";
 import DefaultText from "components/DefaultText";

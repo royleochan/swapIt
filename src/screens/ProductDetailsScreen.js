@@ -14,7 +14,7 @@ import {
   navigateToCategory,
   navigateToProfileNavigator,
 } from "navigation/navigate/common/index";
-import parseTimeAgo from "utils/parseTimeAgo";
+import { parseTimeAgo } from "utils/date";
 import request from "utils/request";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";

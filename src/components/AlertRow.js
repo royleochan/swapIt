@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-elements";
 
 import * as notificationActions from "store/actions/notifications";
-import parseTimeAgo from "utils/parseTimeAgo";
+import { parseTimeAgo } from "utils/date";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import IconButton from "components/IconButton";

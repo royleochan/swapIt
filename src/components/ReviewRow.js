@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Avatar } from "react-native-elements";
 import { Rating } from "react-native-elements";
 
-import parseDateToYYYYMMDD from "utils/date";
+import { parseDateToYYYYMMDD } from "utils/date";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 
