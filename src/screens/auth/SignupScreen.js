@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 
+import { navigateToLogin } from "navigation/navigate/auth/index";
 import Colors from "constants/Colors";
 import GlassTextInput from "components/GlassTextInput";
 import DefaultText from "components/DefaultText";
@@ -27,10 +28,6 @@ const SignupScreen = (props) => {
       delete data.confirmPassword;
       props.navigation.push("SignupTwo", data);
     }
-  };
-
-  const loginHandler = () => {
-    props.navigation.push("Login");
   };
 
   return (
@@ -184,7 +181,7 @@ const SignupScreen = (props) => {
         <DefaultText style={styles.signInText}>
           Already have an account?
         </DefaultText>
-        <TouchableOpacity onPress={loginHandler}>
+        <TouchableOpacity onPress={() => navigateToLogin(props)}>
           <DefaultText style={styles.signInTextAccent}> Sign in!</DefaultText>
         </TouchableOpacity>
       </View>

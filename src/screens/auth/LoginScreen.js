@@ -10,6 +10,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
+import { navigateToSignUp } from "navigation/navigate/auth/index";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import GlassTextInput from "components/GlassTextInput";
@@ -31,10 +32,6 @@ const LoginScreen = (props) => {
         { text: "Okay", onPress: () => setIsLoading(false) },
       ]);
     }
-  };
-
-  const signupHandler = () => {
-    props.navigation.push("Signup");
   };
 
   useEffect(() => {
@@ -110,7 +107,7 @@ const LoginScreen = (props) => {
         <DefaultText style={styles.signupText}>
           Don't have an account?
         </DefaultText>
-        <TouchableOpacity onPress={signupHandler}>
+        <TouchableOpacity onPress={() => navigateToSignUp(props)}>
           <DefaultText style={styles.signupTextAccent}> Sign Up!</DefaultText>
         </TouchableOpacity>
       </View>
