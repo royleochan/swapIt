@@ -104,7 +104,6 @@ const HomeScreen = (props) => {
 
   // List Header Component //
   const ListHeader = (props) => {
-    console.log(props);
     return (
       <>
         <View style={styles.section}>

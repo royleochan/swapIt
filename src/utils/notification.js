@@ -4,6 +4,16 @@ import { Platform } from "react-native";
 
 import request from "utils/request";
 
+/**
+ * This function handles the following:
+ * 1. Requests permission from user for push notifications
+ * 2. Obtains expo push token which is unique for every device (only resets upon app deletion and reinstallation)
+ * 3. Updates push token for the user in the database
+ *
+ * @param uid string representing logged in user's id
+ * @param jwtToken string representing user's jwt token
+ * @returns user object with updated push token
+ */
 export default registerForPushNotificationsAsync = async (uid, jwtToken) => {
   let token;
 

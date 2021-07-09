@@ -5,6 +5,11 @@ import request from "utils/request";
 
 const DUMMY_PROFILE_PIC_URL = "https://i.imgur.com/tiRSkS8.jpg";
 
+/**
+ * Verifies camera permissions
+ *
+ * @returns boolean indicating if user granted camera permissions
+ */
 const verifyCameraPermissions = async () => {
   const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
 
@@ -19,6 +24,11 @@ const verifyCameraPermissions = async () => {
   return true;
 };
 
+/**
+ * Verifies photo library permissions
+ *
+ * @returns boolean indicating if user granted photo library permissions
+ */
 const verifyLibraryPermissions = async () => {
   const mediaStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -33,6 +43,11 @@ const verifyLibraryPermissions = async () => {
   return true;
 };
 
+/**
+ * Handles logic for taking image using camera
+ *
+ * @returns object representing image
+ */
 const takeImage = async () => {
   const hasPermission = await verifyCameraPermissions();
   if (!hasPermission) {
@@ -47,6 +62,11 @@ const takeImage = async () => {
   return image;
 };
 
+/**
+ * Handles logic for picking image from photo library
+ *
+ * @returns object representing image
+ */
 const chooseFromLibrary = async () => {
   const hasPermission = await verifyLibraryPermissions();
   if (!hasPermission) {
@@ -62,6 +82,12 @@ const chooseFromLibrary = async () => {
   return image;
 };
 
+/**
+ * Handles logic for uploading image to s3 bucket
+ *
+ * @param image object representing image to upload
+ * @returns string representing the imageUrl
+ */
 const uploadImageHandler = async (image) => {
   if (image === undefined) {
     return DUMMY_PROFILE_PIC_URL;

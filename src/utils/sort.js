@@ -1,3 +1,10 @@
+/**
+ * Sorts products according to sort state
+ *
+ * @param products array of products to be sorted
+ * @param sortState object of shape {0: <boolean>, 1: <boolean>, 2: <boolean>, 3: <boolean>, 4: <boolean>}
+ * @returns array of sorted products
+ */
 const sortProducts = (products, sortState) => {
   if (sortState[0]) {
     return products.sort(
