@@ -3,6 +3,7 @@ import { StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
 
+import { navigateToProfile } from "navigation/navigate/common/index";
 import { ParamsContext } from "navigation/context/ParamsContext";
 import Colors from "constants/Colors";
 import request from "utils/request";
@@ -20,11 +21,6 @@ const FollowersScreen = (props) => {
   const [username, setUsername] = useState("");
 
   const loggedInUserId = useSelector((state) => state.auth.user);
-
-  // Navigation Function //
-  const navigateToProfile = (userId) => {
-    props.navigation.push("Profile", { userId });
-  };
 
   // Other Functions //
   const loadFollowers = async () => {
@@ -88,7 +84,7 @@ const FollowersScreen = (props) => {
             <View style={styles.rowContainer}>
               <TouchableOpacity
                 style={styles.avatarUsernameContainer}
-                onPress={() => navigateToProfile(user.id)}
+                onPress={() => navigateToProfile(props, user.id)}
               >
                 <Avatar
                   rounded

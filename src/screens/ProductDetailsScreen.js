@@ -21,7 +21,7 @@ import MatchRow from "components/MatchRow";
 
 const ProductDetailsScreen = (props) => {
   const windowHeight = Dimensions.get("window").height;
-  const { id, creator } = props.route.params;
+  const { productId } = props.route.params;
   const [product, setProduct] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -45,7 +45,7 @@ const ProductDetailsScreen = (props) => {
       },
       async (buttonIndex) => {
         if (buttonIndex === 0) {
-          await request.delete(`/api/products/${id}`);
+          await request.delete(`/api/products/${productId}`);
           props.navigation.reset({
             index: 0,
             routes: [{ name: "Profile" }],
@@ -69,24 +69,23 @@ const ProductDetailsScreen = (props) => {
     props.navigation.push("CompletedReview", { matchId });
   };
 
-  const navigateToProfile = () => {
+  const navigateToProfile = (userId) => {
     props.navigation.push("ProfileScreen", {
       screen: "Profile",
-      params: { user: creator },
+      params: { userId },
     });
   };
 
   const loadProduct = async () => {
     setIsRefreshing(true);
     try {
-      const response = await request.get(`/api/products/${id}`);
+      const response = await request.get(`/api/products/${productId}`);
       const resData = response.data;
-
       setProduct(resData.product);
-      setIsLoading(false);
-      setIsRefreshing(false);
     } catch (err) {
       console.log(err.response.data.message);
+    } finally {
+      setIsLoading(false);
       setIsRefreshing(false);
     }
   };
@@ -150,7 +149,7 @@ const ProductDetailsScreen = (props) => {
           <View style={styles.textContainer}>
             <DefaultText>{parseTimeAgo(product.createdAt)} by </DefaultText>
             <TouchableOpacity
-              onPress={() => navigateToProfile(product.creator)}
+              onPress={() => navigateToProfile(product.creator._id)}
             >
               <DefaultText style={styles.highlight}>
                 @{product.creator.username}

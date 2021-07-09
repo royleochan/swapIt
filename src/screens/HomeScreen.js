@@ -12,9 +12,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
 
-import * as notificationActions from "store/actions/notifications";
-import * as productsActions from "store/actions/products";
-import * as authActions from "store/actions/auth";
+import { navigateToProductDetails } from "navigation/navigate/common/index";
+import { fetchNotifications } from "store/actions/notifications";
+import { updateProducts } from "store/actions/products";
+import { refreshUser } from "store/actions/auth";
 import followingIcon from "assets/categories/following.png";
 import request from "utils/request";
 import registerForPushNotificationsAsync from "utils/notification";
@@ -39,13 +40,6 @@ const HomeScreen = (props) => {
   const trendingProducts = useSelector((state) => state.products);
 
   // Navigation functions //
-  const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", {
-      id: productData.id,
-      creator: productData.creator,
-    });
-  };
-
   const navigateToCategory = (category) => {
     props.navigation.push("Category", category);
   };
@@ -67,7 +61,7 @@ const HomeScreen = (props) => {
       user.id,
       jwtToken
     );
-    dispatch(authActions.refreshUser(updatedUser));
+    dispatch(refreshUser(updatedUser));
   };
 
   // Need to change to trending products //
@@ -76,10 +70,10 @@ const HomeScreen = (props) => {
     try {
       const response = await request.get(`/api/products/all/${user.id}`);
       const resData = response.data.products;
-      dispatch(productsActions.updateProducts(resData));
+      dispatch(updateProducts(resData));
     } catch (err) {
       setIsRefreshing(false);
-      dispatch(productsActions.updateProducts([]));
+      dispatch(updateProducts([]));
       Alert.alert("Request failed", `${err.response.data.message}`, [
         { text: "Okay" },
       ]);
@@ -103,7 +97,7 @@ const HomeScreen = (props) => {
     getPushToken();
     loadProducts();
     loadRecommendedUsers();
-    dispatch(notificationActions.fetchNotifications());
+    dispatch(fetchNotifications());
   }, []);
 
   // Other functions //
@@ -256,7 +250,9 @@ const HomeScreen = (props) => {
                 item={itemData.item}
                 productCreator={itemData.item.creator}
                 loggedInUser={user}
-                navigate={() => navigateToProductDetails(itemData.item)}
+                navigate={() =>
+                  navigateToProductDetails(props, itemData.item._id)
+                }
               />
             );
           }}

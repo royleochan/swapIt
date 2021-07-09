@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList, Alert } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
-import * as productsActions from "store/actions/products";
+import { navigateToProductDetails } from "navigation/navigate/common/index";
+import { updateProducts } from "store/actions/products";
 import request from "utils/request";
 import filter from "utils/filter";
 import sort from "utils/sort";
@@ -21,13 +22,6 @@ const CategoryScreen = (props) => {
   const filterState = useSelector((state) => state.filter);
   const storeProducts = useSelector((state) => state.products);
 
-  const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", {
-      id: productData.id,
-      creator: productData.creator,
-    });
-  };
-
   const categoryHandler = useCallback(async () => {
     setIsRefreshing(true);
     try {
@@ -38,13 +32,15 @@ const CategoryScreen = (props) => {
         response = await request.get(`/api/products/category/${category}`);
       }
       const resData = response.data.products;
-      dispatch(productsActions.updateProducts(resData));
+      dispatch(updateProducts(resData));
       setProducts(resData);
     } catch (err) {
       setIsRefreshing(false);
-      dispatch(productsActions.updateProducts([]));
+      dispatch(updateProducts([]));
       setProducts([]);
-      Alert.alert("Request failed", `${err.response.data.message}`, [{ text: "Okay" }]);
+      Alert.alert("Request failed", `${err.response.data.message}`, [
+        { text: "Okay" },
+      ]);
     }
     setIsRefreshing(false);
   }, [setIsRefreshing, dispatch]);
@@ -81,7 +77,7 @@ const CategoryScreen = (props) => {
               item={itemData.item}
               productCreator={itemData.item.creator}
               navigate={() =>
-                navigateToProductDetails(itemData.item)
+                navigateToProductDetails(props, itemData.item._id)
               }
             />
           );

@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
-import * as productsActions from "store/actions/products";
+import { navigateToProductDetails } from "navigation/navigate/common/index";
+import { updateProducts } from "store/actions/products";
 import request from "utils/request";
 import filter from "utils/filter";
 import sort from "utils/sort";
@@ -22,13 +23,6 @@ const ResultsScreen = (props) => {
   const filterState = useSelector((state) => state.filter);
   const storeProducts = useSelector((state) => state.products);
 
-  const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", {
-      id: productData.id,
-      creator: productData.creator,
-    });
-  };
-
   const searchHandler = useCallback(
     async (searchQuery) => {
       setIsRefreshing(true);
@@ -37,10 +31,10 @@ const ResultsScreen = (props) => {
           `/api/products/search/${searchQuery}`
         );
         const resData = response.data.products;
-        dispatch(productsActions.updateProducts(resData));
+        dispatch(updateProducts(resData));
         setProducts(resData);
       } catch (err) {
-        dispatch(productsActions.updateProducts([]));
+        dispatch(updateProducts([]));
         setProducts([]);
       }
       setIsRefreshing(false);
@@ -94,7 +88,9 @@ const ResultsScreen = (props) => {
             <ProductBox
               item={itemData.item}
               productCreator={itemData.item.creator}
-              navigate={() => navigateToProductDetails(itemData.item)}
+              navigate={() =>
+                navigateToProductDetails(props, itemData.item._id)
+              }
             />
           );
         }}

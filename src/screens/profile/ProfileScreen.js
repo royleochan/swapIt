@@ -3,7 +3,14 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigationState } from "@react-navigation/native";
 
-import * as authActions from "store/actions/auth";
+import {
+  navigateToReviews,
+  navigateToFollowers,
+  navigateToFollowing,
+  navigateToSettings,
+} from "navigation/navigate/profile/index";
+import { navigateToProductDetails } from "navigation/navigate/common/index";
+import { refreshUser } from "store/actions/auth";
 import request from "utils/request";
 import Colors from "constants/Colors";
 import Loader from "components/Loader";
@@ -28,40 +35,6 @@ const ProfileScreen = (props) => {
     selectedUserId = loggedInUserId;
   }
 
-  // Navigation Functions //
-  const navigateToProductDetails = (productData) => {
-    props.navigation.push("Product", {
-      id: productData.id,
-      creator: productData.creator, //TODO use id instead
-    });
-  };
-
-  const navigateToReviews = () => {
-    props.navigation.push("Reviews", { selectedUserId });
-  };
-
-  const navigateToFollowing = () => {
-    props.navigation.push("Follow", {
-      screen: "Following",
-      params: {
-        selectedUserId,
-      },
-    });
-  };
-
-  const navigateToFollowers = () => {
-    props.navigation.push("Follow", {
-      screen: "Followers",
-      params: {
-        selectedUserId,
-      },
-    });
-  };
-
-  const navigateToSettings = () => {
-    props.navigation.push("Settings");
-  };
-
   // Other Functions //
   const loadUserData = async () => {
     setIsRefreshing(true);
@@ -73,7 +46,7 @@ const ProfileScreen = (props) => {
         });
       setUserData(response.data.user);
       if (loggedInUserId === response.data.user.id) {
-        dispatch(authActions.refreshUser(response.data.user));
+        dispatch(refreshUser(response.data.user));
       }
     } catch (err) {
       setUserProducts([]);
@@ -99,7 +72,7 @@ const ProfileScreen = (props) => {
             size={26}
             color={Colors.primary}
             name="setting"
-            onPress={() => navigateToSettings()}
+            onPress={() => navigateToSettings(props)}
           />
         ),
       });
@@ -116,9 +89,13 @@ const ProfileScreen = (props) => {
         ListHeaderComponent={
           <UserHeader
             selectedUser={userData}
-            navigateToReviews={navigateToReviews}
-            navigateToFollowers={navigateToFollowers}
-            navigateToFollowing={navigateToFollowing}
+            navigateToReviews={() => navigateToReviews(props, selectedUserId)}
+            navigateToFollowers={() =>
+              navigateToFollowers(props, selectedUserId)
+            }
+            navigateToFollowing={() =>
+              navigateToFollowing(props, selectedUserId)
+            }
           />
         }
         onRefresh={loadUserData}
@@ -132,7 +109,7 @@ const ProfileScreen = (props) => {
           <ProductBox
             productCreator={userData}
             item={itemData.item}
-            navigate={() => navigateToProductDetails(itemData.item)}
+            navigate={() => navigateToProductDetails(props, itemData.item._id)}
           />
         )}
       />

@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Rating } from "react-native-elements";
 import { useForm, Controller } from "react-hook-form";
 
+import { navigateToCompletedReviewScreen } from "navigation/navigate/profile/index";
 import Colors from "constants/Colors";
 import request from "utils/request";
 import DefaultText from "components/DefaultText";
@@ -14,10 +15,6 @@ const CreateReviewScreen = (props) => {
   const { pid, matchId, reviewed } = props.route.params;
   const [userRating, setUserRating] = useState();
   const { control, handleSubmit, errors } = useForm();
-
-  const navigateToCompletedReviewScreen = () => {
-    return props.navigation.push("CompletedReview", { matchId });
-  };
 
   const submitHandler = async (data) => {
     const { description } = data;
@@ -30,7 +27,7 @@ const CreateReviewScreen = (props) => {
         matchId,
         reviewed,
       });
-      navigateToCompletedReviewScreen();
+      navigateToCompletedReviewScreen(props, matchId);
     } catch (err) {
       console.log(err);
     }
