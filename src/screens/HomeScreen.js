@@ -12,7 +12,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
 
-import { navigateToProductDetails } from "navigation/navigate/common/index";
+import {
+  navigateToProductDetails,
+  navigateToProfileNavigator,
+  navigateToSearchUser,
+  navigateToCategory,
+  navigateToResults,
+  navigateToMessagesScreen,
+} from "navigation/navigate/common/index";
 import { fetchNotifications } from "store/actions/notifications";
 import { updateProducts } from "store/actions/products";
 import { refreshUser } from "store/actions/auth";
@@ -38,22 +45,6 @@ const HomeScreen = (props) => {
   const user = useSelector((state) => state.auth.user);
   const jwtToken = useSelector((state) => state.auth.jwtToken);
   const trendingProducts = useSelector((state) => state.products);
-
-  // Navigation functions //
-  const navigateToCategory = (category) => {
-    props.navigation.push("Category", category);
-  };
-
-  const navigateToProfile = (userData) => {
-    props.navigation.push("ProfileScreen", {
-      screen: "Profile",
-      params: { user: userData },
-    });
-  };
-
-  const navigateToSearchUser = () => {
-    props.navigation.push("Search");
-  };
 
   // Update redux user after getting push token //
   const getPushToken = async () => {
@@ -108,11 +99,12 @@ const HomeScreen = (props) => {
   const handleSubmit = () => {
     const searchQuery = query;
     setQuery("");
-    props.navigation.push("Results", searchQuery);
+    navigateToResults(props, searchQuery);
   };
 
   // List Header Component //
-  const ListHeader = () => {
+  const ListHeader = (props) => {
+    console.log(props);
     return (
       <>
         <View style={styles.section}>
@@ -125,7 +117,7 @@ const HomeScreen = (props) => {
             <TouchableOpacity
               style={styles.avatarContainer}
               key="Following"
-              onPress={() => navigateToCategory({ label: "Following" })}
+              onPress={() => navigateToCategory(props, { label: "Following" })}
             >
               <Image style={styles.categoryImage} source={followingIcon} />
               <DefaultText style={styles.categoryLabel}>Following</DefaultText>
@@ -138,7 +130,7 @@ const HomeScreen = (props) => {
                   <TouchableOpacity
                     style={styles.avatarContainer}
                     key={category.label}
-                    onPress={() => navigateToCategory(category)}
+                    onPress={() => navigateToCategory(props, category)}
                   >
                     <Image
                       style={styles.categoryImage}
@@ -156,7 +148,7 @@ const HomeScreen = (props) => {
                 <TouchableOpacity
                   style={styles.avatarContainer}
                   key={category.label}
-                  onPress={() => navigateToCategory(category)}
+                  onPress={() => navigateToCategory(props, category)}
                 >
                   <Image style={styles.categoryImage} source={category.icon} />
                   <DefaultText style={styles.categoryLabel}>
@@ -177,7 +169,7 @@ const HomeScreen = (props) => {
             {recommendedUsers.map((user) => {
               return (
                 <TouchableOpacity
-                  onPress={() => navigateToProfile(user)}
+                  onPress={() => navigateToProfileNavigator(props, user._id)}
                   style={styles.avatarContainer}
                   key={user.username}
                 >
@@ -221,11 +213,11 @@ const HomeScreen = (props) => {
           size={23}
           color={Colors.primary}
           name="message1"
-          onPress={() => props.navigation.push("Messages")}
+          onPress={() => navigateToMessagesScreen(props)}
         />
       </View>
       {isFocusSearch && (
-        <TouchableOpacity onPress={() => navigateToSearchUser()}>
+        <TouchableOpacity onPress={() => navigateToSearchUser(props)}>
           <View style={styles.searchUserContainer}>
             <DefaultText style={styles.searchUserContainer}>
               Search for users instead
@@ -236,7 +228,7 @@ const HomeScreen = (props) => {
       )}
       {!isFocusSearch && (
         <FlatList
-          ListHeaderComponent={<ListHeader />}
+          ListHeaderComponent={<ListHeader navigation={props.navigation} />}
           onRefresh={loadProducts}
           refreshing={isRefreshing}
           columnWrapperStyle={styles.list}

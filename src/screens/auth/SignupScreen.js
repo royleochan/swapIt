@@ -10,7 +10,10 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 
-import { navigateToLogin } from "navigation/navigate/auth/index";
+import {
+  navigateToLogin,
+  navigateToSignUpTwo,
+} from "navigation/navigate/auth/index";
 import Colors from "constants/Colors";
 import GlassTextInput from "components/GlassTextInput";
 import DefaultText from "components/DefaultText";
@@ -26,7 +29,7 @@ const SignupScreen = (props) => {
       ]);
     } else {
       delete data.confirmPassword;
-      props.navigation.push("SignupTwo", data);
+      navigateToSignUpTwo(props, data);
     }
   };
 

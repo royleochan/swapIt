@@ -7,10 +7,12 @@ import OnboardingThree from "assets/svg/OnboardingThree";
 import OnboardingFour from "assets/svg/OnboardingFour";
 import OnboardingFive from "assets/svg/OnboardingFive";
 
+import { navigateToSignUp } from "navigation/navigate/auth/index";
+
 const OnboardingScreen = (props) => {
   return (
     <Onboarding
-      onDone={() => props.navigation.navigate("Signup")}
+      onDone={() => navigateToSignUp(props)}
       showSkip={false}
       showNext={false}
       transitionAnimationDuration={300}

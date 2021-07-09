@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { Avatar } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
 
+import { navigateToProfileNavigator } from "navigation/navigate/common/index";
 import Colors from "constants/Colors";
 import request from "utils/request";
 import useDidMountEffect from "hooks/useDidMountEffect";
@@ -78,12 +79,7 @@ const SearchUserScreen = (props) => {
               key={user.username}
               activeOpacity={0.9}
               underlayColor={"#F6F4F4"}
-              onPress={() =>
-                props.navigation.push("ProfileScreen", {
-                  screen: "Profile",
-                  params: { user: user },
-                })
-              }
+              onPress={() => navigateToProfileNavigator(props, user._id)}
             >
               <View style={styles.userRow}>
                 <View style={styles.avatarTextContainer}>

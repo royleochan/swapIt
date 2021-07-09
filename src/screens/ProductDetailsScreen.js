@@ -10,6 +10,10 @@ import {
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useSelector } from "react-redux";
 
+import {
+  navigateToCategory,
+  navigateToProfileNavigator,
+} from "navigation/navigate/common/index";
 import parseTimeAgo from "utils/parseTimeAgo";
 import request from "utils/request";
 import Colors from "constants/Colors";
@@ -57,23 +61,12 @@ const ProductDetailsScreen = (props) => {
     );
   };
 
-  const navigateToCategory = (cat) => {
-    props.navigation.push("Category", { label: cat });
-  };
-
   const navigateToCreateReview = (pid, matchId, reviewed) => {
     props.navigation.push("CreateReview", { pid, matchId, reviewed });
   };
 
   const navigateToCompletedReview = (matchId) => {
     props.navigation.push("CompletedReview", { matchId });
-  };
-
-  const navigateToProfile = (userId) => {
-    props.navigation.push("ProfileScreen", {
-      screen: "Profile",
-      params: { userId },
-    });
   };
 
   const loadProduct = async () => {
@@ -94,7 +87,7 @@ const ProductDetailsScreen = (props) => {
     loadProduct();
   }, []);
 
-  const DetailsComponent = () => {
+  const DetailsComponent = (props) => {
     return (
       <View>
         <IconButton
@@ -139,7 +132,9 @@ const ProductDetailsScreen = (props) => {
           <View style={styles.textContainer}>
             <DefaultText>In </DefaultText>
             <TouchableOpacity
-              onPress={() => navigateToCategory(product.category)}
+              onPress={() =>
+                navigateToCategory(props, { label: product.category })
+              }
             >
               <DefaultText style={styles.highlight}>
                 {product.category}
@@ -149,7 +144,9 @@ const ProductDetailsScreen = (props) => {
           <View style={styles.textContainer}>
             <DefaultText>{parseTimeAgo(product.createdAt)} by </DefaultText>
             <TouchableOpacity
-              onPress={() => navigateToProfile(product.creator._id)}
+              onPress={() =>
+                navigateToProfileNavigator(props, product.creator._id)
+              }
             >
               <DefaultText style={styles.highlight}>
                 @{product.creator.username}
@@ -174,7 +171,7 @@ const ProductDetailsScreen = (props) => {
   } else {
     return (
       <FlatList
-        ListHeaderComponent={<DetailsComponent />}
+        ListHeaderComponent={<DetailsComponent navigation={props.navigation} />}
         onRefresh={loadProduct}
         refreshing={isRefreshing}
         data={product.matches}

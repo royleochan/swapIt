@@ -8,6 +8,16 @@ const navigateToSignUp = (props) => {
 };
 
 /**
+ * Navigates to SignupScreenTwo
+ *
+ * @param props: props from source screen
+ * @param data: object containing data from sign up screen one
+ */
+const navigateToSignUpTwo = (props, data) => {
+  props.navigation.push("SignupTwo", data);
+};
+
+/**
  * Navigates to LoginScreen
  *
  * @param props: props from source screen
@@ -16,4 +26,4 @@ const navigateToLogin = (props) => {
   props.navigation.push("Login");
 };
 
-export { navigateToSignUp, navigateToLogin };
+export { navigateToSignUp, navigateToSignUpTwo, navigateToLogin };

@@ -4,7 +4,7 @@
  * @param props: props from source screen
  */
 const navigateToEditProfile = (props) => {
-  props.navigation.navigate("EditProfile");
+  props.navigation.push("EditProfile");
 };
 
 /**
@@ -13,7 +13,7 @@ const navigateToEditProfile = (props) => {
  * @param props: props from source screen
  */
 const navigateToChangePassword = (props) => {
-  props.navigation.navigate("ChangePassword");
+  props.navigation.push("ChangePassword");
 };
 
 /**
@@ -22,7 +22,7 @@ const navigateToChangePassword = (props) => {
  * @param props: props from source screen
  */
 const navigateToHelpAndSupport = (props) => {
-  props.navigation.navigate("HelpAndSupport");
+  props.navigation.push("HelpAndSupport");
 };
 
 export {
