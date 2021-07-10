@@ -1,44 +1,49 @@
+// React Imports //
 import React, { useState, useEffect, useLayoutEffect, useContext } from "react";
 import { StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+
+// RNE Imports //
 import { Avatar } from "react-native-elements";
 
-import { navigateToProfile } from "navigation/navigate/common/index";
+// Navigation Imports //
+import { navigateToProfile } from "navigation/navigate/profile/index";
 import { ParamsContext } from "navigation/context/ParamsContext";
+
+// Redux Action Imports //
+import { fetchFollowing } from "store/actions/followInfo";
+
+// Colors Import //
 import Colors from "constants/Colors";
-import request from "utils/request";
+
+// Components Import //
 import Loader from "components/Loader";
 import DefaultText from "components/DefaultText";
 import FollowButton from "components/FollowButton";
 
+// Main Component //
 const FollowingScreen = (props) => {
   // Init //
   const { params } = useContext(ParamsContext);
   const { selectedUserId } = params;
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [following, setFollowing] = useState([]);
 
+  const dispatch = useDispatch();
   const loggedInUserId = useSelector((state) => state.auth.user.id);
+  const following = useSelector((state) => state.followInfo.following);
 
-  // Other Functions //
+  // Functions //
   const loadFollowing = async () => {
-    try {
-      setIsRefreshing(true);
-      const response = await request.get(
-        `/api/users/following/${selectedUserId}`
-      );
-      setFollowing(response.data.result.following);
-    } catch (err) {
-      console.log(err.response.data.message);
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
+    setIsRefreshing(true);
+    await dispatch(fetchFollowing(selectedUserId));
+    setIsRefreshing(false);
+    setIsLoading(false);
   };
 
   // Side Effects //
   useEffect(() => {
+    setIsLoading(true);
     loadFollowing();
   }, []);
 

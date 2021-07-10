@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import useDebouncedCallback from "use-debounce/lib/useDebouncedCallback";
 
-import * as authActions from "store/actions/auth";
+import { followUser, unfollowUser } from "store/actions/followInfo";
 import useDidMountEffect from "hooks/useDidMountEffect";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
@@ -12,28 +12,29 @@ const FollowButton = (props) => {
   // Init //
   const { selectedUserId, style } = props;
   const dispatch = useDispatch();
-  const loggedInUser = useSelector((state) => state.auth.user);
+  const following = useSelector((state) => state.followInfo.following);
 
-  const [actualIsFollowing, setActualIsFollowing] = useState(
-    loggedInUser.following.includes(selectedUserId)
-  );
-  const [debouncedIsFollowing, setDebouncedIsFollowing] = useState(
-    loggedInUser.following.includes(selectedUserId)
-  );
+  const [actualIsFollowing, setActualIsFollowing] = useState();
+  const [debouncedIsFollowing, setDebouncedIsFollowing] = useState();
   const debounced = useDebouncedCallback((val) => {
     setDebouncedIsFollowing(val);
   }, 1000);
 
   // Side Effects //
   useDidMountEffect(() => {
-    dispatch(
-      authActions.updateUserFollowing(
-        loggedInUser.id,
-        selectedUserId,
-        debouncedIsFollowing
-      )
-    );
+    if (debouncedIsFollowing) {
+      dispatch(followUser(selectedUserId));
+    } else {
+      dispatch(unfollowUser(selectedUserId));
+    }
   }, [debouncedIsFollowing]);
+
+  // Update state whenever following array changes
+  useEffect(() => {
+    setActualIsFollowing(
+      following.map((user) => user._id).includes(selectedUserId)
+    );
+  }, [following]);
 
   // Render //
   return (

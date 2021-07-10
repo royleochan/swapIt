@@ -1,9 +1,17 @@
+// React Imports //
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
+
+// RNE Imports //
 import { Rating } from "react-native-elements";
 
+// Util Imports //
 import request from "utils/request";
+
+// Colors Import //
 import Colors from "constants/Colors";
+
+// Components Import //
 import Loader from "components/Loader";
 import DefaultText from "components/DefaultText";
 import ReviewRow from "components/ReviewRow";
@@ -59,6 +67,7 @@ const ReviewsScreen = (props) => {
     fetchReviews();
   }, []);
 
+  // Render //
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
   }

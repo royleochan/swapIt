@@ -1,8 +1,8 @@
 import { UPDATEFILTERSTATE } from "store/actions/filter";
 
 const initialState = {
-  minPrice: null,
-  maxPrice: null,
+  minPrice: null, // number
+  maxPrice: null, // number
 };
 
 export default (state = initialState, action) => {

@@ -3,14 +3,13 @@ import {
   LOGOUT,
   REFRESHUSER,
   UPDATEUSER,
-  UPDATEUSERFOLLOWING,
   UPDATEUSERLIKES,
 } from "store/actions/auth";
 
 const initialState = {
-  isAuth: false,
-  user: null,
-  jwtToken: null,
+  isAuth: false, // boolean
+  user: null, // object representing user schema with products populated
+  jwtToken: null, // string
 };
 
 export default (state = initialState, action) => {
@@ -29,7 +28,6 @@ export default (state = initialState, action) => {
         jwtToken: null,
       };
     case UPDATEUSER:
-    case UPDATEUSERFOLLOWING:
     case UPDATEUSERLIKES:
     case REFRESHUSER:
       return {

@@ -1,4 +1,16 @@
 /**
+ * Navigates to ProfileScreen
+ *
+ * @param props: props from source screen
+ * @param selectedUserId: string representing id of selected user
+ */
+const navigateToProfile = (props, userId) => {
+  props.navigation.push("Profile", {
+    userId,
+  });
+};
+
+/**
  * Navigates to ReviewsScreen
  *
  * @param props: props from source screen
@@ -60,6 +72,7 @@ const navigateToCompletedReviewScreen = (props, matchId) => {
 };
 
 export {
+  navigateToProfile,
   navigateToReviews,
   navigateToSettings,
   navigateToFollowing,

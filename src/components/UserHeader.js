@@ -18,16 +18,13 @@ const UserHeader = (props) => {
   } = props;
 
   const loggedInUser = useSelector((state) => state.auth.user);
-  const token = useSelector((state) => state.auth.jwtToken);
 
   return (
     <View style={styles.container}>
       {loggedInUser.id !== selectedUser.id && (
         <FollowButton
           style={styles.followButton}
-          selectedUser={selectedUser}
-          loggedInUser={loggedInUser}
-          token={token}
+          selectedUserId={selectedUser._id}
         />
       )}
       <View style={styles.topHeaderContainer}>

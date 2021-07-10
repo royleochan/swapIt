@@ -1,47 +1,50 @@
+// React Imports //
 import React, { useState, useEffect, useLayoutEffect, useContext } from "react";
 import { StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+
+// RNE Imports //
 import { Avatar } from "react-native-elements";
 
-import { navigateToProfile } from "navigation/navigate/common/index";
+// Navigation Imports //
+import { navigateToProfile } from "navigation/navigate/profile/index";
 import { ParamsContext } from "navigation/context/ParamsContext";
+
+// Redux Action Imports //
+import { fetchFollowers } from "store/actions/followInfo";
+
+// Colors Import //
 import Colors from "constants/Colors";
-import request from "utils/request";
+
+// Components Import //
 import Loader from "components/Loader";
 import DefaultText from "components/DefaultText";
 import FollowButton from "components/FollowButton";
 
+// Main Component //
 const FollowersScreen = (props) => {
   // Init //
   const { params } = useContext(ParamsContext);
   const { selectedUserId } = params;
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [followers, setFollowers] = useState([]);
-  const [username, setUsername] = useState("");
 
-  const loggedInUserId = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
+  const username = useSelector((state) => state.auth.user.username);
+  const followers = useSelector((state) => state.followInfo.followers);
 
-  // Other Functions //
+  // Functions //
   const loadFollowers = async () => {
-    try {
-      setIsRefreshing(true);
-      const response = await request.get(
-        `/api/users/followers/${selectedUserId}`
-      );
-
-      setFollowers(response.data.result.followers);
-      setUsername(response.data.result.username);
-    } catch (err) {
-      console.log(err.response.data.message);
-    } finally {
-      setIsRefreshing(false);
-      setIsLoading(false);
-    }
+    setIsRefreshing(true);
+    await dispatch(fetchFollowers(selectedUserId));
+    setIsRefreshing(false);
+    setIsLoading(false);
   };
 
   // Side Effects //
   useEffect(() => {
+    setIsLoading(true);
     loadFollowers();
   }, []);
 
