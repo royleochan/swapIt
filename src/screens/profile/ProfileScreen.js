@@ -1,8 +1,10 @@
+// React Imports //
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigationState } from "@react-navigation/native";
 
+// Navigation Imports //
 import {
   navigateToReviews,
   navigateToFollowers,
@@ -10,14 +12,23 @@ import {
   navigateToSettings,
 } from "navigation/navigate/profile/index";
 import { navigateToProductDetails } from "navigation/navigate/common/index";
+
+// Redux Action Imports //
 import { refreshUser } from "store/actions/auth";
+
+// Util Imports //
 import request from "utils/request";
+
+// Colors Imports //
 import Colors from "constants/Colors";
+
+// Components Imports //
 import Loader from "components/Loader";
 import UserHeader from "components/UserHeader";
 import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
 
+// Main Component //
 const ProfileScreen = (props) => {
   // Init //
   const stackIndex = useNavigationState((state) => state.index);
@@ -35,7 +46,7 @@ const ProfileScreen = (props) => {
     selectedUserId = loggedInUserId;
   }
 
-  // Other Functions //
+  // Functions //
   const loadUserData = async () => {
     setIsRefreshing(true);
     try {
@@ -79,6 +90,7 @@ const ProfileScreen = (props) => {
     }
   }, [props.navigation]);
 
+  // Render //
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
   }

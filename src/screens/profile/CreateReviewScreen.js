@@ -1,21 +1,36 @@
+// React Imports //
 import React, { useState } from "react";
 import { StyleSheet, Text, View, TextInput } from "react-native";
 import { useSelector } from "react-redux";
-import { Rating } from "react-native-elements";
+
+// React Hook Form Imports //
 import { useForm, Controller } from "react-hook-form";
 
+// RNE Imports //
+import { Rating } from "react-native-elements";
+
+// Navigation Imports //
 import { navigateToCompletedReviewScreen } from "navigation/navigate/profile/index";
+
+// Colors Imports //
 import Colors from "constants/Colors";
+
+// Utils Imports //
 import request from "utils/request";
+
+// Components Imports //
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
 
+// Main Component //
 const CreateReviewScreen = (props) => {
+  // Init //
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const { pid, matchId, reviewed } = props.route.params;
   const [userRating, setUserRating] = useState();
   const { control, handleSubmit, errors } = useForm();
 
+  // Functions //
   const submitHandler = async (data) => {
     const { description } = data;
     try {
@@ -33,6 +48,7 @@ const CreateReviewScreen = (props) => {
     }
   };
 
+  // Render //
   return (
     <View style={styles.screenContainer}>
       <DefaultText style={styles.headerText}>Leave a Review</DefaultText>
