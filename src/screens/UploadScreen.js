@@ -1,3 +1,4 @@
+// React Imports //
 import React, { useState, useLayoutEffect } from "react";
 import {
   View,
@@ -14,23 +15,30 @@ import { useSelector } from "react-redux";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useForm, Controller } from "react-hook-form";
 
+// Util Imports //
+import request from "utils/request";
 import {
   takeImage,
   chooseFromLibrary,
   uploadImageHandler,
 } from "utils/imagePicker";
-import request from "utils/request";
+
+// Constants Imports //
 import Colors from "constants/Colors";
 import FemaleCategories from "constants/FemaleCategories";
 import MaleCategories from "constants/MaleCategories";
+
+// Components Imports //
 import DefaultText from "components/DefaultText";
 import DropDown from "components/DropDown";
 import MainButton from "components/MainButton";
 import Loader from "components/Loader";
 import IconButton from "components/IconButton";
 
+// Main Component //
 const UploadScreen = (props) => {
-  const user = useSelector((state) => state.auth.user);
+  // Init //
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
   const { showActionSheetWithOptions } = useActionSheet();
   const [pickedImage, setPickedImage] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +50,7 @@ const UploadScreen = (props) => {
   const [maleCategory, setMaleCategory] = useState(null);
   const [femaleCategory, setFemaleCategory] = useState(null);
 
+  // Functions //
   // action sheet handler
   const showActionSheet = () => {
     const options = ["Take Photo", "Choose From Library", "Cancel"];
@@ -125,7 +134,7 @@ const UploadScreen = (props) => {
     data.minPrice = parseInt(watchMinPrice, 10);
     data.maxPrice = parseInt(watchMaxPrice, 10);
     data.category = maleCategory !== null ? maleCategory : femaleCategory;
-    data.creator = user.id;
+    data.creator = loggedInUserId;
 
     try {
       await request.post("/api/products/", data);
@@ -146,6 +155,7 @@ const UploadScreen = (props) => {
     }
   };
 
+  // Side Effects //
   // header upload button
   useLayoutEffect(() => {
     props.navigation.setOptions({
@@ -161,35 +171,39 @@ const UploadScreen = (props) => {
     });
   }, [props.navigation, maleCategory, femaleCategory, pickedImage]);
 
+  // Render //
+  if (isLoading) {
+    return <Loader isLoading={true} />;
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={styles.screenContainer}
     >
-      {isLoading && <Loader isLoading={true} />}
-      <View style={styles.imageContainer}>
-        <View style={styles.imagePreview}>
-          {pickedImage === undefined ? (
-            <IconButton
-              size={24}
-              color={Colors.primary}
-              name="plussquareo"
-              onPress={showActionSheet}
-            />
-          ) : (
-            <Image style={styles.image} source={{ uri: pickedImage.uri }} />
+      <ScrollView style={styles.formContainer}>
+        <View style={styles.imageContainer}>
+          <View style={styles.imagePreview}>
+            {pickedImage === undefined ? (
+              <IconButton
+                size={24}
+                color={Colors.primary}
+                name="plussquareo"
+                onPress={showActionSheet}
+              />
+            ) : (
+              <Image style={styles.image} source={{ uri: pickedImage.uri }} />
+            )}
+          </View>
+          {pickedImage !== undefined && (
+            <MainButton
+              style={styles.button}
+              onPress={() => setPickedImage(undefined)}
+            >
+              Cancel
+            </MainButton>
           )}
         </View>
-        {pickedImage !== undefined && (
-          <MainButton
-            style={styles.button}
-            onPress={() => setPickedImage(undefined)}
-          >
-            Cancel
-          </MainButton>
-        )}
-      </View>
-      <ScrollView style={styles.formContainer}>
         <View style={styles.formBoxContainer}>
           <DefaultText style={styles.inputHeader}>Title</DefaultText>
           <Controller
@@ -280,6 +294,7 @@ const UploadScreen = (props) => {
                   }}
                   style={styles.priceRangeInput}
                   keyboardType="decimal-pad"
+                  returnKeyType="done"
                 />
               )}
             />
@@ -319,6 +334,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
   },
+  formContainer: {
+    height: "10%",
+    width: "100%",
+    backgroundColor: Colors.gray,
+    paddingHorizontal: 26,
+  },
   imageContainer: {
     height: "40%",
     justifyContent: "center",
@@ -341,12 +362,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 30,
     marginTop: 12,
-  },
-  formContainer: {
-    height: "10%",
-    width: "100%",
-    backgroundColor: Colors.gray,
-    paddingHorizontal: 26,
   },
   errorText: {
     marginVertical: 5,
