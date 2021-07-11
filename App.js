@@ -1,15 +1,19 @@
+// React Imports //
 import React, { useState } from "react";
-import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
-import ReduxThunk from "redux-thunk";
-import * as Font from "expo-font";
-import AppLoading from "expo-app-loading";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import ReduxThunk from "redux-thunk";
+import AppLoading from "expo-app-loading";
+import * as Font from "expo-font";
 import * as Notifications from "expo-notifications";
+import "react-native-gesture-handler";
 
+// Navigator Imports //
 import AppNavigator from "navigation/AppNavigator";
+
+// Redux Reducer Imports //
 import authReducer from "store/reducers/auth";
 import sortReducer from "store/reducers/sort";
 import filterReducer from "store/reducers/filter";
@@ -46,11 +50,12 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
+// Main component //
 export default function App() {
   // Init //
   const [dataLoaded, setDataLoaded] = useState(false);
 
-  // Main component //
+  // Render //
   if (!dataLoaded) {
     return (
       <AppLoading

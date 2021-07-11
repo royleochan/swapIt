@@ -2,11 +2,11 @@ export const AUTHENTICATE = "AUTHENTICATE";
 export const LOGOUT = "LOGOUT";
 export const REFRESHUSER = "REFRESHUSER";
 export const UPDATEUSER = "UPDATEUSER";
-export const UPDATEUSERLIKES = "UPDATEUSERLIKES";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
+export const LIKE_PRODUCT = "LIKE_PRODUCT";
+export const UNLIKE_PRODUCT = "UNLIKE_PRODUCT";
 
 import request from "utils/request";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const authenticate = (username, password) => {
   return async (dispatch) => {
@@ -122,32 +122,49 @@ export const updateUser = (updatedUserCredentials, loggedInUserId, token) => {
   };
 };
 
-export const updateUserLikes = (productId, loggedInUserId, token, isLike) => {
-  return async (dispatch) => {
-    try {
-      let response;
-      if (isLike) {
-        response = await request.patch(
-          `/api/products/like/${productId}`,
-          { userId: loggedInUserId },
-          token
-        );
-      } else {
-        response = await request.patch(
-          `/api/products/unlike/${productId}`,
-          { userId: loggedInUserId },
-          token
-        );
-      }
+export const likeProduct = (productId) => {
+  return async (dispatch, getState) => {
+    const loggedInUserId = getState().auth.user.id;
+    const jwtToken = getState().auth.jwtToken;
 
-      const resData = response.data;
+    try {
+      const response = await request.patch(
+        `/api/products/like/${productId}`,
+        { userId: loggedInUserId },
+        jwtToken
+      );
 
       dispatch({
-        type: UPDATEUSERLIKES,
-        user: resData.user,
+        type: LIKE_PRODUCT,
+        productId: response.data.product._id,
       });
-    } catch (e) {
-      throw new Error(e.response.data.message);
+    } catch (err) {
+      console.log(err);
+      throw new Error(err.response.data.message);
+    }
+  };
+};
+
+export const unlikeProduct = (productId) => {
+  return async (dispatch, getState) => {
+    const loggedInUserId = getState().auth.user.id;
+    const jwtToken = getState().auth.jwtToken;
+
+    try {
+      const response = await request.patch(
+        `/api/products/unlike/${productId}`,
+        { userId: loggedInUserId },
+        jwtToken
+      );
+      console.log(response.data);
+      dispatch({
+        type: UNLIKE_PRODUCT,
+        productId: response.data.product._id,
+      });
+    } catch (err) {
+      console.log("what");
+      console.log(err);
+      throw new Error(err.response.data.message);
     }
   };
 };

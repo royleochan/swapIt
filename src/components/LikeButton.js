@@ -1,14 +1,22 @@
+// React Imports //
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import useDebouncedCallback from "use-debounce/lib/useDebouncedCallback";
 
-import * as authActions from "store/actions/auth";
+// Redux Action Imports //
+import { likeProduct, unlikeProduct } from "store/actions/auth";
+
+// Custom Hook Imports //
 import useDidMountEffect from "hooks/useDidMountEffect";
+
+// Component Imports //
 import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 
+// Main Component //
 const LikeButton = (props) => {
+  // Init //
   const {
     productId,
     productLikes,
@@ -20,35 +28,34 @@ const LikeButton = (props) => {
     type,
   } = props;
   const dispatch = useDispatch();
-  const loggedInUser = useSelector((state) => state.auth.user);
-  const token = useSelector((state) => state.auth.jwtToken);
+  const userLikes = useSelector((state) => state.auth.user.likes);
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
 
-  const [numberOfLikes, setNumberOfLikes] = useState(productLikes.length);
+  const [numberOfLikes, setNumberOfLikes] = useState();
   const [actualIsLiked, setActualIsLiked] = useState();
   const [debouncedIsLiked, setDebouncedIsLiked] = useState();
   const debounced = useDebouncedCallback((val) => {
     setDebouncedIsLiked(val);
   }, 1500);
 
+  // Side Effects //
   useDidMountEffect(() => {
-    dispatch(
-      authActions.updateUserLikes(
-        productId,
-        loggedInUser.id,
-        token,
-        debouncedIsLiked
-      )
-    );
+    if (debouncedIsLiked) {
+      dispatch(likeProduct(productId));
+    } else {
+      dispatch(unlikeProduct(productId));
+    }
   }, [debouncedIsLiked]);
 
   useEffect(() => {
-    setActualIsLiked(loggedInUser.likes.includes(productId));
-  }, [loggedInUser]);
+    setActualIsLiked(userLikes.includes(productId));
+  }, [userLikes]);
 
   useEffect(() => {
     setNumberOfLikes(productLikes.length);
   }, [productLikes]);
 
+  // Render //
   return (
     <View style={styles.likesContainer}>
       <IconButton
@@ -63,7 +70,7 @@ const LikeButton = (props) => {
           debounced(!actualIsLiked);
         }}
         color={color}
-        disabled={creatorId === loggedInUser.id}
+        disabled={creatorId === loggedInUserId}
       />
       {type === "box" && (
         <DefaultText style={{ ...textStyle }}>{numberOfLikes}</DefaultText>

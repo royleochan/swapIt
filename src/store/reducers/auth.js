@@ -3,7 +3,8 @@ import {
   LOGOUT,
   REFRESHUSER,
   UPDATEUSER,
-  UPDATEUSERLIKES,
+  LIKE_PRODUCT,
+  UNLIKE_PRODUCT,
 } from "store/actions/auth";
 
 const initialState = {
@@ -28,12 +29,28 @@ export default (state = initialState, action) => {
         jwtToken: null,
       };
     case UPDATEUSER:
-    case UPDATEUSERLIKES:
     case REFRESHUSER:
       return {
         ...state,
         user: action.user,
       };
+    case LIKE_PRODUCT:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          likes: [...state.user.likes, action.productId],
+        },
+      };
+    case UNLIKE_PRODUCT:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          likes: state.user.likes.filter((pid) => pid !== action.productId),
+        },
+      };
+
     default:
       return state;
   }
