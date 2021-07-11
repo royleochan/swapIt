@@ -1,3 +1,4 @@
+// React Imports //
 import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
@@ -9,9 +10,15 @@ import {
   Alert,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import * as Notifications from "expo-notifications";
+
+// RNE Imports //
 import { Avatar } from "react-native-elements";
+
+// Antd Icon Imports //
 import { AntDesign } from "@expo/vector-icons";
 
+// Navigation Imports //
 import {
   navigateToProductDetails,
   navigateToProfileNavigator,
@@ -20,20 +27,121 @@ import {
   navigateToResults,
   navigateToMessagesScreen,
 } from "navigation/navigate/common/index";
+
+// Redux Action Imports //
 import { fetchNotifications } from "store/actions/notifications";
 import { updateProducts } from "store/actions/products";
 import { refreshUser } from "store/actions/auth";
+
+// Local Image Imports //
 import followingIcon from "assets/categories/following.png";
+
+// Utils Imports //
 import request from "utils/request";
 import registerForPushNotificationsAsync from "utils/notification";
+
+// Local Constants Imports //
 import Colors from "constants/Colors";
 import MaleCategories from "constants/MaleCategories";
 import FemaleCategories from "constants/FemaleCategories";
+
+// Component Imports //
 import CustomSearchBar from "components/CustomSearchBar";
 import DefaultText from "components/DefaultText";
 import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
 
+// List Header Component //
+const ListHeader = (props) => {
+  const { recommendedUsers } = props;
+  return (
+    <>
+      <View style={styles.section}>
+        <DefaultText style={styles.subheader}>Categories</DefaultText>
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal={true}
+          contentContainerStyle={styles.avatarsContainer}
+        >
+          <TouchableOpacity
+            style={styles.avatarContainer}
+            key="Following"
+            onPress={() => navigateToCategory(props, { label: "Following" })}
+          >
+            <Image style={styles.categoryImage} source={followingIcon} />
+            <DefaultText style={styles.categoryLabel}>Following</DefaultText>
+          </TouchableOpacity>
+          {MaleCategories.map((category) => {
+            if (category.label == "Others") {
+              return;
+            } else {
+              return (
+                <TouchableOpacity
+                  style={styles.avatarContainer}
+                  key={category.label}
+                  onPress={() => navigateToCategory(props, category)}
+                >
+                  <Image style={styles.categoryImage} source={category.icon} />
+                  <DefaultText style={styles.categoryLabel}>
+                    {category.label}
+                  </DefaultText>
+                </TouchableOpacity>
+              );
+            }
+          })}
+          {FemaleCategories.map((category) => {
+            return (
+              <TouchableOpacity
+                style={styles.avatarContainer}
+                key={category.label}
+                onPress={() => navigateToCategory(props, category)}
+              >
+                <Image style={styles.categoryImage} source={category.icon} />
+                <DefaultText style={styles.categoryLabel}>
+                  {category.label}
+                </DefaultText>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+      <View style={styles.section}>
+        <DefaultText style={styles.subheader}>Recommended Users</DefaultText>
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal={true}
+          contentContainerStyle={styles.recUsersContainer}
+        >
+          {recommendedUsers.map((user) => {
+            return (
+              <TouchableOpacity
+                onPress={() => navigateToProfileNavigator(props, user._id)}
+                style={styles.avatarContainer}
+                key={user.username}
+              >
+                <Avatar
+                  rounded
+                  size={96}
+                  source={{
+                    uri: user.profilePic,
+                  }}
+                />
+                <DefaultText style={styles.categoryLabel}>
+                  @{user.username}
+                </DefaultText>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+      <View style={styles.section}>
+        <DefaultText style={styles.subheader}>Trending Now</DefaultText>
+      </View>
+    </>
+  );
+};
+
+// Main Component //
 const HomeScreen = (props) => {
   // Init //
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -46,7 +154,18 @@ const HomeScreen = (props) => {
   const jwtToken = useSelector((state) => state.auth.jwtToken);
   const trendingProducts = useSelector((state) => state.products);
 
-  // Update redux user after getting push token //
+  // Functions //
+  const handleSearch = (text) => {
+    setQuery(text);
+  };
+
+  const handleSubmit = () => {
+    const searchQuery = query;
+    setQuery("");
+    navigateToResults(props, searchQuery);
+  };
+
+  // Get push token and update redux user
   const getPushToken = async () => {
     const updatedUser = await registerForPushNotificationsAsync(
       user.id,
@@ -55,7 +174,7 @@ const HomeScreen = (props) => {
     dispatch(refreshUser(updatedUser));
   };
 
-  // Need to change to trending products //
+  // Need to change to trending products
   const loadProducts = useCallback(async () => {
     setIsRefreshing(true);
     try {
@@ -72,7 +191,7 @@ const HomeScreen = (props) => {
     setIsRefreshing(false);
   }, [setIsRefreshing]);
 
-  // Need to change to recommended users //
+  // Need to change to recommended users
   const loadRecommendedUsers = useCallback(async () => {
     try {
       const response = await request.get(`/api/users/${user.id}`);
@@ -83,7 +202,12 @@ const HomeScreen = (props) => {
     }
   }, [setRecommendedUsers]);
 
-  // Run side effects //
+  // Navigates to notifications screen whenever a notification is tapped
+  const _handleNotificationResponse = (response) => {
+    props.navigation.navigate("Alerts");
+  };
+
+  // Side effects //
   useEffect(() => {
     getPushToken();
     loadProducts();
@@ -91,110 +215,16 @@ const HomeScreen = (props) => {
     dispatch(fetchNotifications());
   }, []);
 
-  // Other functions //
-  const handleSearch = (text) => {
-    setQuery(text);
-  };
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      _handleNotificationResponse
+    ); // This listener is fired whenever a user taps on or interacts with a push notification (works when app is foregrounded, backgrounded, or killed)
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
-  const handleSubmit = () => {
-    const searchQuery = query;
-    setQuery("");
-    navigateToResults(props, searchQuery);
-  };
-
-  // List Header Component //
-  const ListHeader = (props) => {
-    return (
-      <>
-        <View style={styles.section}>
-          <DefaultText style={styles.subheader}>Categories</DefaultText>
-          <ScrollView
-            showsHorizontalScrollIndicator={false}
-            horizontal={true}
-            contentContainerStyle={styles.avatarsContainer}
-          >
-            <TouchableOpacity
-              style={styles.avatarContainer}
-              key="Following"
-              onPress={() => navigateToCategory(props, { label: "Following" })}
-            >
-              <Image style={styles.categoryImage} source={followingIcon} />
-              <DefaultText style={styles.categoryLabel}>Following</DefaultText>
-            </TouchableOpacity>
-            {MaleCategories.map((category) => {
-              if (category.label == "Others") {
-                return;
-              } else {
-                return (
-                  <TouchableOpacity
-                    style={styles.avatarContainer}
-                    key={category.label}
-                    onPress={() => navigateToCategory(props, category)}
-                  >
-                    <Image
-                      style={styles.categoryImage}
-                      source={category.icon}
-                    />
-                    <DefaultText style={styles.categoryLabel}>
-                      {category.label}
-                    </DefaultText>
-                  </TouchableOpacity>
-                );
-              }
-            })}
-            {FemaleCategories.map((category) => {
-              return (
-                <TouchableOpacity
-                  style={styles.avatarContainer}
-                  key={category.label}
-                  onPress={() => navigateToCategory(props, category)}
-                >
-                  <Image style={styles.categoryImage} source={category.icon} />
-                  <DefaultText style={styles.categoryLabel}>
-                    {category.label}
-                  </DefaultText>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </View>
-        <View style={styles.section}>
-          <DefaultText style={styles.subheader}>Recommended Users</DefaultText>
-          <ScrollView
-            showsHorizontalScrollIndicator={false}
-            horizontal={true}
-            contentContainerStyle={styles.recUsersContainer}
-          >
-            {recommendedUsers.map((user) => {
-              return (
-                <TouchableOpacity
-                  onPress={() => navigateToProfileNavigator(props, user._id)}
-                  style={styles.avatarContainer}
-                  key={user.username}
-                >
-                  <Avatar
-                    rounded
-                    size={96}
-                    source={{
-                      uri: user.profilePic,
-                    }}
-                  />
-                  <DefaultText style={styles.categoryLabel}>
-                    @{user.username}
-                  </DefaultText>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </View>
-        <View style={styles.section}>
-          <DefaultText style={styles.subheader}>Trending Now</DefaultText>
-        </View>
-      </>
-    );
-  };
-
-  // Main Component //
+  // Render //
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>
@@ -227,7 +257,12 @@ const HomeScreen = (props) => {
       )}
       {!isFocusSearch && (
         <FlatList
-          ListHeaderComponent={<ListHeader navigation={props.navigation} />}
+          ListHeaderComponent={
+            <ListHeader
+              navigation={props.navigation}
+              recommendedUsers={recommendedUsers}
+            />
+          }
           onRefresh={loadProducts}
           refreshing={isRefreshing}
           columnWrapperStyle={styles.list}

@@ -1,16 +1,27 @@
+// React Imports //
 import React, { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { View, StyleSheet, AppState } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
+import * as Notifications from "expo-notifications";
 
-import * as notificationActions from "store/actions/notifications";
-import DefaultText from "components/DefaultText";
-import Colors from "constants/Colors";
-import AlertsScreen from "screens/AlertsScreen";
+// Redux Action Imports //
+import { fetchNotifications } from "store/actions/notifications";
+
+// Navigator Imports //
 import HomeNavigator from "navigation/HomeNavigator";
 import UploadNavigator from "navigation/UploadNavigator";
 import UserProfileNavigator from "navigation/UserProfileNavigator";
+
+// Colors Imports //
+import Colors from "constants/Colors";
+
+// Component Imports //
+import DefaultText from "components/DefaultText";
+
+// Screen Imports //
+import AlertsScreen from "screens/AlertsScreen";
 import ExploreScreen from "screens/ExploreScreen";
 
 // Icons for the bottom tab navigator //
@@ -68,40 +79,52 @@ const DefaultIcon = (props) => {
   );
 };
 
+// Init Bottom Tab Navigator //
 const BottomTab = createBottomTabNavigator();
 
-const BottomTabNavigator = () => {
+// Main Component //
+const BottomTabNavigator = (props) => {
   // Init //
+  const dispatch = useDispatch();
+  const appState = useRef(AppState.currentState);
   const unreadNotifications = useSelector(
     (state) => state.notifications.notifications
   ).filter((notification) => !notification.isRead);
 
-  const appState = useRef(AppState.currentState);
-
-  const dispatch = useDispatch();
-
-  // Handles fetching notifications when the app comes into the foreground (app has 3 states: foreground, background and closed) //
+  // Side Effects //
   useEffect(() => {
-    AppState.addEventListener("change", _handleAppStateChange);
+    AppState.addEventListener("change", _handleAppStateChange); // This listener is fired whenever the app state changes (active, foreground, background)
+
+    const subscription =
+      Notifications.addNotificationReceivedListener(_handleNotification); // This listener is fired whenever a notification is received while the app is foregrounded
 
     return () => {
       AppState.removeEventListener("change", _handleAppStateChange);
+      subscription.remove();
     };
   }, []);
 
+  // Functions //
+  // Fetches notifications if app state transitions into active
   const _handleAppStateChange = (nextAppState) => {
     if (
       appState.current.match(/inactive|background/) &&
       nextAppState === "active"
     ) {
       console.log("App has come to the foreground!");
-      dispatch(notificationActions.fetchNotifications());
+      dispatch(fetchNotifications());
     }
 
     appState.current = nextAppState;
   };
 
-  // Main Component //
+  // Fetches notifications if a new notification is received while app is foregrounded
+  const _handleNotification = () => {
+    console.log("New notification");
+    dispatch(fetchNotifications());
+  };
+
+  // Render //
   return (
     <BottomTab.Navigator
       tabBarOptions={{

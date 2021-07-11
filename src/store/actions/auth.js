@@ -156,14 +156,11 @@ export const unlikeProduct = (productId) => {
         { userId: loggedInUserId },
         jwtToken
       );
-      console.log(response.data);
       dispatch({
         type: UNLIKE_PRODUCT,
         productId: response.data.product._id,
       });
     } catch (err) {
-      console.log("what");
-      console.log(err);
       throw new Error(err.response.data.message);
     }
   };
