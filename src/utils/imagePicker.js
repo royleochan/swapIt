@@ -46,40 +46,44 @@ const verifyLibraryPermissions = async () => {
 /**
  * Handles logic for taking image using camera
  *
- * @returns object representing image
+ * @returns object representing image or undefined if the user cancels
  */
 const takeImage = async () => {
   const hasPermission = await verifyCameraPermissions();
   if (!hasPermission) {
     return;
   }
-  const image = await ImagePicker.launchCameraAsync({
+  const result = await ImagePicker.launchCameraAsync({
     allowsEditing: true,
     aspect: [10, 10],
     quality: 1,
   });
 
-  return image;
+  if (!result.cancelled) {
+    return result;
+  }
 };
 
 /**
  * Handles logic for picking image from photo library
  *
- * @returns object representing image
+ * @returns object representing image or undefined if the user cancels
  */
 const chooseFromLibrary = async () => {
   const hasPermission = await verifyLibraryPermissions();
   if (!hasPermission) {
     return;
   }
-  const image = await ImagePicker.launchImageLibraryAsync({
+  const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: true,
     aspect: [10, 10],
     quality: 1,
   });
 
-  return image;
+  if (!result.cancelled) {
+    return result;
+  }
 };
 
 /**
