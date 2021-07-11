@@ -93,6 +93,10 @@ expo r -c
 
 - [Testing on Android Simulators](https://docs.expo.io/workflow/android-studio-emulator/)
 
+## Notifications
+
+- Push Notifications only work on physical devices and not on simulators, actions involving push notifications such as liking products might be buggy when testing on simulators
+
 ## Deployment
 
 ### Development 
