@@ -1,14 +1,25 @@
+// React Imports //
 import React, { useState, useEffect, useCallback } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { View, StyleSheet, FlatList } from "react-native";
 
-import * as notificationActions from "store/actions/notifications";
+// Redux Action Imports //
+import {
+  fetchNotifications,
+  markAllNotificationsAsRead,
+} from "store/actions/notifications";
+
+// Colors Imports //
 import Colors from "constants/Colors";
+
+// Component Imports //
 import DefaultText from "components/DefaultText";
 import AlertRow from "components/AlertRow";
 
-const AlertsScreen = () => {
+// Main Component //
+const AlertsScreen = (props) => {
+  // Init //
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const dispatch = useDispatch();
@@ -19,12 +30,14 @@ const AlertsScreen = () => {
     (notification) => notification.isRead === false
   );
 
+  // Functions //
   const loadNotifications = async () => {
     setIsRefreshing(true);
-    await dispatch(notificationActions.fetchNotifications());
+    await dispatch(fetchNotifications());
     setIsRefreshing(false);
   };
 
+  // Side Effects //
   useEffect(() => {
     loadNotifications();
   }, []);
@@ -33,13 +46,14 @@ const AlertsScreen = () => {
     useCallback(() => {
       return () =>
         dispatch(
-          notificationActions.markAllNotificationsAsRead(
+          markAllNotificationsAsRead(
             unreadNotifications.map((notification) => notification._id)
           )
         );
     }, [])
   );
 
+  // Render //
   return (
     <View style={styles.screenContainer}>
       <View style={styles.headerContainer}>
@@ -53,7 +67,12 @@ const AlertsScreen = () => {
         horizontal={false}
         keyExtractor={(item) => item._id}
         renderItem={(itemData) => {
-          return <AlertRow notification={itemData.item} />;
+          return (
+            <AlertRow
+              notification={itemData.item}
+              navigation={props.navigation}
+            />
+          );
         }}
       ></FlatList>
     </View>

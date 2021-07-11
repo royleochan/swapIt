@@ -10,6 +10,7 @@ import {
   Alert,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 
 // RNE Imports //
@@ -209,7 +210,9 @@ const HomeScreen = (props) => {
 
   // Side effects //
   useEffect(() => {
-    getPushToken();
+    if (Constants.isDevice) {
+      getPushToken();
+    }
     loadProducts();
     loadRecommendedUsers();
     dispatch(fetchNotifications());

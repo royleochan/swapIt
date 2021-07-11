@@ -10,6 +10,7 @@ import * as Notifications from "expo-notifications";
 import { fetchNotifications } from "store/actions/notifications";
 
 // Navigator Imports //
+import AlertsNavigator from "navigation/AlertsNavigator";
 import HomeNavigator from "navigation/HomeNavigator";
 import UploadNavigator from "navigation/UploadNavigator";
 import UserProfileNavigator from "navigation/UserProfileNavigator";
@@ -21,7 +22,6 @@ import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 
 // Screen Imports //
-import AlertsScreen from "screens/AlertsScreen";
 import ExploreScreen from "screens/ExploreScreen";
 
 // Icons for the bottom tab navigator //
@@ -143,7 +143,7 @@ const BottomTabNavigator = (props) => {
       <BottomTab.Screen name="Upload" component={UploadNavigator} />
       <BottomTab.Screen
         name="Alerts"
-        component={AlertsScreen}
+        component={AlertsNavigator}
         options={{
           tabBarBadge:
             unreadNotifications.length > 0 ? unreadNotifications.length : null,

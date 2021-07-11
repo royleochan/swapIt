@@ -1,20 +1,38 @@
+// React Imports //
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+
+// RNE imports //
 import { Avatar } from "react-native-elements";
 
-import * as notificationActions from "store/actions/notifications";
+// Navigation Imports //
+import {
+  navigateToProfileNavigator,
+  navigateToProductDetails,
+} from "navigation/navigate/common/index";
+
+// Redux Action Imports //
+import { dismissNotification } from "store/actions/notifications";
+
+// Utils Imports //
 import { parseTimeAgo } from "utils/date";
+
+// Colors Imports //
 import Colors from "constants/Colors";
+
+// Components Imports //
 import DefaultText from "components/DefaultText";
 import IconButton from "components/IconButton";
 
+// Main Component //
 const AlertRow = (props) => {
+  // Init //
   const {
     _id,
-    creator,
+    creator, // object of shape {_id: "", imageUrl: ""}
     targetUser,
-    productId,
+    productId, // object of shape {_id: "", imageUrl: ""}
     matchedProductId,
     description,
     type,
@@ -24,13 +42,29 @@ const AlertRow = (props) => {
 
   const dispatch = useDispatch();
 
-  const dismissNotification = (notificationId) => {
-    dispatch(notificationActions.dismissNotification(notificationId));
+  // Functions //
+  const closeNotification = (notificationId) => {
+    dispatch(dismissNotification(notificationId));
   };
 
+  const navigate = (alertType) => {
+    switch (alertType) {
+      case "FOLLOW":
+        return navigateToProfileNavigator(props, creator._id);
+      case "REVIEW":
+        return navigateToProfileNavigator(props, targetUser);
+      case "LIKE":
+      case "MATCH":
+      case "REQUEST":
+      case "SWAP":
+        return navigateToProductDetails(props, productId._id);
+    }
+  };
+
+  // Render //
   return (
     <TouchableOpacity
-      onPress={() => console.log("mark as read and navigate")} // TODO
+      onPress={() => navigate(type)}
       style={{
         ...styles.alertContainer,
         ...{ backgroundColor: !isRead ? Colors.gray : Colors.background },
@@ -41,7 +75,10 @@ const AlertRow = (props) => {
           rounded
           size={66}
           source={{
-            uri: type !== "MATCH" ? creator.profilePic : productId.imageUrl,
+            uri:
+              type === "MATCH" || type === "REQUEST" || type === "SWAP"
+                ? productId.imageUrl
+                : creator.profilePic,
           }}
         />
         <View style={styles.textContainer}>
@@ -50,7 +87,7 @@ const AlertRow = (props) => {
           <DefaultText>{parseTimeAgo(createdAt)}</DefaultText>
         </View>
       </View>
-      {type === "MATCH" && (
+      {(type === "MATCH" || type === "REQUEST" || type === "SWAP") && (
         <Avatar
           rounded
           size={66}
@@ -63,7 +100,7 @@ const AlertRow = (props) => {
         name="close"
         style={styles.closeButton}
         size={18}
-        onPress={() => dismissNotification(_id)}
+        onPress={() => closeNotification(_id)}
         color={Colors.primary}
       />
     </TouchableOpacity>
