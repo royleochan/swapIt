@@ -99,7 +99,7 @@ const AlertRow = (props) => {
       <IconButton
         name="close"
         style={styles.closeButton}
-        size={18}
+        size={22}
         onPress={() => closeNotification(_id)}
         color={Colors.primary}
       />
