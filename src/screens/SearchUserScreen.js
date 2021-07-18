@@ -1,3 +1,4 @@
+// React Imports //
 import React, { useState } from "react";
 import {
   View,
@@ -7,22 +8,38 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useSelector } from "react-redux";
+
+// RNE Imports //
 import { Avatar } from "react-native-elements";
+
+// Antd Icon Imports //
 import { AntDesign } from "@expo/vector-icons";
 
+// Navigation Imports //
 import { navigateToProfileNavigator } from "navigation/navigate/common/index";
+
+// Colors Import //
 import Colors from "constants/Colors";
+
+// Utils Imports //
 import request from "utils/request";
+
+// Custom Hooks Imports //
 import useDidMountEffect from "hooks/useDidMountEffect";
+
+// Components Imports //
 import DefaultText from "components/DefaultText";
 import CustomSearchBar from "components/CustomSearchBar";
 
+// Main Component //
 const SearchUserScreen = (props) => {
+  // Init //
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [searchedUsers, setSearchedUsers] = useState([]);
   const loggedInUserId = useSelector((state) => state.auth.user.id);
 
+  // Functions //
   const handleSearch = (text) => {
     setQuery(text);
   };
@@ -40,6 +57,7 @@ const SearchUserScreen = (props) => {
     }
   };
 
+  // Side Effects //
   useDidMountEffect(() => {
     setIsLoading(true);
     // Executes searchHandler after 1000ms, returns a positive integer which uniquely identifies the timer created
@@ -49,6 +67,7 @@ const SearchUserScreen = (props) => {
     return () => clearTimeout(timer);
   }, [query]);
 
+  // Render //
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>

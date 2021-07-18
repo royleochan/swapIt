@@ -18,7 +18,9 @@ import ProductBox from "components/ProductBox";
 import SortFilterMenu from "components/SortFilterMenu";
 import DefaultText from "components/DefaultText";
 
+// Main Component //
 const CategoryScreen = (props) => {
+  // Init //
   const category = props.route.params.label;
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [products, setProducts] = useState([]);
@@ -29,6 +31,7 @@ const CategoryScreen = (props) => {
   const filterState = useSelector((state) => state.filter);
   const storeProducts = useSelector((state) => state.products);
 
+  // Functions //
   const categoryHandler = useCallback(async () => {
     setIsRefreshing(true);
     try {
@@ -50,6 +53,7 @@ const CategoryScreen = (props) => {
     setIsRefreshing(false);
   }, [setIsRefreshing, dispatch]);
 
+  // Side Effects //
   useEffect(() => {
     categoryHandler();
   }, []);
@@ -62,6 +66,7 @@ const CategoryScreen = (props) => {
     setProducts(sort([...products], sortState));
   }, [sortState]);
 
+  // Render //
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>

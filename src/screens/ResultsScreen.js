@@ -1,19 +1,31 @@
+// React Imports //
 import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
+// Navigation Imports //
 import { navigateToProductDetails } from "navigation/navigate/common/index";
+
+// Redux Action Imports //
 import { updateProducts } from "store/actions/products";
+
+// Utils Imports //
 import request from "utils/request";
 import filter from "utils/filter";
 import sort from "utils/sort";
+
+// Colors Import //
 import Colors from "constants/Colors";
+
+// Components Imports //
 import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 import SortFilterMenu from "components/SortFilterMenu";
 
+// Main Component //
 const ResultsScreen = (props) => {
+  // Init //
   const [query, setQuery] = useState(props.route.params);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [products, setProducts] = useState([]);
@@ -23,6 +35,7 @@ const ResultsScreen = (props) => {
   const filterState = useSelector((state) => state.filter);
   const storeProducts = useSelector((state) => state.products);
 
+  // Functions //
   const searchHandler = useCallback(
     async (searchQuery) => {
       setIsRefreshing(true);
@@ -42,6 +55,7 @@ const ResultsScreen = (props) => {
     [setIsRefreshing, setProducts]
   );
 
+  // Side Effects //
   useEffect(() => {
     setIsRefreshing(true);
     // Executes searchHandler after 1000ms, returns a positive integer which uniquely identifies the timer created
@@ -59,6 +73,7 @@ const ResultsScreen = (props) => {
     setProducts(sort([...products], sortState));
   }, [sortState]);
 
+  // Render //
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>
