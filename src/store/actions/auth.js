@@ -7,6 +7,7 @@ export const UNLIKE_PRODUCT = "UNLIKE_PRODUCT";
 export const UPDATE_PASSWORD = "UPDATE_PASSWORD";
 
 import request from "utils/request";
+import throwApiError from "utils/apiError";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const authenticate = (username, password) => {
@@ -82,8 +83,8 @@ export const signup = (signupCredentials) => {
         user: resData.user,
         jwtToken: resData.token,
       });
-    } catch (e) {
-      throw new Error(e.response.data.message);
+    } catch (err) {
+      throwApiError(err);
     }
   };
 };
@@ -120,8 +121,8 @@ export const updateUser = (updatedUserCredentials) => {
         type: UPDATEUSER,
         user: response.data.user,
       });
-    } catch (e) {
-      throw new Error(e.response.data.message);
+    } catch (err) {
+      throwApiError(err);
     }
   };
 };
@@ -143,8 +144,7 @@ export const likeProduct = (productId) => {
         productId: response.data.product._id,
       });
     } catch (err) {
-      console.log(err);
-      throw new Error(err.response.data.message);
+      throwApiError(err);
     }
   };
 };
@@ -165,7 +165,7 @@ export const unlikeProduct = (productId) => {
         productId: response.data.product._id,
       });
     } catch (err) {
-      throw new Error(err.response.data.message);
+      throwApiError(err);
     }
   };
 };
@@ -185,7 +185,7 @@ export const updatePassword = (formState) => {
         type: UPDATE_PASSWORD,
       });
     } catch (err) {
-      throw new Error(err.response.data.message);
+      throwApiError(err);
     }
   };
 };

@@ -2,6 +2,8 @@ export const FETCH_FOLLOWERS = "FETCH_FOLLOWERS";
 export const FETCH_FOLLOWING = "FETCH_FOLLOWING";
 export const FOLLOW_USER = "FOLLOW_USER";
 export const UNFOLLOW_USER = "UNFOLLOW_USER";
+
+import throwApiError from "utils/apiError";
 import request from "utils/request";
 
 export const fetchFollowers = (selectedUserId) => {
@@ -16,7 +18,7 @@ export const fetchFollowers = (selectedUserId) => {
         followers: response.data.result.followers,
       });
     } catch (err) {
-      throw new Error(err.response.data.message);
+      throwApiError(err);
     }
   };
 };
@@ -33,7 +35,7 @@ export const fetchFollowing = (selectedUserId) => {
         following: response.data.result.following,
       });
     } catch (err) {
-      throw new Error(err.response.data.message);
+      throwApiError(err);
     }
   };
 };
@@ -55,7 +57,7 @@ export const followUser = (selectedUserId) => {
         followed: response.data.followed,
       });
     } catch (err) {
-      throw new Error(err.response.data.message);
+      throwApiError(err);
     }
   };
 };
@@ -77,7 +79,7 @@ export const unfollowUser = (selectedUserId) => {
         userId: response.data.unfollowed._id,
       });
     } catch (err) {
-      throw new Error(err.response.data.message);
+      throwApiError(err);
     }
   };
 };

@@ -1,6 +1,8 @@
 export const FETCH_NOTIFICATIONS = "FETCH_NOTIFICATIONS";
 export const MARK_ALL_NOTIFICATIONS = "MARK_ALL_NOTIFICATIONS";
 export const DISMISS_NOTIFICATION = "DISMISS_NOTIFICATION";
+
+import throwApiError from "utils/apiError";
 import request from "utils/request";
 
 export const fetchNotifications = () => {
@@ -15,7 +17,7 @@ export const fetchNotifications = () => {
         notifications: response.data.notifications,
       });
     } catch (err) {
-      throw new Error(err.response.data.message);
+      throwApiError(err);
     }
   };
 };
@@ -41,7 +43,7 @@ export const markAllNotificationsAsRead = (notificationIds) => {
         jwtToken
       );
     } catch (err) {
-      throw new Error(err.response.data.message);
+      throwApiError(err);
     }
   };
 };
@@ -63,7 +65,7 @@ export const dismissNotification = (notificationId) => {
         jwtToken
       );
     } catch (err) {
-      throw new Error(err.response.data.message);
+      throwApiError(err);
     }
   };
 };
