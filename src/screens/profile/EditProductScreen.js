@@ -1,6 +1,6 @@
-import React, { useState, useLayoutEffect } from "react";
+// React Imports //
+import React, { useState } from "react";
 import {
-  Alert,
   View,
   Image,
   StyleSheet,
@@ -10,24 +10,36 @@ import {
   Keyboard,
 } from "react-native";
 import { useSelector } from "react-redux";
+
+// Expo Action Sheet Import //
 import { useActionSheet } from "@expo/react-native-action-sheet";
+
+// React Hook Form Imports //
 import { useForm, Controller } from "react-hook-form";
 
+// Utils Imports //
 import {
   takeImage,
   chooseFromLibrary,
   uploadImageHandler,
 } from "utils/imagePicker";
 import request from "utils/request";
+import showAlert from "utils/showAlert";
+
+// Constants Imports //
 import FemaleCategories from "constants/FemaleCategories";
 import MaleCategories from "constants/MaleCategories";
+import Colors from "constants/Colors";
+
+// Components Imports //
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
 import DropDown from "components/DropDown";
 import Loader from "components/Loader";
-import Colors from "constants/Colors";
 
+// Main Component //
 const EditProductScreen = (props) => {
+  // Init //
   const { _id, imageUrl, title, description } = props.route.params;
   const { control, handleSubmit, errors, reset } = useForm({
     defaultValues: {
@@ -44,7 +56,7 @@ const EditProductScreen = (props) => {
 
   const token = useSelector((state) => state.auth.jwtToken);
 
-  // action sheet handler
+  // Functions //
   const showActionSheet = () => {
     const options = ["Take Photo", "Choose From Library", "Cancel"];
     const cancelButtonIndex = 2;
@@ -72,9 +84,7 @@ const EditProductScreen = (props) => {
 
   const saveHandler = async (data) => {
     if (!isValidCategory()) {
-      Alert.alert("Edit failed!", "Please select exactly one category.", [
-        { text: "Okay" },
-      ]);
+      showAlert("Edit failed!", "Please select exactly one category.", null);
       return;
     }
 
@@ -101,18 +111,12 @@ const EditProductScreen = (props) => {
         routes: [{ name: "Profile" }],
       });
     } catch (err) {
-      Alert.alert("Request failed", `${err.response.data.message}`, [
-        {
-          text: "Okay",
-          onPress: () => {
-            setIsLoading(false);
-          },
-        },
-      ]);
+      showAlert("Request failed", err.response.data.message, () =>
+        setIsLoading(false)
+      );
     }
   };
 
-  // category validation
   const isValidCategory = () => {
     if (maleCategory === null && femaleCategory === null) {
       return false;
@@ -123,6 +127,7 @@ const EditProductScreen = (props) => {
     }
   };
 
+  // Render //
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.screen}>

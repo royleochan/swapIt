@@ -1,12 +1,19 @@
+// React Imports //
 import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, FlatList, Alert } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
+// Navigation Imports //
 import { navigateToProductDetails } from "navigation/navigate/common/index";
 import { updateProducts } from "store/actions/products";
+
+// Utils Imports //
 import request from "utils/request";
 import filter from "utils/filter";
 import sort from "utils/sort";
+import showAlert from "utils/showAlert";
+
+// Components Imports //
 import ProductBox from "components/ProductBox";
 import SortFilterMenu from "components/SortFilterMenu";
 import DefaultText from "components/DefaultText";
@@ -38,9 +45,7 @@ const CategoryScreen = (props) => {
       setIsRefreshing(false);
       dispatch(updateProducts([]));
       setProducts([]);
-      Alert.alert("Request failed", `${err.response.data.message}`, [
-        { text: "Okay" },
-      ]);
+      showAlert("Request failed", err.response.data.message, null);
     }
     setIsRefreshing(false);
   }, [setIsRefreshing, dispatch]);

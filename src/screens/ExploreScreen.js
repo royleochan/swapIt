@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, Platform, Alert } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import Swiper from "react-native-deck-swiper";
 
@@ -9,6 +9,7 @@ import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 import OverlayLabel from "components/OverlayLabel";
 import SwipeProduct from "components/SwipeProduct";
+import showAlert from "utils/showAlert";
 
 const ExploreScreen = (props) => {
   const [products, setProducts] = useState([]);
@@ -30,14 +31,9 @@ const ExploreScreen = (props) => {
       setProducts(resData);
       setIsLoading(false);
     } catch (err) {
-      Alert.alert("Request failed", `${err.response.data.message}`, [
-        {
-          text: "Okay",
-          onPress: () => {
-            setIsLoading(false);
-          },
-        },
-      ]);
+      showAlert("Request failed", err.response.data.message, () =>
+        setIsLoading(false)
+      );
     }
   }, [setProducts]);
 

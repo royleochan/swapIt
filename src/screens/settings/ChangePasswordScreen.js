@@ -1,23 +1,54 @@
-import React from "react";
+// React Imports //
+import React, { useRef, useState } from "react";
 import { StyleSheet, Text, View, TextInput } from "react-native";
+import { useDispatch } from "react-redux";
+
+// React Hook Form Imports //
 import { useForm, Controller } from "react-hook-form";
 
+// Colors Import //
 import Colors from "constants/Colors";
+
+// Redux Actions Imports //
+import { updatePassword } from "store/actions/auth";
+
+// Utils Imports //
+import showAlert from "utils/showAlert";
+
+// Components Import //
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
+import Loader from "components/Loader";
 
+// Main Component //
 const ChangePasswordScreen = () => {
-  const { control, handleSubmit, errors } = useForm();
+  // Init //
+  const { control, handleSubmit, errors, watch, reset } = useForm();
+  const newPassword = useRef({});
+  newPassword.current = watch("newPassword", "");
 
-  // todo: handle api logic
+  const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useDispatch();
+
+  // Functions //
   const submitHandler = async (data) => {
-    console.log(data.currentPassword);
-    console.log(data.newPassword);
-    console.log(data.newPasswordConfirmation);
+    setIsLoading(true);
+    try {
+      await dispatch(updatePassword(data));
+      reset();
+      setIsLoading(false);
+    } catch (err) {
+      showAlert("Failed to change password", err.message, () =>
+        setIsLoading(false)
+      );
+    }
   };
 
+  // Render //
   return (
     <View style={styles.screenContainer}>
+      {isLoading && <Loader isLoading={isLoading} />}
       <DefaultText style={styles.headerText}>Change Password</DefaultText>
       <View style={styles.textInputContainer}>
         <DefaultText style={styles.inputLabelText}>
@@ -27,10 +58,21 @@ const ChangePasswordScreen = () => {
           name="currentPassword"
           defaultValue=""
           control={control}
-          rules={{ required: true }}
+          rules={{
+            required: {
+              value: true,
+              message: "Required field cannot be empty.",
+            },
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters",
+            },
+          }}
           render={({ onChange, value }) => (
             <TextInput
-              autoCapitalize={false}
+              secureTextEntry={true}
+              autoCapitalize="none"
+              style={styles.textInput}
               value={value}
               onChangeText={(value) => {
                 onChange(value);
@@ -40,7 +82,7 @@ const ChangePasswordScreen = () => {
         />
       </View>
       {errors.currentPassword && (
-        <Text style={styles.errorText}>Required field cannot be empty.</Text>
+        <Text style={styles.errorText}>{errors.currentPassword.message}</Text>
       )}
       <View style={styles.textInputContainer}>
         <DefaultText style={styles.inputLabelText}>New Password</DefaultText>
@@ -48,10 +90,21 @@ const ChangePasswordScreen = () => {
           name="newPassword"
           defaultValue=""
           control={control}
-          rules={{ required: true }}
+          rules={{
+            required: {
+              value: true,
+              message: "Required field cannot be empty.",
+            },
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters",
+            },
+          }}
           render={({ onChange, value }) => (
             <TextInput
-              autoCapitalize={false}
+              secureTextEntry={true}
+              autoCapitalize="none"
+              style={styles.textInput}
               value={value}
               onChangeText={(value) => {
                 onChange(value);
@@ -61,7 +114,7 @@ const ChangePasswordScreen = () => {
         />
       </View>
       {errors.newPassword && (
-        <Text style={styles.errorText}>Required field cannot be empty.</Text>
+        <Text style={styles.errorText}>{errors.newPassword.message}</Text>
       )}
       <View style={styles.textInputContainer}>
         <DefaultText style={styles.inputLabelText}>
@@ -71,10 +124,23 @@ const ChangePasswordScreen = () => {
           name="newPasswordConfirmation"
           defaultValue=""
           control={control}
-          rules={{ required: true }}
+          rules={{
+            required: {
+              value: true,
+              message: "Required field cannot be empty.",
+            },
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters",
+            },
+            validate: (value) =>
+              value === newPassword.current || "The passwords do not match",
+          }}
           render={({ onChange, value }) => (
             <TextInput
-              autoCapitalize={false}
+              secureTextEntry={true}
+              autoCapitalize="none"
+              style={styles.textInput}
               value={value}
               onChangeText={(value) => {
                 onChange(value);
@@ -84,7 +150,9 @@ const ChangePasswordScreen = () => {
         />
       </View>
       {errors.newPasswordConfirmation && (
-        <Text style={styles.errorText}>Required field cannot be empty.</Text>
+        <Text style={styles.errorText}>
+          {errors.newPasswordConfirmation.message}
+        </Text>
       )}
       <View style={styles.buttonContainer}>
         <MainButton
@@ -115,7 +183,10 @@ const styles = StyleSheet.create({
   textInputContainer: {
     borderBottomColor: "rgba(196, 196, 196, 0.3)",
     borderBottomWidth: 1,
-    padding: 20,
+    margin: 20,
+  },
+  textInput: {
+    height: 30,
   },
   inputLabelText: {
     fontSize: 14,

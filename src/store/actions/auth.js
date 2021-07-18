@@ -4,6 +4,7 @@ export const REFRESHUSER = "REFRESHUSER";
 export const UPDATEUSER = "UPDATEUSER";
 export const LIKE_PRODUCT = "LIKE_PRODUCT";
 export const UNLIKE_PRODUCT = "UNLIKE_PRODUCT";
+export const UPDATE_PASSWORD = "UPDATE_PASSWORD";
 
 import request from "utils/request";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -104,13 +105,16 @@ export const refreshUser = (updatedUser) => {
   };
 };
 
-export const updateUser = (updatedUserCredentials, loggedInUserId, token) => {
-  return async (dispatch) => {
+export const updateUser = (updatedUserCredentials) => {
+  return async (dispatch, getState) => {
+    const loggedInUserId = getState().auth.user.id;
+    const jwtToken = getState().auth.jwtToken;
+
     try {
-      response = await request.patch(
+      const response = await request.patch(
         `/api/users/${loggedInUserId}`,
         updatedUserCredentials,
-        token
+        jwtToken
       );
       dispatch({
         type: UPDATEUSER,
@@ -159,6 +163,26 @@ export const unlikeProduct = (productId) => {
       dispatch({
         type: UNLIKE_PRODUCT,
         productId: response.data.product._id,
+      });
+    } catch (err) {
+      throw new Error(err.response.data.message);
+    }
+  };
+};
+
+export const updatePassword = (formState) => {
+  return async (dispatch, getState) => {
+    const loggedInUserId = getState().auth.user.id;
+    const jwtToken = getState().auth.jwtToken;
+
+    try {
+      const response = await request.patch(
+        `/api/users/password/${loggedInUserId}`,
+        formState,
+        jwtToken
+      );
+      dispatch({
+        type: UPDATE_PASSWORD,
       });
     } catch (err) {
       throw new Error(err.response.data.message);

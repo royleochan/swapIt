@@ -1,38 +1,45 @@
-import React from "react";
+// React Imports //
+import React, { useRef } from "react";
 import {
   StyleSheet,
   View,
   Image,
   TouchableOpacity,
   Text,
-  Alert,
   KeyboardAvoidingView,
 } from "react-native";
+
+// React Hook Form Imports //
 import { useForm, Controller } from "react-hook-form";
 
+// Navigation Imports //
 import {
   navigateToLogin,
   navigateToSignUpTwo,
 } from "navigation/navigate/auth/index";
+
+// Colors Import //
 import Colors from "constants/Colors";
+
+// Components Imports //
 import GlassTextInput from "components/GlassTextInput";
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
 
+// Main Component //
 const SignupScreen = (props) => {
-  const { control, handleSubmit, errors } = useForm();
+  // Init //
+  const { control, handleSubmit, errors, watch } = useForm();
+  const password = useRef({});
+  password.current = watch("password", "");
 
+  // Functions //
   const signupHandler = (data) => {
-    if (data.password !== data.confirmPassword) {
-      Alert.alert("Signup Failed!", "Please check that passwords match.", [
-        { text: "Okay" },
-      ]);
-    } else {
-      delete data.confirmPassword;
-      navigateToSignUpTwo(props, data);
-    }
+    delete data.confirmPassword;
+    navigateToSignUpTwo(props, data);
   };
 
+  // Render //
   return (
     <View style={styles.screen}>
       <View style={styles.logoContainer}>
@@ -62,7 +69,7 @@ const SignupScreen = (props) => {
           )}
         />
         {errors.name && (
-          <Text style={styles.errorText}>Required field cannot be empty.</Text>
+          <Text style={styles.errorText}>Required field cannot be empty</Text>
         )}
         <Controller
           name="username"
@@ -81,7 +88,7 @@ const SignupScreen = (props) => {
           )}
         />
         {errors.username && (
-          <Text style={styles.errorText}>Required field cannot be empty.</Text>
+          <Text style={styles.errorText}>Required field cannot be empty</Text>
         )}
         <Controller
           name="email"
@@ -94,7 +101,7 @@ const SignupScreen = (props) => {
             },
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Please enter valid email.",
+              message: "Please enter valid email",
             },
           }}
           render={({ onChange, value }) => (
@@ -118,7 +125,7 @@ const SignupScreen = (props) => {
           rules={{
             required: {
               value: true,
-              message: "Required field cannot be empty.",
+              message: "Required field cannot be empty",
             },
             minLength: {
               value: 8,
@@ -153,6 +160,8 @@ const SignupScreen = (props) => {
               value: 8,
               message: "Password must be at least 8 characters",
             },
+            validate: (value) =>
+              value === password.current || "The passwords do not match",
           }}
           render={({ onChange, value }) => (
             <GlassTextInput
@@ -219,6 +228,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: Colors.darkPink,
     fontSize: 12,
+    paddingTop: 6,
   },
   emailContainer: {
     paddingTop: 30,

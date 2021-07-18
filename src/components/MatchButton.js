@@ -1,12 +1,21 @@
+// React Imports //
 import React, { useState, useEffect } from "react";
-import { StyleSheet, TouchableOpacity, View, Alert } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
+// Utils Imports //
 import request from "utils/request";
+import showAlert from "utils/showAlert";
+
+// Colors Import //
 import Colors from "constants/Colors";
+
+// Component Imports //
 import DefaultText from "components/DefaultText";
 import SpinningLoader from "components/SpinningLoader";
 
+// Main Component //
 const MatchButton = (props) => {
+  // Init //
   const {
     style,
     match,
@@ -18,10 +27,63 @@ const MatchButton = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [matchState, setMatchState] = useState(match);
 
+  let onPressFunction;
+  let buttonTitle;
+
+  const {
+    isConfirmed,
+    productOneId,
+    productTwoId,
+    productOneIsRequested,
+    productOneIsReviewed,
+    productTwoIsRequested,
+    productTwoIsReviewed,
+  } = matchState;
+
+  if (productOneId === ownProduct) {
+    if (productOneIsReviewed) {
+      buttonTitle = "Review Made!";
+      onPressFunction = () => navigateToCompletedReview(match.id);
+    } else if (isConfirmed) {
+      buttonTitle = "Make Review";
+      onPressFunction = () =>
+        navigateToCreateReview(ownProduct, match.id, reviewed);
+    } else if (productTwoIsRequested) {
+      buttonTitle = "Accept Request";
+      onPressFunction = () => handleOnClick("accept", productOneId);
+    } else if (productOneIsRequested) {
+      buttonTitle = "Requested";
+      onPressFunction = () => handleOnClick("cancel", productOneId);
+    } else {
+      buttonTitle = "Send Match Request";
+      onPressFunction = () => handleOnClick("send", productOneId);
+    }
+  } else {
+    if (productTwoIsReviewed) {
+      buttonTitle = "Review Made!";
+      onPressFunction = () => navigateToCompletedReview(match.id);
+    } else if (isConfirmed) {
+      buttonTitle = "Make Review";
+      onPressFunction = () =>
+        navigateToCreateReview(ownProduct, match.id, reviewed);
+    } else if (productOneIsRequested) {
+      buttonTitle = "Accept Request";
+      onPressFunction = () => handleOnClick("accept", productTwoId);
+    } else if (productTwoIsRequested) {
+      buttonTitle = "Requested";
+      onPressFunction = () => handleOnClick("cancel", productTwoId);
+    } else {
+      buttonTitle = "Send Match Request";
+      onPressFunction = () => handleOnClick("send", productTwoId);
+    }
+  }
+
+  // Side Effects //
   useEffect(() => {
     setMatchState(match);
   }, [match]);
 
+  // Functions //
   const handleOnClick = async (type, pid) => {
     setIsLoading(true);
     try {
@@ -31,72 +93,10 @@ const MatchButton = (props) => {
       );
       setMatchState(response.data);
     } catch (err) {
-      Alert.alert("Failed", err.response.data.message, [{ text: "Okay" }]);
+      showAlert("Failed", err.response.data.message, null);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const Button = ({ matchState }) => {
-    let onPressFunction;
-    let buttonTitle;
-
-    const {
-      isConfirmed,
-      productOneId,
-      productTwoId,
-      productOneIsRequested,
-      productOneIsReviewed,
-      productTwoIsRequested,
-      productTwoIsReviewed,
-    } = matchState;
-
-    if (productOneId === ownProduct) {
-      if (productOneIsReviewed) {
-        buttonTitle = "Review Made!";
-        onPressFunction = () => navigateToCompletedReview(match.id);
-      } else if (isConfirmed) {
-        buttonTitle = "Make Review";
-        onPressFunction = () =>
-          navigateToCreateReview(ownProduct, match.id, reviewed);
-      } else if (productTwoIsRequested) {
-        buttonTitle = "Accept Request";
-        onPressFunction = () => handleOnClick("accept", productOneId);
-      } else if (productOneIsRequested) {
-        buttonTitle = "Requested";
-        onPressFunction = () => handleOnClick("cancel", productOneId);
-      } else {
-        buttonTitle = "Send Match Request";
-        onPressFunction = () => handleOnClick("send", productOneId);
-      }
-    } else {
-      if (productTwoIsReviewed) {
-        buttonTitle = "Review Made!";
-        onPressFunction = () => navigateToCompletedReview(match.id);
-      } else if (isConfirmed) {
-        buttonTitle = "Make Review";
-        onPressFunction = () =>
-          navigateToCreateReview(ownProduct, match.id, reviewed);
-      } else if (productOneIsRequested) {
-        buttonTitle = "Accept Request";
-        onPressFunction = () => handleOnClick("accept", productTwoId);
-      } else if (productTwoIsRequested) {
-        buttonTitle = "Requested";
-        onPressFunction = () => handleOnClick("cancel", productTwoId);
-      } else {
-        buttonTitle = "Send Match Request";
-        onPressFunction = () => handleOnClick("send", productTwoId);
-      }
-    }
-
-    return (
-      <TouchableOpacity
-        style={{ ...style, ...styles.matchButton }}
-        onPress={onPressFunction}
-      >
-        <DefaultText style={styles.text}>{buttonTitle}</DefaultText>
-      </TouchableOpacity>
-    );
   };
 
   if (isLoading) {
@@ -109,7 +109,12 @@ const MatchButton = (props) => {
 
   return (
     <View style={{ zIndex: 1 }}>
-      <Button matchState={matchState} />
+      <TouchableOpacity
+        style={{ ...style, ...styles.matchButton }}
+        onPress={onPressFunction}
+      >
+        <DefaultText style={styles.text}>{buttonTitle}</DefaultText>
+      </TouchableOpacity>
     </View>
   );
 };

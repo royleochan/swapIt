@@ -1,43 +1,52 @@
+// React Imports //
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  Text,
-  Alert,
-} from "react-native";
-import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
 
+// React Hook Form Imports //
+import { useForm, Controller } from "react-hook-form";
+
+// Navigation Imports //
 import { navigateToSignUp } from "navigation/navigate/auth/index";
+
+// Redux Action Imports //
+import { authenticate } from "store/actions/auth";
+
+// Colors Import //
 import Colors from "constants/Colors";
+
+// Utils Imports //
+import showAlert from "utils/showAlert";
+
+// Components Imports //
 import DefaultText from "components/DefaultText";
 import GlassTextInput from "components/GlassTextInput";
 import MainButton from "components/MainButton";
 import Loader from "components/Loader";
-import * as authActions from "store/actions/auth";
 
+// Main Component //
 const LoginScreen = (props) => {
+  // Init //
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, errors } = useForm();
 
+  // Functions //
   const loginHandler = async (data) => {
     setIsLoading(true);
     try {
-      await dispatch(authActions.authenticate(data.username, data.password));
+      await dispatch(authenticate(data.username, data.password));
     } catch (err) {
-      Alert.alert("Login failed", `${err.message}`, [
-        { text: "Okay", onPress: () => setIsLoading(false) },
-      ]);
+      showAlert("Login failed", err.message, () => setIsLoading(false));
     }
   };
 
+  // Side Effects //
   useEffect(() => {
     return () => setIsLoading(false);
   }, []);
 
+  // Render //
   return (
     <View style={styles.screen}>
       {isLoading && <Loader isLoading={true} />}

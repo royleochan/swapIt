@@ -1,37 +1,53 @@
+// React Imports //
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { StyleSheet, View, TouchableOpacity, Image, Text } from "react-native";
-import { useActionSheet } from "@expo/react-native-action-sheet";
-import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 
+// Expo Action Sheet Import //
+import { useActionSheet } from "@expo/react-native-action-sheet";
+
+// React Hook Form Imports //
+import { useForm, Controller } from "react-hook-form";
+
+// Redux Action Imports //
+import { updateUser } from "store/actions/auth";
+
+// Utils Imports //
 import {
   DUMMY_PROFILE_PIC_URL,
   takeImage,
   chooseFromLibrary,
   uploadImageHandler,
 } from "utils/imagePicker";
-import * as authActions from "store/actions/auth";
+import showAlert from "utils/showAlert";
+
+// Colors Imports //
 import Colors from "constants/Colors";
+
+// Components Imports //
 import DefaultText from "components/DefaultText";
 import DefaultTextInput from "components/DefaultTextInput";
 import IconButton from "components/IconButton";
 import Loader from "components/Loader";
 
+// Main Component //
 const EditProfileScreen = (props) => {
+  // Init //
+  const { control, handleSubmit, errors } = useForm();
+  const { showActionSheetWithOptions } = useActionSheet();
+
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.auth.user);
-  const token = useSelector((state) => state.auth.jwtToken);
-  const { showActionSheetWithOptions } = useActionSheet();
+
   const [pickedImage, setPickedImage] = useState(loggedInUser.profilePic);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { control, handleSubmit, errors } = useForm();
-
+  // Navigation Functions //
   const navigateToProfile = () => {
     props.navigation.navigate("Profile");
   };
 
-  // action sheet handler
+  // Functions //
   const showActionSheet = () => {
     const options = [
       "Take Photo",
@@ -67,7 +83,25 @@ const EditProfileScreen = (props) => {
     );
   };
 
-  // header save button
+  const saveHandler = async (data) => {
+    setIsLoading(true);
+    let imageUrl;
+    if (typeof pickedImage === "object") {
+      imageUrl = await uploadImageHandler(pickedImage);
+    } else {
+      imageUrl = pickedImage;
+    }
+    const formState = { ...data, profilePic: imageUrl };
+    try {
+      await dispatch(updateUser(formState));
+      setIsLoading(false);
+      navigateToProfile();
+    } catch (err) {
+      showAlert("Edit profile failed!", err.message, () => setIsLoading(false));
+    }
+  };
+
+  // Side Effects //
   useLayoutEffect(() => {
     props.navigation.setOptions({
       headerRight: () => (
@@ -82,115 +116,72 @@ const EditProfileScreen = (props) => {
     });
   }, [props.navigation, pickedImage]);
 
-  const saveHandler = async (data) => {
-    setIsLoading(true);
-    let imageUrl;
-    if (typeof pickedImage === "object") {
-      imageUrl = await uploadImageHandler(pickedImage);
-    } else {
-      imageUrl = pickedImage;
-    }
-    const formState = { ...data, profilePic: imageUrl };
-    try {
-      await dispatch(authActions.updateUser(formState, loggedInUser.id, token));
-    } catch (err) {
-      Alert.alert("Edit profile failed!", `${err}`, [
-        { text: "Okay", onPress: () => setIsLoading(false) },
-      ]);
-    }
-    navigateToProfile();
-  };
-
-  useEffect(() => {
-    return () => setIsLoading(false);
-  }, []);
-
-  if (isLoading) {
-    return <Loader isLoading={isLoading} />;
-  } else {
-    return (
-      <View style={styles.screenContainer}>
-        <View style={styles.imageContainer}>
-          <View style={styles.profilePic}>
-            {typeof pickedImage === "object" && (
-              <Image style={styles.image} source={{ uri: pickedImage.uri }} />
-            )}
-            {typeof pickedImage === "string" && (
-              <Image style={styles.image} source={{ uri: pickedImage }} />
-            )}
-          </View>
-          <TouchableOpacity onPress={showActionSheet}>
-            <DefaultText>Change Profile Picture</DefaultText>
-          </TouchableOpacity>
+  // Render //
+  return (
+    <View style={styles.screenContainer}>
+      {isLoading && <Loader isLoading={isLoading} />}
+      <View style={styles.imageContainer}>
+        <View style={styles.profilePic}>
+          {typeof pickedImage === "object" && (
+            <Image style={styles.image} source={{ uri: pickedImage.uri }} />
+          )}
+          {typeof pickedImage === "string" && (
+            <Image style={styles.image} source={{ uri: pickedImage }} />
+          )}
         </View>
+        <TouchableOpacity onPress={showActionSheet}>
+          <DefaultText>Change Profile Picture</DefaultText>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Controller
+          name="name"
+          defaultValue={loggedInUser.name}
+          control={control}
+          rules={{ required: true }}
+          render={({ onChange, value }) => (
+            <DefaultTextInput
+              label="Name"
+              value={value}
+              onChangeText={(value) => {
+                onChange(value);
+              }}
+            />
+          )}
+        />
+        {errors.name && (
+          <Text style={styles.errorText}>Required field cannot be empty.</Text>
+        )}
+        <Controller
+          name="username"
+          defaultValue={loggedInUser.username}
+          control={control}
+          rules={{ required: true }}
+          render={({ onChange, value }) => (
+            <DefaultTextInput
+              label="Username"
+              value={value}
+              onChangeText={(value) => {
+                onChange(value);
+              }}
+            />
+          )}
+        />
+        {errors.username && (
+          <Text style={styles.errorText}>Required field cannot be empty.</Text>
+        )}
         <View>
           <Controller
-            name="name"
-            defaultValue={loggedInUser.name}
-            control={control}
-            rules={{ required: true }}
-            render={({ onChange, value }) => (
-              <DefaultTextInput
-                label="Name"
-                value={value}
-                onChangeText={(value) => {
-                  onChange(value);
-                }}
-              />
-            )}
-          />
-          {errors.name && (
-            <Text style={styles.errorText}>
-              Required field cannot be empty.
-            </Text>
-          )}
-          <Controller
-            name="username"
-            defaultValue={loggedInUser.username}
-            control={control}
-            rules={{ required: true }}
-            render={({ onChange, value }) => (
-              <DefaultTextInput
-                label="Username"
-                value={value}
-                onChangeText={(value) => {
-                  onChange(value);
-                }}
-              />
-            )}
-          />
-          {errors.username && (
-            <Text style={styles.errorText}>
-              Required field cannot be empty.
-            </Text>
-          )}
-          <View>
-            <Controller
-              name="description"
-              defaultValue={loggedInUser.description}
-              control={control}
-              render={({ onChange, value }) => (
-                <DefaultTextInput
-                  label="Description"
-                  value={value}
-                  multiline={true}
-                  containerStyle={styles.descriptionContainer}
-                  style={styles.descriptionInputArea}
-                  onChangeText={(value) => {
-                    onChange(value);
-                  }}
-                />
-              )}
-            />
-          </View>
-          <Controller
-            name="location"
-            defaultValue={loggedInUser.location}
+            name="description"
+            defaultValue={loggedInUser.description}
             control={control}
             render={({ onChange, value }) => (
               <DefaultTextInput
-                label="Location"
+                label="Description"
                 value={value}
+                multiline={true}
+                containerStyle={styles.descriptionContainer}
+                style={styles.descriptionInputArea}
                 onChangeText={(value) => {
                   onChange(value);
                 }}
@@ -198,9 +189,23 @@ const EditProfileScreen = (props) => {
             )}
           />
         </View>
+        <Controller
+          name="location"
+          defaultValue={loggedInUser.location}
+          control={control}
+          render={({ onChange, value }) => (
+            <DefaultTextInput
+              label="Location"
+              value={value}
+              onChangeText={(value) => {
+                onChange(value);
+              }}
+            />
+          )}
+        />
       </View>
-    );
-  }
+    </View>
+  );
 };
 
 export default EditProfileScreen;

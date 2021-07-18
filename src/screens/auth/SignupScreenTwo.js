@@ -1,3 +1,4 @@
+// React Imports //
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -7,25 +8,40 @@ import {
   Text,
   Keyboard,
   TouchableWithoutFeedback,
-  Alert,
 } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import { useActionSheet } from "@expo/react-native-action-sheet";
-import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
+// Antd Icon Imports //
+import AntDesign from "react-native-vector-icons/AntDesign";
+
+// Expo Action Sheet Import //
+import { useActionSheet } from "@expo/react-native-action-sheet";
+
+// React Hook Form Imports //
+import { useForm, Controller } from "react-hook-form";
+
+// Redux Action Imports //
+import { signup } from "store/actions/auth";
+
+// Utils Imports //
 import {
   takeImage,
   chooseFromLibrary,
   uploadImageHandler,
 } from "utils/imagePicker";
-import * as authActions from "store/actions/auth";
+import showAlert from "utils/showAlert";
+
+// Colors Import //
 import Colors from "constants/Colors";
+
+// Components Imports //
 import GlassTextInput from "components/GlassTextInput";
 import MainButton from "components/MainButton";
 import Loader from "components/Loader";
 
+// Main Component //
 const SignupScreenTwo = (props) => {
+  // Init //
   const formData = props.route.params;
   const dispatch = useDispatch();
   const { control, handleSubmit } = useForm();
@@ -33,6 +49,7 @@ const SignupScreenTwo = (props) => {
   const [pickedImage, setPickedImage] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
+  // Functions //
   const showActionSheet = () => {
     const options = [
       "Take Photo",
@@ -76,18 +93,18 @@ const SignupScreenTwo = (props) => {
     }
 
     try {
-      await dispatch(authActions.signup(formState));
+      await dispatch(signup(formState));
     } catch (err) {
-      Alert.alert("Signup failed!", `${err}`, [
-        { text: "Okay", onPress: () => setIsLoading(false) },
-      ]);
+      showAlert("Signup failed!", err.message, () => setIsLoading(false));
     }
   };
 
+  // Side Effects //
   useEffect(() => {
     return () => setIsLoading(false);
   }, []);
 
+  // Render //
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.screen}>

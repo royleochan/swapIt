@@ -39,6 +39,7 @@ import followingIcon from "assets/categories/following.png";
 
 // Utils Imports //
 import request from "utils/request";
+import showAlert from "utils/showAlert";
 import registerForPushNotificationsAsync from "utils/notification";
 
 // Local Constants Imports //
@@ -185,9 +186,7 @@ const HomeScreen = (props) => {
     } catch (err) {
       setIsRefreshing(false);
       dispatch(updateProducts([]));
-      Alert.alert("Request failed", `${err.response.data.message}`, [
-        { text: "Okay" },
-      ]);
+      showAlert("Request failed", err.response.data.message, null);
     }
     setIsRefreshing(false);
   }, [setIsRefreshing]);

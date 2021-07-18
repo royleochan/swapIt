@@ -1,15 +1,26 @@
+// React Imports //
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Text, Alert } from "react-native";
+import { StyleSheet, View, TextInput, Text } from "react-native";
 import { useSelector } from "react-redux";
+
+// React Hook Form Imports //
 import { useForm, Controller } from "react-hook-form";
 
+// Utils Imports //
 import request from "utils/request";
+import showAlert from "utils/showAlert";
+
+// Colors Import //
 import Colors from "constants/Colors";
+
+// Components Imports //
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
 import Loader from "components/Loader";
 
+// Main Component //
 const ReportScreen = (props) => {
+  // Init //
   const { title, subject } = props.route.params;
   const { control, handleSubmit, errors, reset } = useForm();
 
@@ -18,6 +29,7 @@ const ReportScreen = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  // Functions //
   const cleanUp = () => {
     setIsLoading(false);
     reset();
@@ -32,18 +44,20 @@ const ReportScreen = (props) => {
         email,
         description,
       });
-      Alert.alert(
+
+      showAlert(
         "Report Sent!",
         "Thank you for your report. You should be receiving an email shortly. Do check the spam folder if you can't find it in your inbox.",
-        [{ text: "Okay", onPress: () => cleanUp() }]
+        () => cleanUp()
       );
     } catch (err) {
-      Alert.alert("Failed to send report!", "Please try again later.", [
-        { text: "Okay", onPress: () => cleanUp() },
-      ]);
+      showAlert("Failed to send report!", "Please try again later.", () =>
+        cleanUp()
+      );
     }
   };
 
+  // Render //
   return (
     <View style={styles.screenContainer}>
       {isLoading && <Loader isLoading={isLoading} />}

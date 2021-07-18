@@ -1,8 +1,11 @@
+// Expo imports  //
 import * as ImagePicker from "expo-image-picker";
-import { Alert } from "react-native";
 
+// Utils Imports //
 import request from "utils/request";
+import showAlert from "utils/showAlert";
 
+// Blank profile Image
 const DUMMY_PROFILE_PIC_URL = "https://i.imgur.com/tiRSkS8.jpg";
 
 /**
@@ -14,10 +17,10 @@ const verifyCameraPermissions = async () => {
   const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
 
   if (cameraStatus.status !== "granted") {
-    Alert.alert(
+    showAlert(
       "Insufficient Permissions!",
       "You need to grant camera permissions to upload an Image.",
-      [{ text: "Okay" }]
+      null
     );
     return false;
   }
@@ -33,10 +36,10 @@ const verifyLibraryPermissions = async () => {
   const mediaStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
   if (mediaStatus.status !== "granted") {
-    Alert.alert(
+    showAlert(
       "Insufficient Permissions!",
-      "You need to grant camera permissions to upload an Image.",
-      [{ text: "Okay" }]
+      "You need to grant lbirary permissions to upload an Image.",
+      null
     );
     return false;
   }
