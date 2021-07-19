@@ -19,15 +19,7 @@ export const authenticate = (username, password) => {
           password,
         })
         .catch((error) => {
-          const errorResData = error.response.data;
-          const errorId = errorResData.message;
-          let message = "Something went wrong!";
-          if (errorId === "USERNAME_NOT_FOUND") {
-            message = "This username could not be found!";
-          } else if (errorId === "INVALID_PASSWORD") {
-            message = "This password is not valid!";
-          }
-          throw message;
+          throwApiError(error);
         });
 
       const resData = res.data;
@@ -46,7 +38,13 @@ export const authenticate = (username, password) => {
         jwtToken: resData.token,
       });
     } catch (e) {
-      throw new Error(e);
+      let message = "Something went wrong!";
+      if (e.message === "USERNAME_NOT_FOUND") {
+        message = "This username could not be found!";
+      } else if (e.message === "INVALID_PASSWORD") {
+        message = "This password is not valid!";
+      }
+      throw new Error(message);
     }
   };
 };

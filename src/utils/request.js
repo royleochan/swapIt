@@ -3,6 +3,7 @@ import { REACT_APP_BACKEND_URL } from "@env";
 
 const api = axios.create({
   baseURL: REACT_APP_BACKEND_URL,
+  timeout: 6000,
 });
 
 const request = {
