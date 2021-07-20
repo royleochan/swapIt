@@ -19,6 +19,7 @@ import Colors from "constants/Colors";
 // Component Imports //
 import DefaultText from "components/DefaultText";
 import AlertRow from "components/AlertRow";
+import Loader from "components/Loader";
 
 // Main Component //
 const AlertsScreen = (props) => {
@@ -32,9 +33,8 @@ const AlertsScreen = (props) => {
   );
 
   // Side Effects //
-  const { isRefreshing, isError, setIsRefreshing } = useFlatListRequest(() =>
-    dispatch(fetchNotifications())
-  );
+  const { isRefreshing, isError, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => dispatch(fetchNotifications()));
 
   useFocusEffect(
     useCallback(() => {
@@ -48,6 +48,10 @@ const AlertsScreen = (props) => {
   );
 
   // Render //
+  if (isLoading) {
+    return <Loader isLoading={isLoading} />;
+  }
+
   return (
     <View style={styles.screenContainer}>
       <View style={styles.headerContainer}>

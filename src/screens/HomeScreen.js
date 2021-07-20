@@ -7,7 +7,6 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  Alert,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import Constants from "expo-constants";
@@ -31,7 +30,6 @@ import {
 
 // Redux Action Imports //
 import { fetchNotifications } from "store/actions/notifications";
-import { updateProducts } from "store/actions/products";
 import { refreshUser } from "store/actions/auth";
 
 // Local Image Imports //
@@ -149,12 +147,12 @@ const HomeScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isFocusSearch, setIsFocusSearch] = useState(false);
   const [query, setQuery] = useState("");
-  const [recommendedUsers, setRecommendedUsers] = useState([]);
+  const [recommendedUsers, setRecommendedUsers] = useState([]); // temporary
+  const [trendingProducts, setTrendingProducts] = useState([]); // temporary
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const jwtToken = useSelector((state) => state.auth.jwtToken);
-  const trendingProducts = useSelector((state) => state.products);
 
   // Functions //
   const handleSearch = (text) => {
@@ -182,10 +180,10 @@ const HomeScreen = (props) => {
     try {
       const response = await request.get(`/api/products/all/${user.id}`);
       const resData = response.data.products;
-      dispatch(updateProducts(resData));
+      setTrendingProducts(resData);
     } catch (err) {
       setIsRefreshing(false);
-      dispatch(updateProducts([]));
+      setTrendingProducts([]);
       showAlert("Request failed", err.response.data.message, null);
     }
     setIsRefreshing(false);

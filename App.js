@@ -15,8 +15,6 @@ import AppNavigator from "navigation/AppNavigator";
 
 // Redux Reducer Imports //
 import authReducer from "store/reducers/auth";
-import sortReducer from "store/reducers/sort";
-import filterReducer from "store/reducers/filter";
 import productsReducer from "store/reducers/products";
 import notificationsReducer from "store/reducers/notifications";
 import followInfoReducer from "store/reducers/followInfo";
@@ -41,8 +39,6 @@ const fetchFonts = () => {
 // Setup redux store //
 const rootReducer = combineReducers({
   auth: authReducer,
-  sort: sortReducer,
-  filter: filterReducer,
   products: productsReducer,
   notifications: notificationsReducer,
   followInfo: followInfoReducer,

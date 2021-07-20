@@ -5,26 +5,25 @@ import { useForm, Controller } from "react-hook-form";
 import { AntDesign } from "@expo/vector-icons";
 import RBSheet from "react-native-raw-bottom-sheet";
 
-import * as sortActions from "store/actions/sort";
-import * as filterActions from "store/actions/filter";
+import { updateFilterState, updateSortState } from "store/actions/products";
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import IconButton from "components/IconButton";
 import MainButton from "components/MainButton";
 
-const SortFilterMenu = (props) => {
+const SortFilterMenu = () => {
   const refRBSheetSort = useRef();
   const refRBSheetFilter = useRef();
 
-  const sortState = useSelector((state) => state.sort);
-  const filterState = useSelector((state) => state.filter);
+  const sortState = useSelector((state) => state.products.sortState);
+  const filterState = useSelector((state) => state.products.filterState);
   const dispatch = useDispatch();
 
   const { control, handleSubmit, errors } = useForm();
 
   const filterHandler = (data) => {
     dispatch(
-      filterActions.updateFilterState({
+      updateFilterState({
         minPrice: data.minPrice,
         maxPrice: data.maxPrice,
       })
@@ -34,10 +33,8 @@ const SortFilterMenu = (props) => {
 
   useEffect(() => {
     return () => {
-      dispatch(
-        filterActions.updateFilterState({ minPrice: null, maxPrice: null })
-      );
-      dispatch(sortActions.updateSortState({ 0: true }));
+      dispatch(updateFilterState({ minPrice: null, maxPrice: null }));
+      dispatch(updateSortState({ 0: true }));
     };
   }, []);
 
@@ -45,7 +42,7 @@ const SortFilterMenu = (props) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          dispatch(sortActions.updateSortState({ [props.index]: true }));
+          dispatch(updateSortState({ [props.index]: true }));
           refRBSheetSort.current.close();
         }}
         style={styles.sortLabel}
@@ -132,7 +129,7 @@ const SortFilterMenu = (props) => {
               style={styles.resetButton}
               onPress={() => {
                 dispatch(
-                  filterActions.updateFilterState({
+                  updateFilterState({
                     minPrice: null,
                     maxPrice: null,
                   })
