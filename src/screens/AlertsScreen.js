@@ -19,6 +19,8 @@ import Colors from "constants/Colors";
 // Component Imports //
 import DefaultText from "components/DefaultText";
 import AlertRow from "components/AlertRow";
+import Empty from "components/Empty";
+import ErrorSplash from "components/ErrorSplash";
 
 // Main Component //
 const AlertsScreen = (props) => {
@@ -55,6 +57,10 @@ const AlertsScreen = (props) => {
       </View>
       <FlatList
         onRefresh={() => setIsRefreshing(true)}
+        contentContainerStyle={{ flexGrow: 1 }}
+        ListEmptyComponent={
+          isError ? <ErrorSplash /> : <Empty message="No alerts found" />
+        }
         style={styles.list}
         refreshing={isRefreshing}
         data={notifications}
