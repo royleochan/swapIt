@@ -9,11 +9,13 @@ import DefaultText from "components/DefaultText";
 import Error from "assets/svg/Error";
 
 const ErrorSplash = (props) => {
+  const { message } = props;
+
   return (
     <View style={styles.screen}>
       <Error />
       <DefaultText style={styles.text}>
-        {props.message !== undefined ? props.message : "Something went wrong"}
+        {message !== undefined ? message : "Something went wrong"}
       </DefaultText>
     </View>
   );

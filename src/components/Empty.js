@@ -9,13 +9,13 @@ import DefaultText from "components/DefaultText";
 import EmptyFolder from "assets/svg/EmptyFolder";
 
 const Empty = (props) => {
+  const { width, height, fontSize, message } = props;
+
   return (
     <View style={styles.screen}>
-      <EmptyFolder width={props.width} height={props.height} />
-      <DefaultText
-        style={{ ...styles.text, fontSize: true ? props.fontSize : 16 }}
-      >
-        {props.message}
+      <EmptyFolder width={width} height={height} />
+      <DefaultText style={{ ...styles.text, fontSize: true ? fontSize : 16 }}>
+        {message}
       </DefaultText>
     </View>
   );
