@@ -88,10 +88,10 @@ const ProfileScreen = (props) => {
               selectedUser={userData}
               navigateToReviews={() => navigateToReviews(props, selectedUserId)}
               navigateToFollowers={() =>
-                navigateToFollowers(props, selectedUserId)
+                navigateToFollowers(props, selectedUserId, userData.username)
               }
               navigateToFollowing={() =>
-                navigateToFollowing(props, selectedUserId)
+                navigateToFollowing(props, selectedUserId, userData.username)
               }
             />
           }

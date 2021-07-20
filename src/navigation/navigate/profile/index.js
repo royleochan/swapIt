@@ -36,12 +36,14 @@ const navigateToSettings = (props) => {
  *
  * @param props: props from source screen
  * @param selectedUserId: string representing id of selected user
+ * @param username: string representing username of selected user
  */
-const navigateToFollowing = (props, selectedUserId) => {
+const navigateToFollowing = (props, selectedUserId, username) => {
   props.navigation.push("Follow", {
     screen: "Following",
     params: {
       selectedUserId,
+      username,
     },
   });
 };
@@ -51,12 +53,14 @@ const navigateToFollowing = (props, selectedUserId) => {
  *
  * @param props: props from source screen
  * @param selectedUserId: string representing id of selected user
+ * @param username: string representing username of selected user
  */
-const navigateToFollowers = (props, selectedUserId) => {
+const navigateToFollowers = (props, selectedUserId, username) => {
   props.navigation.push("Follow", {
     screen: "Followers",
     params: {
       selectedUserId,
+      username,
     },
   });
 };

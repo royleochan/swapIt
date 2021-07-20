@@ -28,11 +28,10 @@ import FollowButton from "components/FollowButton";
 const FollowersScreen = (props) => {
   // Init //
   const { params } = useContext(ParamsContext);
-  const { selectedUserId } = params;
+  const { selectedUserId, username } = params;
 
   const dispatch = useDispatch();
   const loggedInUserId = useSelector((state) => state.auth.user.id);
-  const username = useSelector((state) => state.auth.user.username);
   const followers = useSelector((state) => state.followInfo.followers);
 
   // Side Effects //
