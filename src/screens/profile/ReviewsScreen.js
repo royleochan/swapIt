@@ -1,6 +1,7 @@
 // React Imports //
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
+import { useSelector } from "react-redux";
 
 // RNE Imports //
 import { Rating } from "react-native-elements";
@@ -18,6 +19,8 @@ import Colors from "constants/Colors";
 import Loader from "components/Loader";
 import DefaultText from "components/DefaultText";
 import ReviewRow from "components/ReviewRow";
+import Empty from "components/Empty";
+import ErrorSplash from "components/ErrorSplash";
 
 // Review Header Component //
 const ReviewHeader = ({ reviewRating, reviewsLength }) => {
@@ -47,14 +50,23 @@ const ReviewHeader = ({ reviewRating, reviewsLength }) => {
 const ReviewsScreen = (props) => {
   // Init //
   const { selectedUserId } = props.route.params;
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
+  const isLoggedInUser = loggedInUserId === selectedUserId;
 
   // Side Effects //
-  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => request.get(`/api/reviews/${selectedUserId}`));
+  const {
+    data,
+    isError,
+    isRefreshing,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => request.get(`/api/reviews/${selectedUserId}`));
 
   // Render //
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
+  } else if (isError) {
+    return <ErrorSplash />;
   } else {
     const reviewsInfo = data;
 
@@ -68,6 +80,20 @@ const ReviewsScreen = (props) => {
             />
           }
           onRefresh={() => setIsRefreshing(true)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={
+            isError ? (
+              <ErrorSplash />
+            ) : (
+              <Empty
+                message={
+                  isLoggedInUser ? "You have no reviews" : "User has no reviews"
+                }
+                width={128}
+                height={128}
+              />
+            )
+          }
           refreshing={isRefreshing}
           data={reviewsInfo.reviews}
           horizontal={false}

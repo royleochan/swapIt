@@ -29,6 +29,8 @@ import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 import SortFilterMenu from "components/SortFilterMenu";
 import Loader from "components/Loader";
+import Empty from "components/Empty";
+import ErrorSplash from "components/ErrorSplash";
 
 // Main Component //
 const ResultsScreen = (props) => {
@@ -44,8 +46,12 @@ const ResultsScreen = (props) => {
   );
 
   // Side Effects //
-  const { isRefreshing, isError, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => dispatch(searchProductsHandler(query)));
+  const {
+    isRefreshing,
+    isError,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => dispatch(searchProductsHandler(query)));
 
   useDidMountEffect(() => {
     // Executes after 1000ms, returns a positive integer which uniquely identifies the timer created
@@ -90,6 +96,14 @@ const ResultsScreen = (props) => {
       <SortFilterMenu />
       <FlatList
         onRefresh={() => setIsRefreshing(true)}
+        contentContainerStyle={{ flexGrow: 1 }}
+        ListEmptyComponent={
+          isError ? (
+            <ErrorSplash />
+          ) : (
+            <Empty message="No results found" width={128} height={128} />
+          )
+        }
         refreshing={isRefreshing}
         columnWrapperStyle={styles.list}
         data={filteredSortedProducts}

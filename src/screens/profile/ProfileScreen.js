@@ -30,6 +30,8 @@ import Loader from "components/Loader";
 import UserHeader from "components/UserHeader";
 import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
+import Empty from "components/Empty";
+import ErrorSplash from "components/ErrorSplash";
 
 // Main Component //
 const ProfileScreen = (props) => {
@@ -46,9 +48,16 @@ const ProfileScreen = (props) => {
     selectedUserId = loggedInUserId;
   }
 
+  const isLoggedInUser = loggedInUserId === selectedUserId;
+
   // Side Effects //
-  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => request.get(`/api/users/${selectedUserId}`));
+  const {
+    data,
+    isError,
+    isRefreshing,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => request.get(`/api/users/${selectedUserId}`));
 
   useEffect(() => {
     if (!isLoading && loggedInUserId === data.user.id) {
@@ -77,6 +86,8 @@ const ProfileScreen = (props) => {
   // Render //
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
+  } else if (isError) {
+    return <ErrorSplash />;
   } else {
     const userData = data.user;
 
@@ -96,6 +107,16 @@ const ProfileScreen = (props) => {
             />
           }
           onRefresh={() => setIsRefreshing(true)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={
+            <Empty
+              message={
+                isLoggedInUser ? "You have no listings" : "User has no listings"
+              }
+              width={128}
+              height={128}
+            />
+          }
           refreshing={isRefreshing}
           columnWrapperStyle={styles.list}
           data={userData.products}

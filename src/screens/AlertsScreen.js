@@ -19,6 +19,8 @@ import Colors from "constants/Colors";
 // Component Imports //
 import DefaultText from "components/DefaultText";
 import AlertRow from "components/AlertRow";
+import Empty from "components/Empty";
+import ErrorSplash from "components/ErrorSplash";
 import Loader from "components/Loader";
 
 // Main Component //
@@ -33,8 +35,12 @@ const AlertsScreen = (props) => {
   );
 
   // Side Effects //
-  const { isRefreshing, isError, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => dispatch(fetchNotifications()));
+  const {
+    isRefreshing,
+    isError,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => dispatch(fetchNotifications()));
 
   useFocusEffect(
     useCallback(() => {
@@ -59,6 +65,14 @@ const AlertsScreen = (props) => {
       </View>
       <FlatList
         onRefresh={() => setIsRefreshing(true)}
+        contentContainerStyle={{ flexGrow: 1 }}
+        ListEmptyComponent={
+          isError ? (
+            <ErrorSplash />
+          ) : (
+            <Empty message="No alerts found" width={128} height={128} />
+          )
+        }
         style={styles.list}
         refreshing={isRefreshing}
         data={notifications}

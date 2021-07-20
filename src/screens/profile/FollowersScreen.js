@@ -23,6 +23,8 @@ import Colors from "constants/Colors";
 import Loader from "components/Loader";
 import DefaultText from "components/DefaultText";
 import FollowButton from "components/FollowButton";
+import Empty from "components/Empty";
+import ErrorSplash from "components/ErrorSplash";
 
 // Main Component //
 const FollowersScreen = (props) => {
@@ -33,10 +35,15 @@ const FollowersScreen = (props) => {
   const dispatch = useDispatch();
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const followers = useSelector((state) => state.followInfo.followers);
+  const isLoggedInUser = loggedInUserId === selectedUserId;
 
   // Side Effects //
-  const { isError, isRefreshing, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => dispatch(fetchFollowers(selectedUserId)));
+  const {
+    isError,
+    isRefreshing,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => dispatch(fetchFollowers(selectedUserId)));
 
   // set the username header in followers screen, don't have to do it in following screen
   useLayoutEffect(() => {
@@ -66,6 +73,22 @@ const FollowersScreen = (props) => {
     <View style={styles.screenContainer}>
       <FlatList
         onRefresh={() => setIsRefreshing(true)}
+        contentContainerStyle={{ flexGrow: 1 }}
+        ListEmptyComponent={
+          isError ? (
+            <ErrorSplash />
+          ) : (
+            <Empty
+              message={
+                isLoggedInUser
+                  ? "You have no followers"
+                  : "User has no followers"
+              }
+              width={128}
+              height={128}
+            />
+          )
+        }
         refreshing={isRefreshing}
         data={followers}
         horizontal={false}

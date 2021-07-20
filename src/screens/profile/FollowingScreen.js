@@ -23,6 +23,8 @@ import Colors from "constants/Colors";
 import Loader from "components/Loader";
 import DefaultText from "components/DefaultText";
 import FollowButton from "components/FollowButton";
+import Empty from "components/Empty";
+import ErrorSplash from "components/ErrorSplash";
 
 // Main Component //
 const FollowingScreen = (props) => {
@@ -33,10 +35,15 @@ const FollowingScreen = (props) => {
   const dispatch = useDispatch();
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const following = useSelector((state) => state.followInfo.following);
+  const isLoggedInUser = loggedInUserId === selectedUserId;
 
   // Side Effects //
-  const { isError, isRefreshing, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => dispatch(fetchFollowing(selectedUserId)));
+  const {
+    isError,
+    isRefreshing,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => dispatch(fetchFollowing(selectedUserId)));
 
   useLayoutEffect(() => {
     props.navigation.setOptions({
@@ -53,6 +60,22 @@ const FollowingScreen = (props) => {
     <View style={styles.screenContainer}>
       <FlatList
         onRefresh={() => setIsRefreshing(true)}
+        contentContainerStyle={{ flexGrow: 1 }}
+        ListEmptyComponent={
+          isError ? (
+            <ErrorSplash />
+          ) : (
+            <Empty
+              message={
+                isLoggedInUser
+                  ? "You are not following anyone"
+                  : "User is not following anyone"
+              }
+              width={128}
+              height={128}
+            />
+          )
+        }
         refreshing={isRefreshing}
         data={following}
         horizontal={false}
