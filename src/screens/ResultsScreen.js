@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -7,10 +7,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { navigateToProductDetails } from "navigation/navigate/common/index";
 
 // Redux Action Imports //
-import { updateProducts } from "store/actions/products";
+import {
+  searchProductsHandler,
+  applyFilterAndSortProducts,
+} from "store/actions/products";
+
+// Custom Hooks Imports //
+import useDidMountEffect from "hooks/useDidMountEffect";
+import useFlatListRequest from "hooks/useFlatListRequest";
 
 // Utils Imports //
-import request from "utils/request";
 import filter from "utils/filter";
 import sort from "utils/sort";
 
@@ -22,58 +28,50 @@ import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 import SortFilterMenu from "components/SortFilterMenu";
+import Loader from "components/Loader";
 
 // Main Component //
 const ResultsScreen = (props) => {
   // Init //
   const [query, setQuery] = useState(props.route.params);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [products, setProducts] = useState([]);
 
   const dispatch = useDispatch();
-  const sortState = useSelector((state) => state.sort);
-  const filterState = useSelector((state) => state.filter);
-  const storeProducts = useSelector((state) => state.products);
-
-  // Functions //
-  const searchHandler = useCallback(
-    async (searchQuery) => {
-      setIsRefreshing(true);
-      try {
-        const response = await request.get(
-          `/api/products/search/${searchQuery}`
-        );
-        const resData = response.data.products;
-        dispatch(updateProducts(resData));
-        setProducts(resData);
-      } catch (err) {
-        dispatch(updateProducts([]));
-        setProducts([]);
-      }
-      setIsRefreshing(false);
-    },
-    [setIsRefreshing, setProducts]
+  const sortState = useSelector((state) => state.products.sortState);
+  const filterState = useSelector((state) => state.products.filterState);
+  const allProducts = useSelector((state) => state.products.allProducts);
+  const filteredSortedProducts = useSelector(
+    (state) => state.products.filteredSortedProducts
   );
 
   // Side Effects //
-  useEffect(() => {
-    setIsRefreshing(true);
-    // Executes searchHandler after 1000ms, returns a positive integer which uniquely identifies the timer created
-    const timer = setTimeout(() => searchHandler(query), 1000);
+  const { isRefreshing, isError, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => dispatch(searchProductsHandler(query)));
+
+  useDidMountEffect(() => {
+    // Executes after 1000ms, returns a positive integer which uniquely identifies the timer created
+    const timer = setTimeout(() => setIsRefreshing(true), 1000);
 
     // Cancels the timer given the timer id
     return () => clearTimeout(timer);
   }, [query]);
 
   useEffect(() => {
-    setProducts(sort(filter(storeProducts, filterState), sortState));
+    dispatch(
+      applyFilterAndSortProducts(
+        sort(filter(allProducts, filterState), sortState)
+      )
+    );
   }, [filterState]);
 
   useEffect(() => {
-    setProducts(sort([...products], sortState));
+    dispatch(applyFilterAndSortProducts(sort([...allProducts], sortState)));
   }, [sortState]);
 
   // Render //
+  if (isLoading) {
+    return <Loader isLoading={isLoading} />;
+  }
+
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>
@@ -94,7 +92,7 @@ const ResultsScreen = (props) => {
         onRefresh={() => searchHandler(query)}
         refreshing={isRefreshing}
         columnWrapperStyle={styles.list}
-        data={products}
+        data={filteredSortedProducts}
         horizontal={false}
         numColumns={2}
         keyExtractor={(item) => item.id}

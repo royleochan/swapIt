@@ -1,72 +1,64 @@
 // React Imports //
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
 // Navigation Imports //
 import { navigateToProductDetails } from "navigation/navigate/common/index";
-import { updateProducts } from "store/actions/products";
+
+// Redux Action Imports //
+import {
+  fetchCategoryProducts,
+  applyFilterAndSortProducts,
+} from "store/actions/products";
+
+// Custom Hooks Imports //
+import useFlatListRequest from "hooks/useFlatListRequest";
 
 // Utils Imports //
-import request from "utils/request";
 import filter from "utils/filter";
 import sort from "utils/sort";
-import showAlert from "utils/showAlert";
 
 // Components Imports //
 import ProductBox from "components/ProductBox";
 import SortFilterMenu from "components/SortFilterMenu";
 import DefaultText from "components/DefaultText";
+import Loader from "components/Loader";
 
 // Main Component //
 const CategoryScreen = (props) => {
   // Init //
   const category = props.route.params.label;
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [products, setProducts] = useState([]);
 
   const dispatch = useDispatch();
-  const loggedInUserId = useSelector((state) => state.auth.user.id);
-  const sortState = useSelector((state) => state.sort);
-  const filterState = useSelector((state) => state.filter);
-  const storeProducts = useSelector((state) => state.products);
-
-  // Functions //
-  const categoryHandler = useCallback(async () => {
-    setIsRefreshing(true);
-    try {
-      let response;
-      if (category === "Following") {
-        response = await request.get(`/api/products/all/${loggedInUserId}`);
-      } else {
-        response = await request.get(`/api/products/category/${category}`);
-      }
-      const resData = response.data.products;
-      dispatch(updateProducts(resData));
-      setProducts(resData);
-    } catch (err) {
-      setIsRefreshing(false);
-      dispatch(updateProducts([]));
-      setProducts([]);
-      showAlert("Request failed", err.response.data.message, null);
-    }
-    setIsRefreshing(false);
-  }, [setIsRefreshing, dispatch]);
+  const sortState = useSelector((state) => state.products.sortState);
+  const filterState = useSelector((state) => state.products.filterState);
+  const allProducts = useSelector((state) => state.products.allProducts);
+  const filteredSortedProducts = useSelector(
+    (state) => state.products.filteredSortedProducts
+  );
 
   // Side Effects //
-  useEffect(() => {
-    categoryHandler();
-  }, []);
+  const { isRefreshing, isError, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => dispatch(fetchCategoryProducts(category)));
 
   useEffect(() => {
-    setProducts(sort(filter(storeProducts, filterState), sortState));
+    dispatch(
+      applyFilterAndSortProducts(
+        sort(filter(allProducts, filterState), sortState)
+      )
+    );
   }, [filterState]);
 
   useEffect(() => {
-    setProducts(sort([...products], sortState));
+    dispatch(applyFilterAndSortProducts(sort([...allProducts], sortState)));
   }, [sortState]);
 
   // Render //
+  if (isLoading) {
+    return <Loader isLoading={isLoading} />;
+  }
+
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>
@@ -74,10 +66,10 @@ const CategoryScreen = (props) => {
       </View>
       <SortFilterMenu />
       <FlatList
-        onRefresh={categoryHandler}
+        onRefresh={() => setIsRefreshing(true)}
         refreshing={isRefreshing}
         columnWrapperStyle={styles.list}
-        data={products}
+        data={filteredSortedProducts}
         horizontal={false}
         numColumns={2}
         keyExtractor={(item) => item.id}
