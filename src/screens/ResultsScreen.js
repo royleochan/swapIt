@@ -95,7 +95,7 @@ const ResultsScreen = (props) => {
       </View>
       <SortFilterMenu />
       <FlatList
-        onRefresh={() => searchHandler(query)}
+        onRefresh={() => setIsRefreshing(true)}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={
           isError ? (
