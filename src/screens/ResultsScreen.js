@@ -89,7 +89,7 @@ const ResultsScreen = (props) => {
       </View>
       <SortFilterMenu />
       <FlatList
-        onRefresh={() => searchHandler(query)}
+        onRefresh={() => setIsRefreshing(true)}
         refreshing={isRefreshing}
         columnWrapperStyle={styles.list}
         data={filteredSortedProducts}
