@@ -33,6 +33,8 @@ import IconButton from "components/IconButton";
 import LikeButton from "components/LikeButton";
 import Loader from "components/Loader";
 import MatchRow from "components/MatchRow";
+import Empty from "components/Empty";
+import ErrorSplash from "components/ErrorSplash";
 
 // Details Component //
 const DetailsComponent = (props) => {
@@ -163,12 +165,19 @@ const ProductDetailsScreen = (props) => {
   };
 
   // Side Effects //
-  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => request.get(`/api/products/${productId}`));
+  const {
+    data,
+    isError,
+    isRefreshing,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => request.get(`/api/products/${productId}`));
 
   // Render //
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
+  } else if (isError) {
+    return <ErrorSplash />;
   } else {
     const { product } = data;
 
@@ -182,6 +191,15 @@ const ProductDetailsScreen = (props) => {
           />
         }
         onRefresh={() => setIsRefreshing(true)}
+        contentContainerStyle={{ flexGrow: 1 }}
+        ListEmptyComponent={
+          <Empty
+            message="No matches found"
+            width={100}
+            height={100}
+            fontSize={12}
+          />
+        }
         refreshing={isRefreshing}
         data={product.matches}
         horizontal={false}

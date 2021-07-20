@@ -11,8 +11,12 @@ import EmptyFolder from "assets/svg/EmptyFolder";
 const Empty = (props) => {
   return (
     <View style={styles.screen}>
-      <EmptyFolder />
-      <DefaultText style={styles.text}>{props.message}</DefaultText>
+      <EmptyFolder width={props.width} height={props.height} />
+      <DefaultText
+        style={{ ...styles.text, fontSize: true ? props.fontSize : 16 }}
+      >
+        {props.message}
+      </DefaultText>
     </View>
   );
 };
@@ -27,5 +31,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
+    paddingBottom: 10,
   },
 });

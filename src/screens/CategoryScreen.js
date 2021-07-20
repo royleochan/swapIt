@@ -24,6 +24,8 @@ import ProductBox from "components/ProductBox";
 import SortFilterMenu from "components/SortFilterMenu";
 import DefaultText from "components/DefaultText";
 import Loader from "components/Loader";
+import Empty from "components/Empty";
+import ErrorSplash from "components/ErrorSplash";
 
 // Main Component //
 const CategoryScreen = (props) => {
@@ -39,8 +41,12 @@ const CategoryScreen = (props) => {
   );
 
   // Side Effects //
-  const { isRefreshing, isError, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => dispatch(fetchCategoryProducts(category)));
+  const {
+    isRefreshing,
+    isError,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => dispatch(fetchCategoryProducts(category)));
 
   useEffect(() => {
     dispatch(
@@ -67,6 +73,18 @@ const CategoryScreen = (props) => {
       <SortFilterMenu />
       <FlatList
         onRefresh={() => setIsRefreshing(true)}
+        contentContainerStyle={{ flexGrow: 1 }}
+        ListEmptyComponent={
+          isError ? (
+            <ErrorSplash />
+          ) : (
+            <Empty
+              message="No listings found under this category"
+              width={128}
+              height={128}
+            />
+          )
+        }
         refreshing={isRefreshing}
         columnWrapperStyle={styles.list}
         data={filteredSortedProducts}

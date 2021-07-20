@@ -35,8 +35,12 @@ const AlertsScreen = (props) => {
   );
 
   // Side Effects //
-  const { isRefreshing, isError, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => dispatch(fetchNotifications()));
+  const {
+    isRefreshing,
+    isError,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => dispatch(fetchNotifications()));
 
   useFocusEffect(
     useCallback(() => {
@@ -63,7 +67,11 @@ const AlertsScreen = (props) => {
         onRefresh={() => setIsRefreshing(true)}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={
-          isError ? <ErrorSplash /> : <Empty message="No alerts found" />
+          isError ? (
+            <ErrorSplash />
+          ) : (
+            <Empty message="No alerts found" width={128} height={128} />
+          )
         }
         style={styles.list}
         refreshing={isRefreshing}

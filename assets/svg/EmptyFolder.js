@@ -4,8 +4,8 @@ import Svg, { G, Path, Circle } from "react-native-svg";
 function EmptyFolder(props) {
   return (
     <Svg
-      width={128}
-      height={128}
+      width={props.width}
+      height={props.height}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 64 64"
       {...props}
