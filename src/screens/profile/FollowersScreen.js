@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useState, useEffect, useLayoutEffect, useContext } from "react";
+import React, { useLayoutEffect, useContext } from "react";
 import { StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -12,6 +12,9 @@ import { ParamsContext } from "navigation/context/ParamsContext";
 
 // Redux Action Imports //
 import { fetchFollowers } from "store/actions/followInfo";
+
+// Custom Hook Imports //
+import useFlatListRequest from "hooks/useFlatListRequest";
 
 // Colors Import //
 import Colors from "constants/Colors";
@@ -26,27 +29,15 @@ const FollowersScreen = (props) => {
   // Init //
   const { params } = useContext(ParamsContext);
   const { selectedUserId } = params;
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const dispatch = useDispatch();
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const username = useSelector((state) => state.auth.user.username);
   const followers = useSelector((state) => state.followInfo.followers);
 
-  // Functions //
-  const loadFollowers = async () => {
-    setIsRefreshing(true);
-    await dispatch(fetchFollowers(selectedUserId));
-    setIsRefreshing(false);
-    setIsLoading(false);
-  };
-
   // Side Effects //
-  useEffect(() => {
-    setIsLoading(true);
-    loadFollowers();
-  }, []);
+  const { isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => dispatch(fetchFollowers(selectedUserId)));
 
   // set the username header in followers screen, don't have to do it in following screen
   useLayoutEffect(() => {
@@ -75,7 +66,7 @@ const FollowersScreen = (props) => {
   return (
     <View style={styles.screenContainer}>
       <FlatList
-        onRefresh={loadFollowers}
+        onRefresh={() => setIsRefreshing(true)}
         refreshing={isRefreshing}
         data={followers}
         horizontal={false}

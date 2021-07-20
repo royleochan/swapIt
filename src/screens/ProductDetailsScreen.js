@@ -1,13 +1,13 @@
 // React Imports //
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   StyleSheet,
   View,
-  Image,
   TouchableOpacity,
   Dimensions,
   FlatList,
 } from "react-native";
+import { Image } from "react-native-elements";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useSelector } from "react-redux";
 
@@ -16,6 +16,9 @@ import {
   navigateToCategory,
   navigateToProfileNavigator,
 } from "navigation/navigate/common/index";
+
+// Custom Hook Imports //
+import useFlatListRequest from "hooks/useFlatListRequest";
 
 // Utils Imports //
 import { parseTimeAgo } from "utils/date";
@@ -148,10 +151,6 @@ const DetailsComponent = (props) => {
 const ProductDetailsScreen = (props) => {
   // Init //
   const { productId } = props.route.params;
-  const [product, setProduct] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
   const loggedInUserId = useSelector((state) => state.auth.user.id);
 
   // Navigation Functions //
@@ -163,64 +162,50 @@ const ProductDetailsScreen = (props) => {
     props.navigation.push("CompletedReview", { matchId });
   };
 
-  // Functions //
-  const loadProduct = async () => {
-    setIsRefreshing(true);
-    try {
-      const response = await request.get(`/api/products/${productId}`);
-      const resData = response.data;
-      setProduct(resData.product);
-    } catch (err) {
-      console.log(err.response.data.message);
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
-  };
-
   // Side Effects //
-  useEffect(() => {
-    loadProduct();
-  }, []);
+  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => request.get(`/api/products/${productId}`));
 
   // Render //
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
-  }
+  } else {
+    const { product } = data;
 
-  return (
-    <FlatList
-      ListHeaderComponent={
-        <DetailsComponent
-          navigation={props.navigation}
-          product={product}
-          loggedInUserId={loggedInUserId}
-        />
-      }
-      onRefresh={loadProduct}
-      refreshing={isRefreshing}
-      data={product.matches}
-      horizontal={false}
-      numColumns={1}
-      keyExtractor={(item) => item.id}
-      scrollIndicatorInsets={{ right: 1 }}
-      renderItem={(itemData) => {
-        if (loggedInUserId === product.creator.id) {
-          return (
-            <MatchRow
-              ownProduct={product.id}
-              product={itemData.item.product}
-              match={itemData.item.match}
-              navigateToCreateReview={navigateToCreateReview}
-              navigateToCompletedReview={navigateToCompletedReview}
-            />
-          );
-        } else {
-          return <View></View>;
+    return (
+      <FlatList
+        ListHeaderComponent={
+          <DetailsComponent
+            navigation={props.navigation}
+            product={product}
+            loggedInUserId={loggedInUserId}
+          />
         }
-      }}
-    />
-  );
+        onRefresh={() => setIsRefreshing(true)}
+        refreshing={isRefreshing}
+        data={product.matches}
+        horizontal={false}
+        numColumns={1}
+        keyExtractor={(item) => item.id}
+        scrollIndicatorInsets={{ right: 1 }}
+        renderItem={(itemData) => {
+          if (loggedInUserId === product.creator.id) {
+            return (
+              <MatchRow
+                ownProduct={product.id}
+                product={itemData.item.product}
+                match={itemData.item.match}
+                navigateToCreateReview={navigateToCreateReview}
+                navigateToCompletedReview={navigateToCompletedReview}
+              />
+            );
+          } else {
+            return <View></View>;
+          }
+        }}
+      />
+    );
+  }
 };
 
 export default ProductDetailsScreen;

@@ -13,6 +13,9 @@ import {
 } from "navigation/navigate/profile/index";
 import { navigateToProductDetails } from "navigation/navigate/common/index";
 
+// Custom Hook Imports //
+import useFlatListRequest from "hooks/useFlatListRequest";
+
 // Redux Action Imports //
 import { refreshUser } from "store/actions/auth";
 
@@ -32,9 +35,6 @@ import IconButton from "components/IconButton";
 const ProfileScreen = (props) => {
   // Init //
   const stackIndex = useNavigationState((state) => state.index);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [userData, setUserData] = useState();
   const dispatch = useDispatch();
 
   // user is either the logged in user (default) or other users that the logged in user is visiting obtained from route params
@@ -46,31 +46,15 @@ const ProfileScreen = (props) => {
     selectedUserId = loggedInUserId;
   }
 
-  // Functions //
-  const loadUserData = async () => {
-    setIsRefreshing(true);
-    try {
-      const response = await request
-        .get(`/api/users/${selectedUserId}`)
-        .catch((error) => {
-          throw new Error(error.response.data.message);
-        });
-      setUserData(response.data.user);
-      if (loggedInUserId === response.data.user.id) {
-        dispatch(refreshUser(response.data.user));
-      }
-    } catch (err) {
-      setUserProducts([]);
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
-  };
-
   // Side Effects //
+  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => request.get(`/api/users/${selectedUserId}`));
+
   useEffect(() => {
-    loadUserData();
-  }, []);
+    if (!isLoading && loggedInUserId === data.user.id) {
+      dispatch(refreshUser(data.user));
+    }
+  }, [data]);
 
   // if isLoggedInUser, render settings button in the header
   useLayoutEffect(() => {
@@ -93,40 +77,44 @@ const ProfileScreen = (props) => {
   // Render //
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
-  }
+  } else {
+    const userData = data.user;
 
-  return (
-    <View style={styles.screenContainer}>
-      <FlatList
-        ListHeaderComponent={
-          <UserHeader
-            selectedUser={userData}
-            navigateToReviews={() => navigateToReviews(props, selectedUserId)}
-            navigateToFollowers={() =>
-              navigateToFollowers(props, selectedUserId)
-            }
-            navigateToFollowing={() =>
-              navigateToFollowing(props, selectedUserId)
-            }
-          />
-        }
-        onRefresh={loadUserData}
-        refreshing={isRefreshing}
-        columnWrapperStyle={styles.list}
-        data={userData.products}
-        horizontal={false}
-        numColumns={2}
-        keyExtractor={(item) => item._id}
-        renderItem={(itemData) => (
-          <ProductBox
-            productCreator={userData}
-            item={itemData.item}
-            navigate={() => navigateToProductDetails(props, itemData.item._id)}
-          />
-        )}
-      />
-    </View>
-  );
+    return (
+      <View style={styles.screenContainer}>
+        <FlatList
+          ListHeaderComponent={
+            <UserHeader
+              selectedUser={userData}
+              navigateToReviews={() => navigateToReviews(props, selectedUserId)}
+              navigateToFollowers={() =>
+                navigateToFollowers(props, selectedUserId)
+              }
+              navigateToFollowing={() =>
+                navigateToFollowing(props, selectedUserId)
+              }
+            />
+          }
+          onRefresh={() => setIsRefreshing(true)}
+          refreshing={isRefreshing}
+          columnWrapperStyle={styles.list}
+          data={userData.products}
+          horizontal={false}
+          numColumns={2}
+          keyExtractor={(item) => item._id}
+          renderItem={(itemData) => (
+            <ProductBox
+              productCreator={userData}
+              item={itemData.item}
+              navigate={() =>
+                navigateToProductDetails(props, itemData.item._id)
+              }
+            />
+          )}
+        />
+      </View>
+    );
+  }
 };
 
 export default ProfileScreen;

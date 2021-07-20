@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useState, useEffect, useLayoutEffect, useContext } from "react";
+import React, { useLayoutEffect, useContext } from "react";
 import { StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -12,6 +12,9 @@ import { ParamsContext } from "navigation/context/ParamsContext";
 
 // Redux Action Imports //
 import { fetchFollowing } from "store/actions/followInfo";
+
+// Custom Hook Imports //
+import useFlatListRequest from "hooks/useFlatListRequest";
 
 // Colors Import //
 import Colors from "constants/Colors";
@@ -26,26 +29,14 @@ const FollowingScreen = (props) => {
   // Init //
   const { params } = useContext(ParamsContext);
   const { selectedUserId } = params;
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const dispatch = useDispatch();
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const following = useSelector((state) => state.followInfo.following);
 
-  // Functions //
-  const loadFollowing = async () => {
-    setIsRefreshing(true);
-    await dispatch(fetchFollowing(selectedUserId));
-    setIsRefreshing(false);
-    setIsLoading(false);
-  };
-
   // Side Effects //
-  useEffect(() => {
-    setIsLoading(true);
-    loadFollowing();
-  }, []);
+  const { isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => dispatch(fetchFollowing(selectedUserId)));
 
   useLayoutEffect(() => {
     props.navigation.setOptions({
@@ -61,7 +52,7 @@ const FollowingScreen = (props) => {
   return (
     <View style={styles.screenContainer}>
       <FlatList
-        onRefresh={loadFollowing}
+        onRefresh={() => setIsRefreshing(true)}
         refreshing={isRefreshing}
         data={following}
         horizontal={false}

@@ -1,6 +1,7 @@
 import React from "react";
-import { StyleSheet, Image, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { Image } from "react-native-elements";
 
 import { parseTimeAgo } from "utils/date";
 import Colors from "constants/Colors";

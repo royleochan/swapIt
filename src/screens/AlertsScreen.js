@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
@@ -9,6 +9,9 @@ import {
   fetchNotifications,
   markAllNotificationsAsRead,
 } from "store/actions/notifications";
+
+// Custom Hook Imports //
+import useFlatListRequest from "hooks/useFlatListRequest";
 
 // Colors Imports //
 import Colors from "constants/Colors";
@@ -20,8 +23,6 @@ import AlertRow from "components/AlertRow";
 // Main Component //
 const AlertsScreen = (props) => {
   // Init //
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
   const dispatch = useDispatch();
   const notifications = useSelector(
     (state) => state.notifications.notifications
@@ -30,17 +31,10 @@ const AlertsScreen = (props) => {
     (notification) => notification.isRead === false
   );
 
-  // Functions //
-  const loadNotifications = async () => {
-    setIsRefreshing(true);
-    await dispatch(fetchNotifications());
-    setIsRefreshing(false);
-  };
-
   // Side Effects //
-  useEffect(() => {
-    loadNotifications();
-  }, []);
+  const { isRefreshing, isError, setIsRefreshing } = useFlatListRequest(() =>
+    dispatch(fetchNotifications())
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -60,7 +54,7 @@ const AlertsScreen = (props) => {
         <DefaultText style={styles.header}>Alerts</DefaultText>
       </View>
       <FlatList
-        onRefresh={loadNotifications}
+        onRefresh={() => setIsRefreshing(true)}
         style={styles.list}
         refreshing={isRefreshing}
         data={notifications}

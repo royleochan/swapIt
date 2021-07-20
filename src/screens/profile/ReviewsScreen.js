@@ -5,6 +5,9 @@ import { View, StyleSheet, FlatList } from "react-native";
 // RNE Imports //
 import { Rating } from "react-native-elements";
 
+// Custom Hook Imports //
+import useFlatListRequest from "hooks/useFlatListRequest";
+
 // Util Imports //
 import request from "utils/request";
 
@@ -44,52 +47,36 @@ const ReviewHeader = ({ reviewRating, reviewsLength }) => {
 const ReviewsScreen = (props) => {
   // Init //
   const { selectedUserId } = props.route.params;
-  const [reviewsInfo, setReviewsInfo] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  // Functions //
-  const fetchReviews = async () => {
-    setIsRefreshing(true);
-    try {
-      const response = await request.get(`/api/reviews/${selectedUserId}`);
-      setReviewsInfo(response.data);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsRefreshing(false);
-      setIsLoading(false);
-    }
-  };
 
   // Side Effects //
-  useEffect(() => {
-    fetchReviews();
-  }, []);
+  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => request.get(`/api/reviews/${selectedUserId}`));
 
   // Render //
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
-  }
+  } else {
+    const reviewsInfo = data;
 
-  return (
-    <View style={styles.screenContainer}>
-      <FlatList
-        ListHeaderComponent={
-          <ReviewHeader
-            reviewRating={reviewsInfo.reviewRating}
-            reviewsLength={reviewsInfo.reviews.length}
-          />
-        }
-        onRefresh={fetchReviews}
-        refreshing={isRefreshing}
-        data={reviewsInfo.reviews}
-        horizontal={false}
-        keyExtractor={(item) => item._id}
-        renderItem={(itemData) => <ReviewRow review={itemData.item} />}
-      />
-    </View>
-  );
+    return (
+      <View style={styles.screenContainer}>
+        <FlatList
+          ListHeaderComponent={
+            <ReviewHeader
+              reviewRating={reviewsInfo.reviewRating}
+              reviewsLength={reviewsInfo.reviews.length}
+            />
+          }
+          onRefresh={() => setIsRefreshing(true)}
+          refreshing={isRefreshing}
+          data={reviewsInfo.reviews}
+          horizontal={false}
+          keyExtractor={(item) => item._id}
+          renderItem={(itemData) => <ReviewRow review={itemData.item} />}
+        />
+      </View>
+    );
+  }
 };
 
 export default ReviewsScreen;
