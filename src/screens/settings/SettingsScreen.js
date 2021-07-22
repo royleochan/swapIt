@@ -1,22 +1,36 @@
-import React from "react";
+// React Imports //
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useDispatch } from "react-redux";
 
+// Navigation Imports //
 import {
   navigateToEditProfile,
   navigateToChangePassword,
   navigateToHelpAndSupport,
 } from "navigation/navigate/settings/index";
+
+// Redux Action Imports //
 import { logout } from "store/actions/auth";
+
+// Colors Import //
 import Colors from "constants/Colors";
+
+// Components Import //
 import DefaultText from "components/DefaultText";
 import SettingRow from "components/SettingRow";
+import Loader from "components/Loader";
 
+// Main Component //
 const SettingsScreen = (props) => {
+  // Init //
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
+  // Render //
   return (
     <View style={styles.screenContainer}>
+      {isLoading && <Loader isLoading={true} />}
       <DefaultText style={styles.headerText}>Settings</DefaultText>
       <SettingRow
         iconSet="MaterialCommunity"
@@ -58,7 +72,10 @@ const SettingsScreen = (props) => {
         iconName="logout"
         rowTitle="Logout"
         size={22}
-        navigate={() => dispatch(logout())}
+        navigate={() => {
+          setIsLoading(true);
+          dispatch(logout());
+        }}
       />
     </View>
   );

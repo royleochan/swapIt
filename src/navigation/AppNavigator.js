@@ -20,9 +20,11 @@ const AppNavigator = () => {
   // Side Effects: Handles auto login //
   useEffect(() => {
     const initAuthToken = async () => {
-      const authData = await AsyncStorage.getItem("authentication_data");
-      if (authData && authData.token) {
-        dispatch(relogin(authData.user, authData.token));
+      const authData = await AsyncStorage.getItem("authenticationData");
+
+      if (authData) {
+        const { user, jwtToken } = JSON.parse(authData);
+        dispatch(relogin(user, jwtToken));
       }
     };
     initAuthToken();

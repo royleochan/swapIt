@@ -1,8 +1,9 @@
 import {
   AUTHENTICATE,
+  RELOGIN,
   LOGOUT,
-  REFRESHUSER,
-  UPDATEUSER,
+  REFRESH_USER,
+  UPDATE_USER,
   LIKE_PRODUCT,
   UNLIKE_PRODUCT,
 } from "store/actions/auth";
@@ -16,6 +17,7 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case AUTHENTICATE:
+    case RELOGIN:
       return {
         ...state,
         isAuth: true,
@@ -28,8 +30,8 @@ export default (state = initialState, action) => {
         user: null,
         jwtToken: null,
       };
-    case UPDATEUSER:
-    case REFRESHUSER:
+    case UPDATE_USER:
+    case REFRESH_USER:
       return {
         ...state,
         user: action.user,

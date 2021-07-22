@@ -1,7 +1,8 @@
 export const AUTHENTICATE = "AUTHENTICATE";
+export const RELOGIN = "RELOGIN";
 export const LOGOUT = "LOGOUT";
-export const REFRESHUSER = "REFRESHUSER";
-export const UPDATEUSER = "UPDATEUSER";
+export const REFRESH_USER = "REFRESH_USER";
+export const UPDATE_USER = "UPDATE_USER";
 export const LIKE_PRODUCT = "LIKE_PRODUCT";
 export const UNLIKE_PRODUCT = "UNLIKE_PRODUCT";
 export const UPDATE_PASSWORD = "UPDATE_PASSWORD";
@@ -49,12 +50,12 @@ export const authenticate = (username, password) => {
   };
 };
 
-export const relogin = (token, user) => {
+export const relogin = (user, jwtToken) => {
   return (dispatch) => {
     dispatch({
       type: RELOGIN,
       user,
-      token,
+      jwtToken,
     });
   };
 };
@@ -88,17 +89,27 @@ export const signup = (signupCredentials) => {
 };
 
 export const logout = () => {
-  return async (dispatch) => {
-    dispatch({
-      type: LOGOUT,
-    });
+  return async (dispatch, getState) => {
+    const loggedInUserId = getState().auth.user.id;
+
+    try {
+      const response = await request.post(`/api/users/logout`, {
+        userId: loggedInUserId,
+      });
+      AsyncStorage.removeItem("authenticationData");
+      dispatch({
+        type: LOGOUT,
+      });
+    } catch (err) {
+      throwApiError(err);
+    }
   };
 };
 
 export const refreshUser = (updatedUser) => {
   return async (dispatch) => {
     dispatch({
-      type: UPDATEUSER,
+      type: REFRESH_USER,
       user: updatedUser,
     });
   };
@@ -116,7 +127,7 @@ export const updateUser = (updatedUserCredentials) => {
         jwtToken
       );
       dispatch({
-        type: UPDATEUSER,
+        type: UPDATE_USER,
         user: response.data.user,
       });
     } catch (err) {
