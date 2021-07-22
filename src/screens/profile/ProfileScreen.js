@@ -51,13 +51,8 @@ const ProfileScreen = (props) => {
   const isLoggedInUser = loggedInUserId === selectedUserId;
 
   // Side Effects //
-  const {
-    data,
-    isError,
-    isRefreshing,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() => request.get(`/api/users/${selectedUserId}`));
+  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => request.get(`/api/users/${selectedUserId}`));
 
   useEffect(() => {
     if (!isLoading && loggedInUserId === data.user.id) {
@@ -86,40 +81,48 @@ const ProfileScreen = (props) => {
   // Render //
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
-  } else if (isError) {
-    return <ErrorSplash />;
   } else {
-    const userData = data.user;
+    const userData = isError ? null : data.user;
 
     return (
       <View style={styles.screenContainer}>
         <FlatList
           ListHeaderComponent={
-            <UserHeader
-              selectedUser={userData}
-              navigateToReviews={() => navigateToReviews(props, selectedUserId)}
-              navigateToFollowers={() =>
-                navigateToFollowers(props, selectedUserId, userData.username)
-              }
-              navigateToFollowing={() =>
-                navigateToFollowing(props, selectedUserId, userData.username)
-              }
-            />
+            !isError && (
+              <UserHeader
+                selectedUser={userData}
+                navigateToReviews={() =>
+                  navigateToReviews(props, selectedUserId)
+                }
+                navigateToFollowers={() =>
+                  navigateToFollowers(props, selectedUserId, userData.username)
+                }
+                navigateToFollowing={() =>
+                  navigateToFollowing(props, selectedUserId, userData.username)
+                }
+              />
+            )
           }
           onRefresh={() => setIsRefreshing(true)}
           contentContainerStyle={{ flexGrow: 1 }}
           ListEmptyComponent={
-            <Empty
-              message={
-                isLoggedInUser ? "You have no listings" : "User has no listings"
-              }
-              width={128}
-              height={128}
-            />
+            isError ? (
+              <ErrorSplash />
+            ) : (
+              <Empty
+                message={
+                  isLoggedInUser
+                    ? "You have no listings"
+                    : "User has no listings"
+                }
+                width={128}
+                height={128}
+              />
+            )
           }
           refreshing={isRefreshing}
           columnWrapperStyle={styles.list}
-          data={userData.products}
+          data={isError ? [] : userData.products}
           horizontal={false}
           numColumns={2}
           keyExtractor={(item) => item._id}
