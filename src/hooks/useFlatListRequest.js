@@ -11,6 +11,7 @@ const useFlatListRequest = (request) => {
       const response = await request();
       if (response) {
         setData(response.data);
+        setIsError(false);
       }
     } catch (err) {
       console.error(err);
