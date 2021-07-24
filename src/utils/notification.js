@@ -56,7 +56,7 @@ export default registerForPushNotificationsAsync = async (uid, jwtToken) => {
     );
     user = response.data.user;
   } catch (err) {
-    console.log(err.response.data);
+    console.log(err);
   }
 
   return user;
