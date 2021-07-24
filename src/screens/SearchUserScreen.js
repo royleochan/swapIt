@@ -26,6 +26,7 @@ import Colors from "constants/Colors";
 import request from "utils/request";
 
 // Custom Hooks Imports //
+import useDidMountEffect from "hooks/useDidMountEffect";
 import useDidMountFlatListRequest from "hooks/useDidMountFlatListRequest";
 
 // Components Imports //
@@ -33,7 +34,6 @@ import DefaultText from "components/DefaultText";
 import CustomSearchBar from "components/CustomSearchBar";
 import Empty from "components/Empty";
 import ErrorSplash from "components/ErrorSplash";
-import useDidMountEffect from "hooks/useDidMountEffect";
 
 // Main Component //
 const SearchUserScreen = (props) => {
@@ -47,6 +47,7 @@ const SearchUserScreen = (props) => {
   const handleSearch = (text) => {
     setQuery(text);
   };
+
 
   // Side Effects //
   const { data, isError, isRefreshing, setIsRefreshing, hasSentRequest } =
