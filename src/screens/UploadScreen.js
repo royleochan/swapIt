@@ -39,6 +39,7 @@ import IconButton from "components/IconButton";
 const UploadScreen = (props) => {
   // Init //
   const loggedInUserId = useSelector((state) => state.auth.user.id);
+  const jwtToken = useSelector((state) => state.auth.jwtToken);
   const { showActionSheetWithOptions } = useActionSheet();
   const [pickedImage, setPickedImage] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -137,7 +138,7 @@ const UploadScreen = (props) => {
     data.creator = loggedInUserId;
 
     try {
-      await request.post("/api/products/", data);
+      await request.post("/api/products/", data, jwtToken);
       setPickedImage(undefined);
       reset({ title: "", description: "", minPrice: "", maxPrice: "" });
       setMaleCategory(null);

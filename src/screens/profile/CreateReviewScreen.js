@@ -26,6 +26,7 @@ import MainButton from "components/MainButton";
 const CreateReviewScreen = (props) => {
   // Init //
   const loggedInUserId = useSelector((state) => state.auth.user.id);
+  const jwtToken = useSelector((state) => state.auth.jwtToken);
   const { pid, matchId, reviewed } = props.route.params;
   const [userRating, setUserRating] = useState();
   const { control, handleSubmit, errors } = useForm();
@@ -34,14 +35,18 @@ const CreateReviewScreen = (props) => {
   const submitHandler = async (data) => {
     const { description } = data;
     try {
-      await request.post("/api/reviews", {
-        description,
-        rating: userRating,
-        creator: loggedInUserId,
-        pid,
-        matchId,
-        reviewed,
-      });
+      await request.post(
+        "/api/reviews",
+        {
+          description,
+          rating: userRating,
+          creator: loggedInUserId,
+          pid,
+          matchId,
+          reviewed,
+        },
+        jwtToken
+      );
       navigateToCompletedReviewScreen(props, matchId);
     } catch (err) {
       console.log(err);

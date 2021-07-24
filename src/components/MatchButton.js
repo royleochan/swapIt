@@ -1,6 +1,7 @@
 // React Imports //
 import React, { useState, useEffect } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useSelector } from "react-redux";
 
 // Utils Imports //
 import request from "utils/request";
@@ -26,6 +27,8 @@ const MatchButton = (props) => {
   } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [matchState, setMatchState] = useState(match);
+
+  const jwtToken = useSelector((state) => state.auth.jwtToken);
 
   let onPressFunction;
   let buttonTitle;
@@ -89,7 +92,8 @@ const MatchButton = (props) => {
     try {
       const response = await request.patch(
         `/api/matches/request/${type}/${match._id}`,
-        { pid }
+        { pid },
+        jwtToken
       );
       setMatchState(response.data);
     } catch (err) {

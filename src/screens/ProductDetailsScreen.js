@@ -39,7 +39,7 @@ import ErrorSplash from "components/ErrorSplash";
 // Details Component //
 const DetailsComponent = (props) => {
   // Init //
-  const { product, loggedInUserId } = props;
+  const { product, loggedInUserId, jwtToken } = props;
   const { showActionSheetWithOptions } = useActionSheet();
   const windowHeight = Dimensions.get("window").height;
 
@@ -58,7 +58,7 @@ const DetailsComponent = (props) => {
       },
       async (buttonIndex) => {
         if (buttonIndex === 0) {
-          await request.delete(`/api/products/${product._id}`);
+          await request.delete(`/api/products/${product._id}`, jwtToken);
           props.navigation.reset({
             index: 0,
             routes: [{ name: "Profile" }],
@@ -154,6 +154,7 @@ const ProductDetailsScreen = (props) => {
   // Init //
   const { productId } = props.route.params;
   const loggedInUserId = useSelector((state) => state.auth.user.id);
+  const jwtToken = useSelector((state) => state.auth.jwtToken);
 
   // Navigation Functions //
   const navigateToCreateReview = (pid, matchId, reviewed) => {
@@ -165,13 +166,8 @@ const ProductDetailsScreen = (props) => {
   };
 
   // Side Effects //
-  const {
-    data,
-    isError,
-    isRefreshing,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() => request.get(`/api/products/${productId}`));
+  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => request.get(`/api/products/${productId}`));
 
   // Render //
   if (isLoading) {
@@ -182,6 +178,7 @@ const ProductDetailsScreen = (props) => {
     return (
       <FlatList
         ListHeaderComponent={
+<<<<<<< HEAD
           !isError && (
             <DetailsComponent
               navigation={props.navigation}
@@ -189,6 +186,14 @@ const ProductDetailsScreen = (props) => {
               loggedInUserId={loggedInUserId}
             />
           )
+=======
+          <DetailsComponent
+            navigation={props.navigation}
+            product={product}
+            loggedInUserId={loggedInUserId}
+            jwtToken={jwtToken}
+          />
+>>>>>>> 2195e46dc9f45b135fdb26291df7ec6660f64edc
         }
         onRefresh={() => setIsRefreshing(true)}
         contentContainerStyle={{ flexGrow: 1 }}
