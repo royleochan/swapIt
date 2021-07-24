@@ -1,4 +1,13 @@
 /**
+ * Navigates to LikedProductsScreen
+ *
+ * @param props: props from source screen
+ */
+const navigateToLikedProducts = (props) => {
+  props.navigation.push("LikedProducts");
+};
+
+/**
  * Navigates to EditProfileScreen
  *
  * @param props: props from source screen
@@ -26,6 +35,7 @@ const navigateToHelpAndSupport = (props) => {
 };
 
 export {
+  navigateToLikedProducts,
   navigateToEditProfile,
   navigateToChangePassword,
   navigateToHelpAndSupport,

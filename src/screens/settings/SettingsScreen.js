@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 
 // Navigation Imports //
 import {
+  navigateToLikedProducts,
   navigateToEditProfile,
   navigateToChangePassword,
   navigateToHelpAndSupport,
@@ -32,6 +33,13 @@ const SettingsScreen = (props) => {
     <View style={styles.screenContainer}>
       {isLoading && <Loader isLoading={true} />}
       <DefaultText style={styles.headerText}>Settings</DefaultText>
+      <SettingRow
+        iconSet="MaterialCommunity"
+        iconName="heart-outline"
+        rowTitle="Liked Products"
+        size={26}
+        navigate={() => navigateToLikedProducts(props)}
+      />
       <SettingRow
         iconSet="MaterialCommunity"
         iconName="account-edit-outline"
