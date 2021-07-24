@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import {
   View,
+  FlatList,
   StyleSheet,
   TouchableOpacity,
   TouchableHighlight,
@@ -26,17 +27,18 @@ import request from "utils/request";
 
 // Custom Hooks Imports //
 import useDidMountEffect from "hooks/useDidMountEffect";
+import useFlatListRequest from "hooks/useFlatListRequest";
 
 // Components Imports //
 import DefaultText from "components/DefaultText";
 import CustomSearchBar from "components/CustomSearchBar";
+import Empty from "components/Empty";
+import ErrorSplash from "components/ErrorSplash";
 
 // Main Component //
 const SearchUserScreen = (props) => {
   // Init //
   const [query, setQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchedUsers, setSearchedUsers] = useState([]);
   const loggedInUserId = useSelector((state) => state.auth.user.id);
 
   // Functions //
@@ -44,24 +46,21 @@ const SearchUserScreen = (props) => {
     setQuery(text);
   };
 
-  const searchHandler = async () => {
-    try {
-      const response = await request.get(
-        `/api/users/search/${query}/${loggedInUserId}`
-      );
-      setSearchedUsers(response.data.users);
-      setIsLoading(false);
-    } catch (err) {
-      setSearchedUsers([]);
-      setIsLoading(false);
-    }
-  };
+  // Side Effects //
+  const {
+    data,
+    isError,
+    isRefreshing,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() =>
+    request.get(`/api/users/search/${query}/${loggedInUserId}`)
+  );
 
   // Side Effects //
   useDidMountEffect(() => {
-    setIsLoading(true);
     // Executes searchHandler after 1000ms, returns a positive integer which uniquely identifies the timer created
-    const timer = setTimeout(() => searchHandler(query), 1000);
+    const timer = setTimeout(() => setIsRefreshing(true), 1000);
 
     // Cancels the timer given the timer id
     return () => clearTimeout(timer);
@@ -85,38 +84,55 @@ const SearchUserScreen = (props) => {
           query={query}
           handleSearch={handleSearch}
           style={styles.searchBar}
-          onSubmit={() => searchHandler(query)}
+          onSubmit={() => setIsRefreshing(true)}
         />
       </View>
       <View style={styles.mainContainer}>
-        {isLoading && (
+        {isLoading ? (
           <ActivityIndicator size={30} style={styles.loadingSpinner} />
+        ) : (
+          <FlatList
+            onRefresh={() => setIsRefreshing(true)}
+            contentContainerStyle={{ flexGrow: 1 }}
+            ListEmptyComponent={
+              isError ? (
+                <ErrorSplash />
+              ) : (
+                <Empty message="No results found" width={128} height={128} />
+              )
+            }
+            refreshing={isRefreshing}
+            data={isError ? [] : data.users}
+            keyExtractor={(item) => item.id}
+            renderItem={(itemData) => {
+              const user = itemData.item;
+
+              return (
+                <TouchableHighlight
+                  key={user.username}
+                  activeOpacity={0.9}
+                  underlayColor={"#F6F4F4"}
+                  onPress={() => navigateToProfileNavigator(props, user._id)}
+                >
+                  <View style={styles.userRow}>
+                    <View style={styles.avatarTextContainer}>
+                      <Avatar
+                        rounded
+                        size={64}
+                        source={{
+                          uri: user.profilePic,
+                        }}
+                      />
+                      <DefaultText style={styles.username}>
+                        {user.username}
+                      </DefaultText>
+                    </View>
+                  </View>
+                </TouchableHighlight>
+              );
+            }}
+          ></FlatList>
         )}
-        {searchedUsers.map((user) => {
-          return (
-            <TouchableHighlight
-              key={user.username}
-              activeOpacity={0.9}
-              underlayColor={"#F6F4F4"}
-              onPress={() => navigateToProfileNavigator(props, user._id)}
-            >
-              <View style={styles.userRow}>
-                <View style={styles.avatarTextContainer}>
-                  <Avatar
-                    rounded
-                    size={64}
-                    source={{
-                      uri: user.profilePic,
-                    }}
-                  />
-                  <DefaultText style={styles.username}>
-                    {user.username}
-                  </DefaultText>
-                </View>
-              </View>
-            </TouchableHighlight>
-          );
-        })}
       </View>
     </View>
   );
@@ -151,6 +167,11 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     marginTop: 18,
+    flex: 1,
+  },
+  list: {
+    justifyContent: "center",
+    marginTop: 10,
   },
   userRow: {
     width: "100%",
