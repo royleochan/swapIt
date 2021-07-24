@@ -176,32 +176,36 @@ const ProductDetailsScreen = (props) => {
   // Render //
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
-  } else if (isError) {
-    return <ErrorSplash />;
   } else {
-    const { product } = data;
+    const product = isError ? null : data.product;
 
     return (
       <FlatList
         ListHeaderComponent={
-          <DetailsComponent
-            navigation={props.navigation}
-            product={product}
-            loggedInUserId={loggedInUserId}
-          />
+          !isError && (
+            <DetailsComponent
+              navigation={props.navigation}
+              product={product}
+              loggedInUserId={loggedInUserId}
+            />
+          )
         }
         onRefresh={() => setIsRefreshing(true)}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={
-          <Empty
-            message="No matches found"
-            width={100}
-            height={100}
-            fontSize={12}
-          />
+          isError ? (
+            <ErrorSplash />
+          ) : (
+            <Empty
+              message="No matches found"
+              width={100}
+              height={100}
+              fontSize={12}
+            />
+          )
         }
         refreshing={isRefreshing}
-        data={product.matches}
+        data={isError ? [] : product.matches}
         horizontal={false}
         numColumns={1}
         keyExtractor={(item) => item.id}

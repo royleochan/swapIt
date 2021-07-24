@@ -65,8 +65,6 @@ const ReviewsScreen = (props) => {
   // Render //
   if (isLoading) {
     return <Loader isLoading={isLoading} />;
-  } else if (isError) {
-    return <ErrorSplash />;
   } else {
     const reviewsInfo = data;
 
@@ -74,10 +72,12 @@ const ReviewsScreen = (props) => {
       <View style={styles.screenContainer}>
         <FlatList
           ListHeaderComponent={
-            <ReviewHeader
-              reviewRating={reviewsInfo.reviewRating}
-              reviewsLength={reviewsInfo.reviews.length}
-            />
+            !isError && (
+              <ReviewHeader
+                reviewRating={reviewsInfo.reviewRating}
+                reviewsLength={reviewsInfo.reviews.length}
+              />
+            )
           }
           onRefresh={() => setIsRefreshing(true)}
           contentContainerStyle={{ flexGrow: 1 }}
@@ -95,7 +95,7 @@ const ReviewsScreen = (props) => {
             )
           }
           refreshing={isRefreshing}
-          data={reviewsInfo.reviews}
+          data={isError ? [] : reviewsInfo.reviews}
           horizontal={false}
           keyExtractor={(item) => item._id}
           renderItem={(itemData) => <ReviewRow review={itemData.item} />}
