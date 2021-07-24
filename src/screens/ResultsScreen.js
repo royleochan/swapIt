@@ -13,7 +13,6 @@ import {
 } from "store/actions/products";
 
 // Custom Hooks Imports //
-import useDidMountEffect from "hooks/useDidMountEffect";
 import useFlatListRequest from "hooks/useFlatListRequest";
 
 // Utils Imports //
@@ -46,20 +45,8 @@ const ResultsScreen = (props) => {
   );
 
   // Side Effects //
-  const {
-    isRefreshing,
-    isError,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() => dispatch(searchProductsHandler(query)));
-
-  useDidMountEffect(() => {
-    // Executes after 1000ms, returns a positive integer which uniquely identifies the timer created
-    const timer = setTimeout(() => setIsRefreshing(true), 1000);
-
-    // Cancels the timer given the timer id
-    return () => clearTimeout(timer);
-  }, [query]);
+  const { isRefreshing, isError, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => dispatch(searchProductsHandler(query)));
 
   useEffect(() => {
     dispatch(

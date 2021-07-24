@@ -6,9 +6,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableHighlight,
-  ActivityIndicator,
 } from "react-native";
 import { useSelector } from "react-redux";
+import { useDebounce } from "use-debounce";
 
 // RNE Imports //
 import { Avatar } from "react-native-elements";
@@ -27,7 +27,7 @@ import request from "utils/request";
 
 // Custom Hooks Imports //
 import useDidMountEffect from "hooks/useDidMountEffect";
-import useFlatListRequest from "hooks/useFlatListRequest";
+import useDidMountFlatListRequest from "hooks/useDidMountFlatListRequest";
 
 // Components Imports //
 import DefaultText from "components/DefaultText";
@@ -39,6 +39,8 @@ import ErrorSplash from "components/ErrorSplash";
 const SearchUserScreen = (props) => {
   // Init //
   const [query, setQuery] = useState("");
+  const [debouncedQuery] = useDebounce(query, 500);
+
   const loggedInUserId = useSelector((state) => state.auth.user.id);
 
   // Functions //
@@ -46,25 +48,16 @@ const SearchUserScreen = (props) => {
     setQuery(text);
   };
 
-  // Side Effects //
-  const {
-    data,
-    isError,
-    isRefreshing,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() =>
-    request.get(`/api/users/search/${query}/${loggedInUserId}`)
-  );
 
   // Side Effects //
+  const { data, isError, isRefreshing, setIsRefreshing, hasSentRequest } =
+    useDidMountFlatListRequest(() =>
+      request.get(`/api/users/search/${loggedInUserId}/?query=${query}`)
+    );
+
   useDidMountEffect(() => {
-    // Executes searchHandler after 1000ms, returns a positive integer which uniquely identifies the timer created
-    const timer = setTimeout(() => setIsRefreshing(true), 1000);
-
-    // Cancels the timer given the timer id
-    return () => clearTimeout(timer);
-  }, [query]);
+    setIsRefreshing(true);
+  }, [debouncedQuery]);
 
   // Render //
   return (
@@ -82,57 +75,54 @@ const SearchUserScreen = (props) => {
         <CustomSearchBar
           placeholder="Search by username"
           query={query}
+          debouncedQuery={debouncedQuery}
           handleSearch={handleSearch}
           style={styles.searchBar}
           onSubmit={() => setIsRefreshing(true)}
         />
       </View>
       <View style={styles.mainContainer}>
-        {isLoading ? (
-          <ActivityIndicator size={30} style={styles.loadingSpinner} />
-        ) : (
-          <FlatList
-            onRefresh={() => setIsRefreshing(true)}
-            contentContainerStyle={{ flexGrow: 1 }}
-            ListEmptyComponent={
-              isError ? (
-                <ErrorSplash />
-              ) : (
-                <Empty message="No results found" width={128} height={128} />
-              )
-            }
-            refreshing={isRefreshing}
-            data={isError ? [] : data.users}
-            keyExtractor={(item) => item.id}
-            renderItem={(itemData) => {
-              const user = itemData.item;
+        <FlatList
+          onRefresh={() => setIsRefreshing(true)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={
+            isError ? (
+              <ErrorSplash />
+            ) : hasSentRequest && query.length > 0 && !isRefreshing ? (
+              <Empty message="No results found" width={128} height={128} />
+            ) : null
+          }
+          refreshing={isRefreshing}
+          data={isError ? [] : data.users}
+          keyExtractor={(item) => item.id}
+          renderItem={(itemData) => {
+            const user = itemData.item;
 
-              return (
-                <TouchableHighlight
-                  key={user.username}
-                  activeOpacity={0.9}
-                  underlayColor={"#F6F4F4"}
-                  onPress={() => navigateToProfileNavigator(props, user._id)}
-                >
-                  <View style={styles.userRow}>
-                    <View style={styles.avatarTextContainer}>
-                      <Avatar
-                        rounded
-                        size={64}
-                        source={{
-                          uri: user.profilePic,
-                        }}
-                      />
-                      <DefaultText style={styles.username}>
-                        {user.username}
-                      </DefaultText>
-                    </View>
+            return (
+              <TouchableHighlight
+                key={user.username}
+                activeOpacity={0.9}
+                underlayColor={"#F6F4F4"}
+                onPress={() => navigateToProfileNavigator(props, user._id)}
+              >
+                <View style={styles.userRow}>
+                  <View style={styles.avatarTextContainer}>
+                    <Avatar
+                      rounded
+                      size={64}
+                      source={{
+                        uri: user.profilePic,
+                      }}
+                    />
+                    <DefaultText style={styles.username}>
+                      {user.username}
+                    </DefaultText>
                   </View>
-                </TouchableHighlight>
-              );
-            }}
-          ></FlatList>
-        )}
+                </View>
+              </TouchableHighlight>
+            );
+          }}
+        ></FlatList>
       </View>
     </View>
   );

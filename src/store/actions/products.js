@@ -30,7 +30,9 @@ export const fetchCategoryProducts = (category) => {
 export const searchProductsHandler = (searchQuery) => {
   return async (dispatch) => {
     try {
-      const response = await request.get(`/api/products/search/${searchQuery}`);
+      const response = await request.get(
+        `/api/products/search/title?query=${searchQuery}`
+      );
       dispatch({
         type: FETCH_SEARCH_PRODUCTS,
         products: response.data.products,
