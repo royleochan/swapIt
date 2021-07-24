@@ -178,22 +178,14 @@ const ProductDetailsScreen = (props) => {
     return (
       <FlatList
         ListHeaderComponent={
-<<<<<<< HEAD
           !isError && (
             <DetailsComponent
               navigation={props.navigation}
               product={product}
               loggedInUserId={loggedInUserId}
+              jwtToken={jwtToken}
             />
           )
-=======
-          <DetailsComponent
-            navigation={props.navigation}
-            product={product}
-            loggedInUserId={loggedInUserId}
-            jwtToken={jwtToken}
-          />
->>>>>>> 2195e46dc9f45b135fdb26291df7ec6660f64edc
         }
         onRefresh={() => setIsRefreshing(true)}
         contentContainerStyle={{ flexGrow: 1 }}
