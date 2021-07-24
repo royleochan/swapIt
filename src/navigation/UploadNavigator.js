@@ -2,7 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import UploadScreen from "screens/UploadScreen";
-import DefaultNavOptions from "navigation/options/DefaultNavOptions";
+import { DefaultNavOptions } from "navigation/options/DefaultNavOptions";
 
 const Stack = createStackNavigator();
 

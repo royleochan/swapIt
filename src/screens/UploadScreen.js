@@ -170,6 +170,7 @@ const UploadScreen = (props) => {
   // header upload button
   useLayoutEffect(() => {
     props.navigation.setOptions({
+      headerLeft: () => <View></View>,
       headerRight: () => (
         <IconButton
           style={{ paddingRight: 16 }}
