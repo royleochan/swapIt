@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -13,6 +13,11 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useActionSheet } from "@expo/react-native-action-sheet";
+
+// React Navigation Hook Imports //
+import { useFocusEffect } from "@react-navigation/native";
+
+// React Hook Form Imports //
 import { useForm, Controller } from "react-hook-form";
 
 // Util Imports //
@@ -107,6 +112,14 @@ const UploadScreen = (props) => {
     }
   };
 
+  // reset inputs
+  const resetInputs = () => {
+    reset();
+    setMaleCategory(null);
+    setFemaleCategory(null);
+    setPickedImage(undefined);
+  };
+
   const uploadHandler = async (data) => {
     if (!isValidPriceRange) {
       Alert.alert(
@@ -139,10 +152,7 @@ const UploadScreen = (props) => {
 
     try {
       await request.post("/api/products/", data, jwtToken);
-      setPickedImage(undefined);
-      reset({ title: "", description: "", minPrice: "", maxPrice: "" });
-      setMaleCategory(null);
-      setFemaleCategory(null);
+      resetInputs();
       setIsLoading(false);
     } catch (err) {
       Alert.alert("Request failed", `${err.response.data.message}`, [
@@ -171,6 +181,13 @@ const UploadScreen = (props) => {
       ),
     });
   }, [props.navigation, maleCategory, femaleCategory, pickedImage]);
+
+  // effect is ran when screen comes into focus: ensures inputs are cleared when screen is blurred (goes out of focus)
+  useFocusEffect(
+    useCallback(() => {
+      return () => resetInputs();
+    }, [])
+  );
 
   // Render //
   if (isLoading) {
@@ -336,7 +353,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   formContainer: {
-    height: "10%",
     width: "100%",
     backgroundColor: Colors.gray,
     paddingHorizontal: 26,
@@ -412,6 +428,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   space: {
-    height: 40,
+    height: 160,
   },
 });
