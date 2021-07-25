@@ -34,6 +34,7 @@ import DefaultText from "components/DefaultText";
 import CustomSearchBar from "components/CustomSearchBar";
 import Empty from "components/Empty";
 import ErrorSplash from "components/ErrorSplash";
+import SearchUserSkeleton from "components/skeletons/SearchUserSkeleton";
 
 // Main Component //
 const SearchUserScreen = (props) => {
@@ -52,15 +53,21 @@ const SearchUserScreen = (props) => {
   const {
     data,
     isError,
-    isRefreshing,
-    setIsRefreshing,
-    hasSentRequest,
+    isLoading,
+    setIsLoading,
+    setIsSendRequest,
+    setData,
   } = useDidMountFlatListRequest(() =>
     request.get(`/api/users/search/${loggedInUserId}/?query=${query}`)
   );
 
   useDidMountEffect(() => {
-    setIsRefreshing(true);
+    setData([]);
+    setIsLoading(true);
+  }, [query]);
+
+  useDidMountEffect(() => {
+    setIsSendRequest(true);
   }, [debouncedQuery]);
 
   // Render //
@@ -86,17 +93,16 @@ const SearchUserScreen = (props) => {
         />
       </View>
       <View style={styles.mainContainer}>
+        {isLoading && <SearchUserSkeleton />}
         <FlatList
-          onRefresh={() => setIsRefreshing(true)}
           contentContainerStyle={{ flexGrow: 1 }}
           ListEmptyComponent={
             isError ? (
               <ErrorSplash />
-            ) : hasSentRequest && query.length > 0 && !isRefreshing ? (
+            ) : query.length > 0 && !isLoading ? (
               <Empty message="No results found" width={128} height={128} />
             ) : null
           }
-          refreshing={isRefreshing}
           data={isError ? [] : data.users}
           keyExtractor={(item) => item.id}
           renderItem={(itemData) => {

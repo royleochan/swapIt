@@ -3,10 +3,9 @@ import useDidMountEffect from "./useDidMountEffect";
 
 const useDidMountFlatListRequest = (request) => {
   const [data, setData] = useState([]);
-  const [hasSentRequest, setHasSentRequest] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isSendRequest, setIsSendRequest] = useState(false);
 
   const sendRequest = async () => {
     try {
@@ -19,25 +18,24 @@ const useDidMountFlatListRequest = (request) => {
       console.error(err);
       setIsError(true);
     } finally {
-      setHasSentRequest(true);
       setIsLoading(false);
-      setIsRefreshing(false);
+      setIsSendRequest(false);
     }
   };
 
   useDidMountEffect(() => {
-    if (isRefreshing === true || isLoading === true) {
+    if (isSendRequest === true) {
       sendRequest();
     }
-  }, [isRefreshing]);
+  }, [isSendRequest]);
 
   return {
     data,
     isError,
-    isRefreshing,
     isLoading,
-    setIsRefreshing,
-    hasSentRequest,
+    setIsLoading,
+    setIsSendRequest,
+    setData,
   };
 };
 
