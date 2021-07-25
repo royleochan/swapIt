@@ -20,7 +20,7 @@ import useFlatListRequest from "hooks/useFlatListRequest";
 import Colors from "constants/Colors";
 
 // Components Import //
-import Loader from "components/Loader";
+import FollowSkeleton from "components/skeletons/FollowSkeleton";
 import DefaultText from "components/DefaultText";
 import FollowButton from "components/FollowButton";
 import Empty from "components/Empty";
@@ -38,12 +38,8 @@ const FollowingScreen = (props) => {
   const isLoggedInUser = loggedInUserId === selectedUserId;
 
   // Side Effects //
-  const {
-    isError,
-    isRefreshing,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() => dispatch(fetchFollowing(selectedUserId)));
+  const { isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => dispatch(fetchFollowing(selectedUserId)));
 
   useLayoutEffect(() => {
     props.navigation.setOptions({
@@ -53,7 +49,7 @@ const FollowingScreen = (props) => {
 
   // Render //
   if (isLoading) {
-    return <Loader isLoading={isLoading} />;
+    return <FollowSkeleton />;
   }
 
   return (

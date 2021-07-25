@@ -20,7 +20,7 @@ import useFlatListRequest from "hooks/useFlatListRequest";
 import Colors from "constants/Colors";
 
 // Components Import //
-import Loader from "components/Loader";
+import FollowSkeleton from "components/skeletons/FollowSkeleton";
 import DefaultText from "components/DefaultText";
 import FollowButton from "components/FollowButton";
 import Empty from "components/Empty";
@@ -38,12 +38,8 @@ const FollowersScreen = (props) => {
   const isLoggedInUser = loggedInUserId === selectedUserId;
 
   // Side Effects //
-  const {
-    isError,
-    isRefreshing,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() => dispatch(fetchFollowers(selectedUserId)));
+  const { isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => dispatch(fetchFollowers(selectedUserId)));
 
   // set the username header in followers screen, don't have to do it in following screen
   useLayoutEffect(() => {
@@ -66,7 +62,7 @@ const FollowersScreen = (props) => {
 
   // Render //
   if (isLoading) {
-    return <Loader isLoading={isLoading} />;
+    return <FollowSkeleton />;
   }
 
   return (
