@@ -21,7 +21,7 @@ import DefaultText from "components/DefaultText";
 import AlertRow from "components/AlertRow";
 import Empty from "components/Empty";
 import ErrorSplash from "components/ErrorSplash";
-import Loader from "components/Loader";
+import AlertSkeleton from "components/skeletons/AlertSkeleton";
 
 // Main Component //
 const AlertsScreen = (props) => {
@@ -35,12 +35,8 @@ const AlertsScreen = (props) => {
   );
 
   // Side Effects //
-  const {
-    isRefreshing,
-    isError,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() => dispatch(fetchNotifications()));
+  const { isRefreshing, isError, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => dispatch(fetchNotifications()));
 
   useFocusEffect(
     useCallback(() => {
@@ -54,39 +50,39 @@ const AlertsScreen = (props) => {
   );
 
   // Render //
-  if (isLoading) {
-    return <Loader isLoading={isLoading} />;
-  }
-
   return (
     <View style={styles.screenContainer}>
       <View style={styles.headerContainer}>
         <DefaultText style={styles.header}>Alerts</DefaultText>
       </View>
-      <FlatList
-        onRefresh={() => setIsRefreshing(true)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={
-          isError ? (
-            <ErrorSplash />
-          ) : (
-            <Empty message="No alerts found" width={128} height={128} />
-          )
-        }
-        style={styles.list}
-        refreshing={isRefreshing}
-        data={notifications}
-        horizontal={false}
-        keyExtractor={(item) => item._id}
-        renderItem={(itemData) => {
-          return (
-            <AlertRow
-              notification={itemData.item}
-              navigation={props.navigation}
-            />
-          );
-        }}
-      ></FlatList>
+      {isLoading ? (
+        <AlertSkeleton />
+      ) : (
+        <FlatList
+          onRefresh={() => setIsRefreshing(true)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={
+            isError ? (
+              <ErrorSplash />
+            ) : (
+              <Empty message="No alerts found" width={128} height={128} />
+            )
+          }
+          style={styles.list}
+          refreshing={isRefreshing}
+          data={notifications}
+          horizontal={false}
+          keyExtractor={(item) => item._id}
+          renderItem={(itemData) => {
+            return (
+              <AlertRow
+                notification={itemData.item}
+                navigation={props.navigation}
+              />
+            );
+          }}
+        ></FlatList>
+      )}
     </View>
   );
 };
