@@ -50,10 +50,16 @@ const SearchUserScreen = (props) => {
   };
 
   // Side Effects //
-  const { data, isError, isLoading, setIsLoading, setIsSendRequest, setData } =
-    useDidMountFlatListRequest(() =>
-      request.get(`/api/users/search/${loggedInUserId}/?query=${query}`)
-    );
+  const {
+    data,
+    isError,
+    isLoading,
+    setIsLoading,
+    setIsSendRequest,
+    setData,
+  } = useDidMountFlatListRequest(() =>
+    request.get(`/api/users/search/${loggedInUserId}/?query=${query}`)
+  );
 
   useDidMountEffect(() => {
     setData([]);
@@ -137,7 +143,7 @@ export default SearchUserScreen;
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: "column",

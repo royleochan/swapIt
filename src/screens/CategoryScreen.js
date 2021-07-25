@@ -19,6 +19,9 @@ import useFlatListRequest from "hooks/useFlatListRequest";
 import filter from "utils/filter";
 import sort from "utils/sort";
 
+// Colors Import //
+import Colors from "constants/Colors";
+
 // Components Imports //
 import ProductBox from "components/ProductBox";
 import SortFilterMenu from "components/SortFilterMenu";
@@ -112,7 +115,7 @@ export default CategoryScreen;
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
   },
   header: {
     marginTop: 30,

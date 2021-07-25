@@ -293,7 +293,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: "row",
