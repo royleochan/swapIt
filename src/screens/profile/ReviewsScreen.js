@@ -16,7 +16,7 @@ import request from "utils/request";
 import Colors from "constants/Colors";
 
 // Components Import //
-import Loader from "components/Loader";
+import ReviewSkeleton from "components/skeletons/ReviewSkeleton";
 import DefaultText from "components/DefaultText";
 import ReviewRow from "components/ReviewRow";
 import Empty from "components/Empty";
@@ -54,22 +54,16 @@ const ReviewsScreen = (props) => {
   const isLoggedInUser = loggedInUserId === selectedUserId;
 
   // Side Effects //
-  const {
-    data,
-    isError,
-    isRefreshing,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() => request.get(`/api/reviews/${selectedUserId}`));
+  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => request.get(`/api/reviews/${selectedUserId}`));
 
   // Render //
-  if (isLoading) {
-    return <Loader isLoading={isLoading} />;
-  } else {
-    const reviewsInfo = data;
-
-    return (
-      <View style={styles.screenContainer}>
+  const reviewsInfo = isLoading ? null : data;
+  return (
+    <View style={styles.screenContainer}>
+      {isLoading ? (
+        <ReviewSkeleton />
+      ) : (
         <FlatList
           ListHeaderComponent={
             !isError && (
@@ -100,9 +94,9 @@ const ReviewsScreen = (props) => {
           keyExtractor={(item) => item._id}
           renderItem={(itemData) => <ReviewRow review={itemData.item} />}
         />
-      </View>
-    );
-  }
+      )}
+    </View>
+  );
 };
 
 export default ReviewsScreen;
