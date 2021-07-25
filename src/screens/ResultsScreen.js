@@ -45,8 +45,12 @@ const ResultsScreen = (props) => {
   );
 
   // Side Effects //
-  const { isRefreshing, isError, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => dispatch(searchProductsHandler(query)));
+  const {
+    isRefreshing,
+    isError,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => dispatch(searchProductsHandler(query)));
 
   useEffect(() => {
     dispatch(
@@ -118,7 +122,7 @@ export default ResultsScreen;
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
   },
   header: {
     marginTop: 50,

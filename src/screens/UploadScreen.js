@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: "100%",
-    backgroundColor: Colors.gray,
+    backgroundColor: Colors.background,
     paddingHorizontal: 26,
   },
   imageContainer: {
