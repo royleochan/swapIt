@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
-const NUM_ROWS_TO_RENDER = 4;
+const NUM_ROWS_TO_RENDER = 3;
 
 const Row = () => {
   return (
