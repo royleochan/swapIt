@@ -17,10 +17,10 @@ import Colors from "constants/Colors";
 
 // Components Import //
 import DefaultText from "components/DefaultText";
-import Loader from "components/Loader";
 import ProductBox from "components/ProductBox";
 import Empty from "components/Empty";
 import ErrorSplash from "components/ErrorSplash";
+import ProductBoxSkeleton from "components/skeletons/ProductBoxSkeleton";
 
 // Main Component //
 const LikedProductsScreen = (props) => {
@@ -28,27 +28,20 @@ const LikedProductsScreen = (props) => {
   const loggedInUserId = useSelector((state) => state.auth.user.id);
 
   // Side Effects //
-  const {
-    data,
-    isError,
-    isRefreshing,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() =>
-    request.get(`/api/products/likedProducts/${loggedInUserId}`)
-  );
+  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() =>
+      request.get(`/api/products/likedProducts/${loggedInUserId}`)
+    );
 
   // Render //
-  if (isLoading) {
-    return <Loader isLoading={isLoading} />;
-  } else {
-    const likedProductsInfo = isError ? [] : data.data;
+  const likedProductsInfo = isError || isLoading ? [] : data.data;
 
-    return (
-      <View style={styles.screenContainer}>
-        <DefaultText style={styles.headerText}>
-          Products You've Liked
-        </DefaultText>
+  return (
+    <View style={styles.screenContainer}>
+      <DefaultText style={styles.headerText}>Products You've Liked</DefaultText>
+      {isLoading ? (
+        <ProductBoxSkeleton />
+      ) : (
         <FlatList
           onRefresh={() => setIsRefreshing(true)}
           contentContainerStyle={{ flexGrow: 1 }}
@@ -79,9 +72,9 @@ const LikedProductsScreen = (props) => {
             />
           )}
         />
-      </View>
-    );
-  }
+      )}
+    </View>
+  );
 };
 
 export default LikedProductsScreen;
