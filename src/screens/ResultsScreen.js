@@ -27,7 +27,7 @@ import ProductBox from "components/ProductBox";
 import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 import SortFilterMenu from "components/SortFilterMenu";
-import Loader from "components/Loader";
+import ProductBoxSkeleton from "components/skeletons/ProductBoxSkeleton";
 import Empty from "components/Empty";
 import ErrorSplash from "components/ErrorSplash";
 
@@ -45,12 +45,8 @@ const ResultsScreen = (props) => {
   );
 
   // Side Effects //
-  const {
-    isRefreshing,
-    isError,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() => dispatch(searchProductsHandler(query)));
+  const { isRefreshing, isError, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => dispatch(searchProductsHandler(query)));
 
   useEffect(() => {
     dispatch(
@@ -65,10 +61,6 @@ const ResultsScreen = (props) => {
   }, [sortState]);
 
   // Render //
-  if (isLoading) {
-    return <Loader isLoading={isLoading} />;
-  }
-
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>
@@ -85,34 +77,38 @@ const ResultsScreen = (props) => {
         </View>
       </View>
       <SortFilterMenu />
-      <FlatList
-        onRefresh={() => setIsRefreshing(true)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={
-          isError ? (
-            <ErrorSplash />
-          ) : (
-            <Empty message="No results found" width={128} height={128} />
-          )
-        }
-        refreshing={isRefreshing}
-        columnWrapperStyle={styles.list}
-        data={filteredSortedProducts}
-        horizontal={false}
-        numColumns={2}
-        keyExtractor={(item) => item.id}
-        renderItem={(itemData) => {
-          return (
-            <ProductBox
-              item={itemData.item}
-              productCreator={itemData.item.creator}
-              navigate={() =>
-                navigateToProductDetails(props, itemData.item._id)
-              }
-            />
-          );
-        }}
-      ></FlatList>
+      {isLoading ? (
+        <ProductBoxSkeleton />
+      ) : (
+        <FlatList
+          onRefresh={() => setIsRefreshing(true)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={
+            isError ? (
+              <ErrorSplash />
+            ) : (
+              <Empty message="No results found" width={128} height={128} />
+            )
+          }
+          refreshing={isRefreshing}
+          columnWrapperStyle={styles.list}
+          data={filteredSortedProducts}
+          horizontal={false}
+          numColumns={2}
+          keyExtractor={(item) => item.id}
+          renderItem={(itemData) => {
+            return (
+              <ProductBox
+                item={itemData.item}
+                productCreator={itemData.item.creator}
+                navigate={() =>
+                  navigateToProductDetails(props, itemData.item._id)
+                }
+              />
+            );
+          }}
+        ></FlatList>
+      )}
     </View>
   );
 };
