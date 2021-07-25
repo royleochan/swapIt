@@ -212,6 +212,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     alignItems: "center",
+    backgroundColor: Colors.background,
   },
   imagePreview: {
     width: 200,
@@ -246,6 +247,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
     backgroundColor: Colors.glass,
     opacity: 0.3,
+    paddingHorizontal: 5,
   },
   descriptionInput: {
     width: "95%",
@@ -254,6 +256,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
     backgroundColor: Colors.glass,
     opacity: 0.3,
+    paddingHorizontal: 5,
   },
   button: {
     height: 50,

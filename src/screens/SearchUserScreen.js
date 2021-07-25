@@ -48,12 +48,16 @@ const SearchUserScreen = (props) => {
     setQuery(text);
   };
 
-
   // Side Effects //
-  const { data, isError, isRefreshing, setIsRefreshing, hasSentRequest } =
-    useDidMountFlatListRequest(() =>
-      request.get(`/api/users/search/${loggedInUserId}/?query=${query}`)
-    );
+  const {
+    data,
+    isError,
+    isRefreshing,
+    setIsRefreshing,
+    hasSentRequest,
+  } = useDidMountFlatListRequest(() =>
+    request.get(`/api/users/search/${loggedInUserId}/?query=${query}`)
+  );
 
   useDidMountEffect(() => {
     setIsRefreshing(true);
@@ -133,7 +137,7 @@ export default SearchUserScreen;
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: "column",

@@ -20,9 +20,9 @@ import uuid from "react-native-uuid";
 
 const MessagesScreen = (props) => {
   const [socket] = useState(
-      io(`${REACT_APP_BACKEND_URL}/chatSocket`, {
-        autoConnect: false,
-      })
+    io(`${REACT_APP_BACKEND_URL}/chatSocket`, {
+      autoConnect: false,
+    })
   );
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -44,11 +44,11 @@ const MessagesScreen = (props) => {
       seen: seen,
       createdAt: new Date(),
       updatedAt: new Date(),
-    }
+    };
     let prevUserChats = [...userChatsRef.current];
     if (prevUserChats.length > 0) {
       let reqChat = prevUserChats.find((chat) => {
-        return (chat.user._id === creator) || (loggedInUserId === creator);
+        return chat.user._id === creator || loggedInUserId === creator;
       });
       reqChat.messages.push(newMessageFromSchema);
       reqChat.numUnseen += 1;
@@ -87,7 +87,7 @@ const MessagesScreen = (props) => {
           user: chat.users.find((usr) => usr.id !== loggedInUserId),
           chatId: chat.id,
           messages: chat.messages,
-          numUnseen: chat.messages.filter(msg => !msg.seen).length,
+          numUnseen: chat.messages.filter((msg) => !msg.seen).length,
         };
       });
     } catch (e) {
@@ -107,14 +107,14 @@ const MessagesScreen = (props) => {
     socket.on("messages joined", async () => {
       setIsLoading(true);
       await getChats()
-          .then((response) => {
-            setUserChats(response);
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            setIsLoading(false);
-            console.error(err);
-          });
+        .then((response) => {
+          setUserChats(response);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          console.error(err);
+        });
     });
     socket.on("new message", ({ creator, content, imageUrl, seen }) => {
       newMessageHandler(creator, content, imageUrl, seen);
@@ -122,7 +122,7 @@ const MessagesScreen = (props) => {
     return () => {
       socket.disconnect();
     };
-  }, [])
+  }, []);
 
   useDidMountEffect(() => {
     if (query !== "") {
@@ -212,7 +212,7 @@ export default MessagesScreen;
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
   },
   header: {
     marginTop: 50,

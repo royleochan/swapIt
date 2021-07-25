@@ -72,7 +72,7 @@ const DetailsComponent = (props) => {
 
   // Render //
   return (
-    <View>
+    <View style={styles.headerContainer}>
       <IconButton
         style={styles.arrow}
         size={23}
@@ -166,8 +166,13 @@ const ProductDetailsScreen = (props) => {
   };
 
   // Side Effects //
-  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => request.get(`/api/products/${productId}`));
+  const {
+    data,
+    isError,
+    isRefreshing,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => request.get(`/api/products/${productId}`));
 
   // Render //
   if (isLoading) {
@@ -190,16 +195,18 @@ const ProductDetailsScreen = (props) => {
         onRefresh={() => setIsRefreshing(true)}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={
-          isError ? (
-            <ErrorSplash />
-          ) : (
-            <Empty
-              message="No matches found"
-              width={100}
-              height={100}
-              fontSize={12}
-            />
-          )
+          loggedInUserId === product.creator.id ? (
+            isError ? (
+              <ErrorSplash />
+            ) : (
+              <Empty
+                message="No matches found"
+                width={100}
+                height={100}
+                fontSize={12}
+              />
+            )
+          ) : null
         }
         refreshing={isRefreshing}
         data={isError ? [] : product.matches}
@@ -256,11 +263,6 @@ const styles = StyleSheet.create({
   textContainer: {
     marginVertical: 4,
     flexDirection: "row",
-  },
-  iconTextContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 4,
   },
   highlight: {
     color: Colors.darkPink,
