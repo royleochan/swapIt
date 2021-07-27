@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useCallback } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
@@ -33,19 +33,27 @@ const AlertsScreen = (props) => {
   const unreadNotifications = notifications.filter(
     (notification) => notification.isRead === false
   );
+  const refUnreadNotifications = useRef();
 
   // Side Effects //
   const { isRefreshing, isError, isLoading, setIsRefreshing } =
     useFlatListRequest(() => dispatch(fetchNotifications()));
 
+  useEffect(() => {
+    refUnreadNotifications.current = unreadNotifications;
+  }, [unreadNotifications]);
+
   useFocusEffect(
     useCallback(() => {
-      return () =>
+      return () => {
         dispatch(
           markAllNotificationsAsRead(
-            unreadNotifications.map((notification) => notification._id)
+            refUnreadNotifications.current.map(
+              (notification) => notification._id
+            )
           )
         );
+      };
     }, [])
   );
 
