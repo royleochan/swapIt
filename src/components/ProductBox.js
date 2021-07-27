@@ -1,5 +1,10 @@
 import React from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { Image } from "react-native-elements";
 
@@ -14,7 +19,18 @@ const ProductBox = (props) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={navigate}>
-        <Image style={styles.itemImage} source={{ uri: item.imageUrl }} />
+        {item.isSwapped ? (
+          <ImageBackground
+            source={{ uri: item.imageUrl }}
+            style={styles.swappedImage}
+          >
+            <View style={styles.innerImageContainer}>
+              <DefaultText style={styles.swapped}>SWAPPED</DefaultText>
+            </View>
+          </ImageBackground>
+        ) : (
+          <Image style={styles.itemImage} source={{ uri: item.imageUrl }} />
+        )}
       </TouchableOpacity>
       <View style={styles.titleLikeContainer}>
         <DefaultText style={styles.titleText}>{item.title}</DefaultText>
@@ -62,10 +78,32 @@ const styles = StyleSheet.create({
   container: {
     padding: 15,
   },
+  innerImageContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0, 0.2)",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  swappedImage: {
+    width: 160,
+    height: 180,
+    borderRadius: 10,
+  },
   itemImage: {
     width: 160,
     height: 180,
     borderRadius: 10,
+  },
+  swapped: {
+    fontSize: 18,
+    color: Colors.gray,
+    opacity: 0.75,
+    transform: [{ rotate: "325deg" }],
   },
   titleLikeContainer: {
     flexDirection: "row",
