@@ -403,16 +403,14 @@ const styles = StyleSheet.create({
     height: 25,
     borderRadius: 8,
     paddingHorizontal: 5,
-    backgroundColor: Colors.glass,
-    opacity: 0.3,
+    backgroundColor: Colors.textInput,
   },
   descriptionInput: {
     width: "95%",
     height: 100,
     borderRadius: 8,
     paddingHorizontal: 5,
-    backgroundColor: Colors.glass,
-    opacity: 0.3,
+    backgroundColor: Colors.textInput,
   },
   priceRangeContainer: {
     flexDirection: "row",
@@ -423,8 +421,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 8,
     paddingHorizontal: 5,
-    backgroundColor: Colors.glass,
-    opacity: 0.3,
+    backgroundColor: Colors.textInput,
   },
   priceErrorContainer: {
     marginLeft: 12,

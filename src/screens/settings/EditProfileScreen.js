@@ -1,6 +1,14 @@
 // React Imports //
-import React, { useLayoutEffect, useState, useEffect } from "react";
-import { StyleSheet, View, TouchableOpacity, Image, Text } from "react-native";
+import React, { useLayoutEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Image,
+  Text,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 // Expo Action Sheet Import //
@@ -118,70 +126,90 @@ const EditProfileScreen = (props) => {
 
   // Render //
   return (
-    <View style={styles.screenContainer}>
-      {isLoading && <Loader isLoading={isLoading} />}
-      <View style={styles.imageContainer}>
-        <View style={styles.profilePic}>
-          {typeof pickedImage === "object" && (
-            <Image style={styles.image} source={{ uri: pickedImage.uri }} />
-          )}
-          {typeof pickedImage === "string" && (
-            <Image style={styles.image} source={{ uri: pickedImage }} />
-          )}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.screenContainer}>
+        {isLoading && <Loader isLoading={isLoading} />}
+        <View style={styles.imageContainer}>
+          <View style={styles.profilePic}>
+            {typeof pickedImage === "object" && (
+              <Image style={styles.image} source={{ uri: pickedImage.uri }} />
+            )}
+            {typeof pickedImage === "string" && (
+              <Image style={styles.image} source={{ uri: pickedImage }} />
+            )}
+          </View>
+          <TouchableOpacity onPress={showActionSheet}>
+            <DefaultText>Change Profile Picture</DefaultText>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={showActionSheet}>
-          <DefaultText>Change Profile Picture</DefaultText>
-        </TouchableOpacity>
-      </View>
-      <View>
-        <Controller
-          name="name"
-          defaultValue={loggedInUser.name}
-          control={control}
-          rules={{ required: true }}
-          render={({ onChange, value }) => (
-            <DefaultTextInput
-              label="Name"
-              value={value}
-              onChangeText={(value) => {
-                onChange(value);
-              }}
-            />
-          )}
-        />
-        {errors.name && (
-          <Text style={styles.errorText}>Required field cannot be empty.</Text>
-        )}
-        <Controller
-          name="username"
-          defaultValue={loggedInUser.username}
-          control={control}
-          rules={{ required: true }}
-          render={({ onChange, value }) => (
-            <DefaultTextInput
-              label="Username"
-              value={value}
-              onChangeText={(value) => {
-                onChange(value);
-              }}
-            />
-          )}
-        />
-        {errors.username && (
-          <Text style={styles.errorText}>Required field cannot be empty.</Text>
-        )}
         <View>
           <Controller
-            name="description"
-            defaultValue={loggedInUser.description}
+            name="name"
+            defaultValue={loggedInUser.name}
+            control={control}
+            rules={{ required: true }}
+            render={({ onChange, value }) => (
+              <DefaultTextInput
+                label="Name"
+                value={value}
+                onChangeText={(value) => {
+                  onChange(value);
+                }}
+              />
+            )}
+          />
+          {errors.name && (
+            <Text style={styles.errorText}>
+              Required field cannot be empty.
+            </Text>
+          )}
+          <Controller
+            name="username"
+            defaultValue={loggedInUser.username}
+            control={control}
+            rules={{ required: true }}
+            render={({ onChange, value }) => (
+              <DefaultTextInput
+                label="Username"
+                value={value}
+                onChangeText={(value) => {
+                  onChange(value);
+                }}
+              />
+            )}
+          />
+          {errors.username && (
+            <Text style={styles.errorText}>
+              Required field cannot be empty.
+            </Text>
+          )}
+          <View>
+            <Controller
+              name="description"
+              defaultValue={loggedInUser.description}
+              control={control}
+              render={({ onChange, value }) => (
+                <DefaultTextInput
+                  label="Description"
+                  value={value}
+                  multiline={true}
+                  containerStyle={styles.descriptionContainer}
+                  style={styles.descriptionInputArea}
+                  onChangeText={(value) => {
+                    onChange(value);
+                  }}
+                />
+              )}
+            />
+          </View>
+          <Controller
+            name="location"
+            defaultValue={loggedInUser.location}
             control={control}
             render={({ onChange, value }) => (
               <DefaultTextInput
-                label="Description"
+                label="Location"
                 value={value}
-                multiline={true}
-                containerStyle={styles.descriptionContainer}
-                style={styles.descriptionInputArea}
                 onChangeText={(value) => {
                   onChange(value);
                 }}
@@ -189,22 +217,8 @@ const EditProfileScreen = (props) => {
             )}
           />
         </View>
-        <Controller
-          name="location"
-          defaultValue={loggedInUser.location}
-          control={control}
-          render={({ onChange, value }) => (
-            <DefaultTextInput
-              label="Location"
-              value={value}
-              onChangeText={(value) => {
-                onChange(value);
-              }}
-            />
-          )}
-        />
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
