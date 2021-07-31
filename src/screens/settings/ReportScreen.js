@@ -1,6 +1,13 @@
 // React Imports //
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  Text,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import { useSelector } from "react-redux";
 
 // React Hook Form Imports //
@@ -59,41 +66,43 @@ const ReportScreen = (props) => {
 
   // Render //
   return (
-    <View style={styles.screenContainer}>
-      {isLoading && <Loader isLoading={isLoading} />}
-      <DefaultText style={styles.headerText}>{title}</DefaultText>
-      <View style={styles.textInputContainer}>
-        <Controller
-          name="description"
-          defaultValue=""
-          control={control}
-          rules={{ required: true }}
-          render={({ onChange, value }) => (
-            <TextInput
-              style={styles.textInput}
-              placeholder="Description"
-              multiline={true}
-              value={value}
-              onChangeText={(value) => {
-                onChange(value);
-              }}
-            />
-          )}
-        />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.screenContainer}>
+        {isLoading && <Loader isLoading={isLoading} />}
+        <DefaultText style={styles.headerText}>{title}</DefaultText>
+        <View style={styles.textInputContainer}>
+          <Controller
+            name="description"
+            defaultValue=""
+            control={control}
+            rules={{ required: true }}
+            render={({ onChange, value }) => (
+              <TextInput
+                style={styles.textInput}
+                placeholder="Description"
+                multiline={true}
+                value={value}
+                onChangeText={(value) => {
+                  onChange(value);
+                }}
+              />
+            )}
+          />
+        </View>
+        {errors.description && (
+          <Text style={styles.errorText}>Required field cannot be empty.</Text>
+        )}
+        <View style={styles.buttonContainer}>
+          <MainButton
+            style={styles.button}
+            styleText={styles.buttonText}
+            onPress={handleSubmit(submitHandler)}
+          >
+            Submit
+          </MainButton>
+        </View>
       </View>
-      {errors.description && (
-        <Text style={styles.errorText}>Required field cannot be empty.</Text>
-      )}
-      <View style={styles.buttonContainer}>
-        <MainButton
-          style={styles.button}
-          styleText={styles.buttonText}
-          onPress={handleSubmit(submitHandler)}
-        >
-          Submit
-        </MainButton>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -111,21 +120,15 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   textInputContainer: {
-    marginHorizontal: 20,
-    width: "90%",
-    height: 120,
-    backgroundColor: Colors.background,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 2,
+    alignItems: "center",
   },
   textInput: {
-    padding: 5,
+    width: "90%",
+    height: 120,
+    borderRadius: 8,
+    paddingHorizontal: 5,
+    backgroundColor: Colors.textInput,
+    color: "black",
   },
   errorText: {
     marginLeft: 20,
