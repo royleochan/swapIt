@@ -39,10 +39,12 @@ import DropDown from "components/DropDown";
 import MainButton from "components/MainButton";
 import Loader from "components/Loader";
 import IconButton from "components/IconButton";
+import ErrorSplash from "components/ErrorSplash";
 
 // Main Component //
 const UploadScreen = (props) => {
   // Init //
+  const isVerified = useSelector((state) => state.auth.user.isVerified);
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const jwtToken = useSelector((state) => state.auth.jwtToken);
   const { showActionSheetWithOptions } = useActionSheet();
@@ -191,8 +193,10 @@ const UploadScreen = (props) => {
   );
 
   // Render //
-  if (isLoading) {
-    return <Loader isLoading={true} />;
+  if (!isVerified) {
+    return (
+      <ErrorSplash message="Verify your email at the profile tab to start posting!" />
+    );
   }
 
   return (
@@ -200,6 +204,7 @@ const UploadScreen = (props) => {
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={styles.screenContainer}
     >
+      {isLoading && <Loader isLoading={true} />}
       <ScrollView style={styles.formContainer}>
         <View style={styles.imageContainer}>
           <View style={styles.imagePreview}>

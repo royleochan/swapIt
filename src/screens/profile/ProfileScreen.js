@@ -10,6 +10,7 @@ import {
   navigateToFollowers,
   navigateToFollowing,
   navigateToSettings,
+  navigateToVerifyScreen,
 } from "navigation/navigate/profile/index";
 import { navigateToProductDetails } from "navigation/navigate/common/index";
 
@@ -91,6 +92,7 @@ const ProfileScreen = (props) => {
             !isError && (
               <UserHeader
                 selectedUser={userData}
+                navigateToVerify={() => navigateToVerifyScreen(props)}
                 navigateToReviews={() =>
                   navigateToReviews(props, selectedUserId)
                 }

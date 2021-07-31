@@ -8,6 +8,7 @@ import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import UserStatistic from "components/UserStatistic";
 import FollowButton from "components/FollowButton";
+import VerifyButton from "components/VerifyButton";
 
 const UserHeader = (props) => {
   const {
@@ -15,17 +16,22 @@ const UserHeader = (props) => {
     navigateToReviews,
     navigateToFollowers,
     navigateToFollowing,
+    navigateToVerify,
   } = props;
 
-  const loggedInUser = useSelector((state) => state.auth.user);
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
+  const isVerified = useSelector((state) => state.auth.user.isVerified);
 
   return (
     <View style={styles.container}>
-      {loggedInUser.id !== selectedUser.id && (
+      {loggedInUserId !== selectedUser.id && (
         <FollowButton
           style={styles.followButton}
           selectedUserId={selectedUser._id}
         />
+      )}
+      {loggedInUserId === selectedUser.id && !isVerified && (
+        <VerifyButton onPress={navigateToVerify} style={styles.followButton} />
       )}
       <View style={styles.topHeaderContainer}>
         <Image

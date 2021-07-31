@@ -10,6 +10,7 @@ import EditProductScreen from "screens/profile/EditProductScreen";
 import ReviewsScreen from "screens/profile/ReviewsScreen";
 import CreateReviewScreen from "screens/profile/CreateReviewScreen";
 import CompletedReviewScreen from "screens/profile/CompletedReviewScreen";
+import VerifyEmailScreen from "screens/profile/VerifyEmailScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
 import CategoryScreen from "screens/CategoryScreen";
 
@@ -62,6 +63,11 @@ const UserProfileNavigator = () => {
         name="Settings"
         component={SettingsNavigator}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Verify"
+        component={VerifyEmailScreen}
+        options={DefaultNavOptions}
       />
     </Stack.Navigator>
   );

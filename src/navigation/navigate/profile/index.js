@@ -75,6 +75,15 @@ const navigateToCompletedReviewScreen = (props, matchId) => {
   return props.navigation.push("CompletedReview", { matchId });
 };
 
+/**
+ * Navigates to VerifyEmailScreen
+ *
+ * @param props: props from source screen
+ */
+const navigateToVerifyScreen = (props) => {
+  return props.navigation.push("Verify");
+};
+
 export {
   navigateToProfile,
   navigateToReviews,
@@ -82,4 +91,5 @@ export {
   navigateToFollowing,
   navigateToFollowers,
   navigateToCompletedReviewScreen,
+  navigateToVerifyScreen,
 };
