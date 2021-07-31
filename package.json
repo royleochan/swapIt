@@ -29,6 +29,7 @@
     "react-hook-form": "^6.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz",
     "react-native-animated-loader": "0.0.8",
+    "react-native-confirmation-code-field": "^6.7.0",
     "react-native-deck-swiper": "^2.0.5",
     "react-native-dotenv": "^2.4.3",
     "react-native-elements": "^3.1.0",
