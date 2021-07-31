@@ -1,6 +1,13 @@
 // React Imports //
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import { useSelector } from "react-redux";
 
 // React Hook Form Imports //
@@ -10,7 +17,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Rating } from "react-native-elements";
 
 // Navigation Imports //
-import { navigateToCompletedReviewScreen } from "navigation/navigate/profile/index";
+import { navigateToReviews } from "navigation/navigate/profile/index";
 
 // Colors Imports //
 import Colors from "constants/Colors";
@@ -47,7 +54,7 @@ const CreateReviewScreen = (props) => {
         },
         jwtToken
       );
-      navigateToCompletedReviewScreen(props, matchId);
+      navigateToReviews(props, reviewed);
     } catch (err) {
       console.log(err);
     }
@@ -55,58 +62,60 @@ const CreateReviewScreen = (props) => {
 
   // Render //
   return (
-    <View style={styles.screenContainer}>
-      <DefaultText style={styles.headerText}>Leave a Review</DefaultText>
-      <View style={styles.ratingContainer}>
-        <DefaultText style={styles.labelText}>Rate the Swapper</DefaultText>
-        {userRating !== undefined && (
-          <DefaultText style={styles.labelText}>{userRating} / 5</DefaultText>
-        )}
-        <Rating
-          type="custom"
-          imageSize={28}
-          ratingBackgroundColor={Colors.background}
-          ratingColor={Colors.star}
-          fractions={1}
-          startingValue={0}
-          onFinishRating={(rating) => setUserRating(rating)}
-          style={styles.rating}
-        />
-      </View>
-      <DefaultText style={styles.labelText}>
-        Describe Your Experience
-      </DefaultText>
-      <View style={styles.textInputContainer}>
-        <Controller
-          name="description"
-          defaultValue=""
-          control={control}
-          rules={{ required: true }}
-          render={({ onChange, value }) => (
-            <TextInput
-              style={styles.textInput}
-              multiline={true}
-              value={value}
-              onChangeText={(value) => {
-                onChange(value);
-              }}
-            />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.screenContainer}>
+        <DefaultText style={styles.headerText}>Leave a Review</DefaultText>
+        <View style={styles.ratingContainer}>
+          <DefaultText style={styles.labelText}>Rate the Swapper</DefaultText>
+          {userRating !== undefined && (
+            <DefaultText style={styles.labelText}>{userRating} / 5</DefaultText>
           )}
-        />
+          <Rating
+            type="custom"
+            imageSize={28}
+            ratingBackgroundColor={Colors.background}
+            ratingColor={Colors.star}
+            fractions={1}
+            startingValue={0}
+            onFinishRating={(rating) => setUserRating(rating)}
+            style={styles.rating}
+          />
+        </View>
+        <DefaultText style={styles.labelText}>
+          Describe Your Experience
+        </DefaultText>
+        <View style={styles.textInputContainer}>
+          <Controller
+            name="description"
+            defaultValue=""
+            control={control}
+            rules={{ required: true }}
+            render={({ onChange, value }) => (
+              <TextInput
+                style={styles.textInput}
+                multiline={true}
+                value={value}
+                onChangeText={(value) => {
+                  onChange(value);
+                }}
+              />
+            )}
+          />
+        </View>
+        {errors.description && (
+          <Text style={styles.errorText}>Required field cannot be empty.</Text>
+        )}
+        <View style={styles.buttonContainer}>
+          <MainButton
+            style={styles.button}
+            styleText={styles.buttonText}
+            onPress={handleSubmit(submitHandler)}
+          >
+            Submit
+          </MainButton>
+        </View>
       </View>
-      {errors.description && (
-        <Text style={styles.errorText}>Required field cannot be empty.</Text>
-      )}
-      <View style={styles.buttonContainer}>
-        <MainButton
-          style={styles.button}
-          styleText={styles.buttonText}
-          onPress={handleSubmit(submitHandler)}
-        >
-          Submit
-        </MainButton>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -136,21 +145,15 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   textInputContainer: {
-    marginHorizontal: 20,
-    width: "90%",
-    height: 120,
-    backgroundColor: Colors.background,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 2,
+    alignItems: "center",
   },
   textInput: {
-    padding: 5,
+    width: "90%",
+    height: 120,
+    borderRadius: 8,
+    paddingHorizontal: 5,
+    backgroundColor: Colors.textInput,
+    color: "black",
   },
   errorText: {
     marginLeft: 20,

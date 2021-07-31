@@ -23,6 +23,18 @@ const navigateToReviews = (props, selectedUserId) => {
 };
 
 /**
+ * Navigates to CreateReviewScreen
+ *
+ * @param props: props from source screen
+ * @param pid: product id of the product being viewed
+ * @param matchId: match id of the match row
+ * @param reviewed: string representing id of user being reviewed
+ */
+const navigateToCreateReview = (props, pid, matchId, reviewed) => {
+  props.navigation.push("CreateReview", { pid, matchId, reviewed });
+};
+
+/**
  * Navigates to SettingsScreen
  *
  * @param props: props from source screen
@@ -66,16 +78,6 @@ const navigateToFollowers = (props, selectedUserId, username) => {
 };
 
 /**
- * Navigates to CompletedReviewScreen
- *
- * @param props: props from source screen
- * @param matchId: string match id that review is associated to
- */
-const navigateToCompletedReviewScreen = (props, matchId) => {
-  return props.navigation.push("CompletedReview", { matchId });
-};
-
-/**
  * Navigates to VerifyEmailScreen
  *
  * @param props: props from source screen
@@ -87,9 +89,9 @@ const navigateToVerifyScreen = (props) => {
 export {
   navigateToProfile,
   navigateToReviews,
+  navigateToCreateReview,
   navigateToSettings,
   navigateToFollowing,
   navigateToFollowers,
-  navigateToCompletedReviewScreen,
   navigateToVerifyScreen,
 };
