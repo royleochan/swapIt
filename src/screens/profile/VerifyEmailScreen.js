@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   CodeField,
   Cursor,
@@ -18,29 +18,79 @@ import {
 // RNE Imports //
 import { Button } from "react-native-elements";
 
+// Redux Action Imports //
+import { refreshUser } from "store/actions/auth";
+
+// Util Imports //
+import request from "utils/request";
+import showAlert from "utils/showAlert";
+
 // Colors Imports //
 import Colors from "constants/Colors";
 
 // Components Imports //
+import Loader from "components/Loader";
 import DefaultText from "components/DefaultText";
 
 // Constants //
 const CELL_COUNT = 6;
 
 // Main Component //
-const VerifyEmailScreen = () => {
+const VerifyEmailScreen = (props) => {
   // Init //
+  const dispatch = useDispatch();
+  const jwtToken = useSelector((state) => state.auth.jwtToken);
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
   const loggedInUserEmail = useSelector((state) => state.auth.user.email);
+
   const [value, setValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
-  const [props, getCellOnLayoutHandler] = useClearByFocusCell({
+  const [properties, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
 
+  // Functions //
+  const sendOtp = async () => {
+    setIsLoading(true);
+    try {
+      await request.get(`/api/otp/generate/${loggedInUserId}`);
+    } catch (err) {
+      showAlert("Failed", err.response.data.message, null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const verifyOtp = async () => {
+    setIsLoading(true);
+    try {
+      const response = await request.post(
+        `/api/otp/verify/email`,
+        {
+          uid: loggedInUserId,
+          otpValue: value,
+        },
+        jwtToken
+      );
+      dispatch(refreshUser(response.data.user));
+      setIsLoading(false);
+      props.navigation.goBack();
+    } catch (err) {
+      showAlert("Failed", err.response.data.message, () => setIsLoading(false));
+    }
+  };
+
+  // Side Effects //
+  useEffect(() => {
+    sendOtp();
+  }, []);
+
   // Render //
   return (
     <View style={styles.screen}>
+      {isLoading && <Loader isLoading={true} />}
       <DefaultText style={styles.headerText}>We've sent you a code</DefaultText>
       <DefaultText style={styles.bodyText}>
         Enter it below to verify {loggedInUserEmail}
@@ -48,7 +98,7 @@ const VerifyEmailScreen = () => {
       <SafeAreaView style={styles.root}>
         <CodeField
           ref={ref}
-          {...props}
+          {...properties}
           value={value}
           onChangeText={setValue}
           cellCount={CELL_COUNT}
@@ -75,9 +125,9 @@ const VerifyEmailScreen = () => {
         buttonStyle={styles.button}
         titleStyle={styles.buttonText}
         disabled={value.length !== 6 ? true : false}
-        onPress={() => {}}
+        onPress={() => verifyOtp()}
       />
-      <TouchableOpacity>
+      <TouchableOpacity onPress={sendOtp}>
         <DefaultText>Resend email</DefaultText>
       </TouchableOpacity>
     </View>
