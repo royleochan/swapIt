@@ -63,6 +63,21 @@ const navigateToProfileNavigator = (props, userId) => {
   });
 };
 
+/**
+ * Navigates to Reviews Screen through Profile Navigator
+ *
+ * @param props: props from source screen
+ * @param selectedUserId: string representing id of selected user
+ */
+const navigateToReviewThroughProfileNavigator = (props, selectedUserId) => {
+  props.navigation.push("ProfileScreen", {
+    screen: "Reviews",
+    params: {
+      selectedUserId,
+    },
+  });
+};
+
 export {
   navigateToProductDetails,
   navigateToCategory,
@@ -70,4 +85,5 @@ export {
   navigateToResults,
   navigateToMessagesScreen,
   navigateToProfileNavigator,
+  navigateToReviewThroughProfileNavigator,
 };

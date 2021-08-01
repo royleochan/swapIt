@@ -8,6 +8,7 @@ import { Avatar } from "react-native-elements";
 
 // Navigation Imports //
 import {
+  navigateToReviewThroughProfileNavigator,
   navigateToProfileNavigator,
   navigateToProductDetails,
 } from "navigation/navigate/common/index";
@@ -52,7 +53,7 @@ const AlertRow = (props) => {
       case "FOLLOW":
         return navigateToProfileNavigator(props, creator._id);
       case "REVIEW":
-        return navigateToProfileNavigator(props, targetUser);
+        return navigateToReviewThroughProfileNavigator(props, targetUser);
       case "LIKE":
       case "MATCH":
       case "REQUEST":

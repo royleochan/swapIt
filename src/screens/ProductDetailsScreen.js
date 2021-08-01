@@ -131,9 +131,11 @@ const DetailsComponent = (props) => {
         <View style={styles.textContainer}>
           <DefaultText>{parseTimeAgo(product.createdAt)} by </DefaultText>
           <TouchableOpacity
-            onPress={() =>
-              navigateToProfileNavigator(props, product.creator._id)
-            }
+            onPress={() => {
+              if (loggedInUserId !== product.creator._id) {
+                navigateToProfileNavigator(props, product.creator._id);
+              }
+            }}
           >
             <DefaultText style={styles.highlight}>
               @{product.creator.username}
@@ -161,13 +163,8 @@ const ProductDetailsScreen = (props) => {
   const jwtToken = useSelector((state) => state.auth.jwtToken);
 
   // Side Effects //
-  const {
-    data,
-    isError,
-    isRefreshing,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() => request.get(`/api/products/${productId}`));
+  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => request.get(`/api/products/${productId}`));
 
   // Render //
   if (isLoading) {
@@ -221,7 +218,8 @@ const ProductDetailsScreen = (props) => {
                     props,
                     productId,
                     itemData.item.match.id,
-                    itemData.item.product.creator.id
+                    itemData.item.product.creator.id,
+                    itemData.item.product.creator.username
                   )
                 }
                 navigateToReviews={() =>

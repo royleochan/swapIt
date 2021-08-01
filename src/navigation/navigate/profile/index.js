@@ -29,9 +29,10 @@ const navigateToReviews = (props, selectedUserId) => {
  * @param pid: product id of the product being viewed
  * @param matchId: match id of the match row
  * @param reviewed: string representing id of user being reviewed
+ * @param username: string representing username of user being reviewed
  */
-const navigateToCreateReview = (props, pid, matchId, reviewed) => {
-  props.navigation.push("CreateReview", { pid, matchId, reviewed });
+const navigateToCreateReview = (props, pid, matchId, reviewed, username) => {
+  props.navigation.push("CreateReview", { pid, matchId, reviewed, username });
 };
 
 /**
