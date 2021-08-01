@@ -95,7 +95,7 @@ expo r -c
 
 ## Notifications
 
-- Push Notifications only work on physical devices and not on simulators, actions involving push notifications such as liking products might be buggy when testing on simulators
+- Push Notifications only work on physical devices and not on simulators.
 
 ## Deployment
 
