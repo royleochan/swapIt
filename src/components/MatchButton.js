@@ -21,9 +21,8 @@ const MatchButton = (props) => {
     style,
     match,
     navigateToCreateReview,
-    navigateToCompletedReview,
+    navigateToReviews,
     ownProduct,
-    reviewed,
   } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [matchState, setMatchState] = useState(match);
@@ -46,11 +45,10 @@ const MatchButton = (props) => {
   if (productOneId === ownProduct) {
     if (productOneIsReviewed) {
       buttonTitle = "Review Made!";
-      onPressFunction = () => navigateToCompletedReview(match.id);
+      onPressFunction = () => navigateToReviews();
     } else if (isConfirmed) {
       buttonTitle = "Make Review";
-      onPressFunction = () =>
-        navigateToCreateReview(ownProduct, match.id, reviewed);
+      onPressFunction = () => navigateToCreateReview();
     } else if (productTwoIsRequested) {
       buttonTitle = "Accept Request";
       onPressFunction = () => handleOnClick("accept", productOneId);
@@ -64,11 +62,10 @@ const MatchButton = (props) => {
   } else {
     if (productTwoIsReviewed) {
       buttonTitle = "Review Made!";
-      onPressFunction = () => navigateToCompletedReview(match.id);
+      onPressFunction = () => navigateToReviews();
     } else if (isConfirmed) {
       buttonTitle = "Make Review";
-      onPressFunction = () =>
-        navigateToCreateReview(ownProduct, match.id, reviewed);
+      onPressFunction = () => navigateToCreateReview();
     } else if (productOneIsRequested) {
       buttonTitle = "Accept Request";
       onPressFunction = () => handleOnClick("accept", productTwoId);
@@ -138,7 +135,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   text: {
-    color: Colors.background,
+    color: "white",
     alignSelf: "center",
   },
   loader: {

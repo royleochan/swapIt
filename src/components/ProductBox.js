@@ -101,9 +101,9 @@ const styles = StyleSheet.create({
   },
   swapped: {
     fontSize: 18,
-    color: Colors.gray,
+    color: "white",
     opacity: 0.75,
-    transform: [{ rotate: "325deg" }],
+    fontFamily: "latoBold",
   },
   titleLikeContainer: {
     flexDirection: "row",

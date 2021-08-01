@@ -16,6 +16,10 @@ import {
   navigateToCategory,
   navigateToProfileNavigator,
 } from "navigation/navigate/common/index";
+import {
+  navigateToCreateReview,
+  navigateToReviews,
+} from "navigation/navigate/profile";
 
 // Custom Hook Imports //
 import useFlatListRequest from "hooks/useFlatListRequest";
@@ -156,15 +160,6 @@ const ProductDetailsScreen = (props) => {
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const jwtToken = useSelector((state) => state.auth.jwtToken);
 
-  // Navigation Functions //
-  const navigateToCreateReview = (pid, matchId, reviewed) => {
-    props.navigation.push("CreateReview", { pid, matchId, reviewed });
-  };
-
-  const navigateToCompletedReview = (matchId) => {
-    props.navigation.push("CompletedReview", { matchId });
-  };
-
   // Side Effects //
   const {
     data,
@@ -221,8 +216,17 @@ const ProductDetailsScreen = (props) => {
                 ownProduct={product.id}
                 product={itemData.item.product}
                 match={itemData.item.match}
-                navigateToCreateReview={navigateToCreateReview}
-                navigateToCompletedReview={navigateToCompletedReview}
+                navigateToCreateReview={() =>
+                  navigateToCreateReview(
+                    props,
+                    productId,
+                    itemData.item.match.id,
+                    itemData.item.product.creator.id
+                  )
+                }
+                navigateToReviews={() =>
+                  navigateToReviews(props, itemData.item.product.creator.id)
+                }
               />
             );
           } else {
