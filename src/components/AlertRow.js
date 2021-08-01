@@ -9,8 +9,8 @@ import { Avatar } from "react-native-elements";
 // Navigation Imports //
 import {
   navigateToReviewThroughProfileNavigator,
+  navigateToProductDetailsThroughProfileNavigator,
   navigateToProfileNavigator,
-  navigateToProductDetails,
 } from "navigation/navigate/common/index";
 
 // Redux Action Imports //
@@ -58,7 +58,10 @@ const AlertRow = (props) => {
       case "MATCH":
       case "REQUEST":
       case "SWAP":
-        return navigateToProductDetails(props, productId._id);
+        return navigateToProductDetailsThroughProfileNavigator(
+          props,
+          productId._id
+        );
     }
   };
 
