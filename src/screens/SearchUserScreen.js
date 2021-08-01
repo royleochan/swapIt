@@ -89,7 +89,7 @@ const SearchUserScreen = (props) => {
           debouncedQuery={debouncedQuery}
           handleSearch={handleSearch}
           style={styles.searchBar}
-          onSubmit={() => setIsRefreshing(true)}
+          onSubmit={() => handleSearch(query)}
         />
       </View>
       <View style={styles.mainContainer}>
