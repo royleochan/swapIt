@@ -11,7 +11,7 @@ const MatchRow = (props) => {
   const {
     match,
     navigateToCreateReview,
-    navigateToCompletedReview,
+    navigateToReviews,
     ownProduct,
   } = props;
   const { title, minPrice, maxPrice, imageUrl, creator } = props.product;
@@ -46,7 +46,7 @@ const MatchRow = (props) => {
         <MatchButton
           match={match}
           navigateToCreateReview={navigateToCreateReview}
-          navigateToCompletedReview={navigateToCompletedReview}
+          navigateToReviews={navigateToReviews}
           ownProduct={ownProduct}
           reviewed={creator.id}
         />

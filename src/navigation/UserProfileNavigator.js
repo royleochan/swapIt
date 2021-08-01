@@ -9,7 +9,6 @@ import ProfileScreen from "screens/profile/ProfileScreen";
 import EditProductScreen from "screens/profile/EditProductScreen";
 import ReviewsScreen from "screens/profile/ReviewsScreen";
 import CreateReviewScreen from "screens/profile/CreateReviewScreen";
-import CompletedReviewScreen from "screens/profile/CompletedReviewScreen";
 import VerifyEmailScreen from "screens/profile/VerifyEmailScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
 import CategoryScreen from "screens/CategoryScreen";
@@ -42,11 +41,6 @@ const UserProfileNavigator = () => {
       <Stack.Screen
         name="CreateReview"
         component={CreateReviewScreen}
-        options={DefaultNavOptions}
-      />
-      <Stack.Screen
-        name="CompletedReview"
-        component={CompletedReviewScreen}
         options={DefaultNavOptions}
       />
       <Stack.Screen
