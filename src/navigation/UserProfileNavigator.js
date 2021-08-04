@@ -9,7 +9,7 @@ import ProfileScreen from "screens/profile/ProfileScreen";
 import EditProductScreen from "screens/profile/EditProductScreen";
 import ReviewsScreen from "screens/profile/ReviewsScreen";
 import CreateReviewScreen from "screens/profile/CreateReviewScreen";
-import VerifyEmailScreen from "screens/profile/VerifyEmailScreen";
+import VerifyOtpScreen from "screens/profile/VerifyOtpScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
 import CategoryScreen from "screens/CategoryScreen";
 
@@ -60,7 +60,7 @@ const UserProfileNavigator = () => {
       />
       <Stack.Screen
         name="Verify"
-        component={VerifyEmailScreen}
+        component={VerifyOtpScreen}
         options={DefaultNavOptions}
       />
     </Stack.Navigator>

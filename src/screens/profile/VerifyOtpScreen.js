@@ -36,7 +36,7 @@ import DefaultText from "components/DefaultText";
 const CELL_COUNT = 6;
 
 // Main Component //
-const VerifyEmailScreen = (props) => {
+const VerifyOtpScreen = (props) => {
   // Init //
   const dispatch = useDispatch();
   const jwtToken = useSelector((state) => state.auth.jwtToken);
@@ -134,7 +134,7 @@ const VerifyEmailScreen = (props) => {
   );
 };
 
-export default VerifyEmailScreen;
+export default VerifyOtpScreen;
 
 const styles = StyleSheet.create({
   screen: {

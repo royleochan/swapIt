@@ -79,7 +79,7 @@ const navigateToFollowers = (props, selectedUserId, username) => {
 };
 
 /**
- * Navigates to VerifyEmailScreen
+ * Navigates to VerifyOtpScreen
  *
  * @param props: props from source screen
  */
