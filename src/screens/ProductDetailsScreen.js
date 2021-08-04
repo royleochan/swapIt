@@ -76,7 +76,7 @@ const DetailsComponent = (props) => {
 
   // Render //
   return (
-    <View style={styles.headerContainer}>
+    <View>
       <IconButton
         style={styles.arrow}
         size={23}

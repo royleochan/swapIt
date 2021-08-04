@@ -26,4 +26,38 @@ const navigateToLogin = (props) => {
   props.navigation.push("Login");
 };
 
-export { navigateToSignUp, navigateToSignUpTwo, navigateToLogin };
+/**
+ * Navigates to ResetPasswordScreen
+ *
+ * @param props: props from source screen
+ */
+const navigateToResetPassword = (props) => {
+  props.navigation.push("ResetPassword");
+};
+
+/**
+ * Navigates to CreateNewPasswordScreen
+ *
+ * @param props: props from source screen
+ */
+const navigateToCreateNewPassword = (props) => {
+  props.navigation.push("CreateNewPassword");
+};
+
+/**
+ * Navigates to VerifyOtpScreen
+ *
+ * @param props: props from source screen
+ */
+const navigateToVerifyScreen = (props) => {
+  return props.navigation.push("VerifyOtp");
+};
+
+export {
+  navigateToSignUp,
+  navigateToSignUpTwo,
+  navigateToLogin,
+  navigateToResetPassword,
+  navigateToCreateNewPassword,
+  navigateToVerifyScreen,
+};

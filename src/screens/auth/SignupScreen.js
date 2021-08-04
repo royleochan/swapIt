@@ -131,6 +131,10 @@ const SignupScreen = (props) => {
               value: 8,
               message: "Password must be at least 8 characters",
             },
+            maxLength: {
+              value: 16,
+              message: "Password cannot exceed 16 characters",
+            },
           }}
           render={({ onChange, value }) => (
             <GlassTextInput
@@ -159,6 +163,10 @@ const SignupScreen = (props) => {
             minLength: {
               value: 8,
               message: "Password must be at least 8 characters",
+            },
+            maxLength: {
+              value: 16,
+              message: "Password cannot exceed 16 characters",
             },
             validate: (value) =>
               value === password.current || "The passwords do not match",

@@ -7,7 +7,10 @@ import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 
 // Navigation Imports //
-import { navigateToSignUp } from "navigation/navigate/auth/index";
+import {
+  navigateToSignUp,
+  navigateToResetPassword,
+} from "navigation/navigate/auth/index";
 
 // Redux Action Imports //
 import { authenticate } from "store/actions/auth";
@@ -120,6 +123,13 @@ const LoginScreen = (props) => {
           <DefaultText style={styles.signupTextAccent}> Sign Up!</DefaultText>
         </TouchableOpacity>
       </View>
+      <View style={styles.forgetPasswordContainer}>
+        <TouchableOpacity onPress={() => navigateToResetPassword(props)}>
+          <DefaultText style={styles.forgotPasswordText}>
+            Forgot password
+          </DefaultText>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -192,5 +202,12 @@ const styles = StyleSheet.create({
     color: Colors.accent,
     fontSize: 14,
     textDecorationLine: "underline",
+  },
+  forgetPasswordContainer: {
+    paddingTop: 12,
+    alignItems: "center",
+  },
+  forgotPasswordText: {
+    color: Colors.accent,
   },
 });
