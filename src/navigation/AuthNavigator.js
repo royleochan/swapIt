@@ -50,7 +50,6 @@ const AuthNavigator = () => {
         name="CreateNewPassword"
         component={CreateNewPasswordScreen}
       />
-      <Stack.Screen name="VerifyOtp" component={VerifyOtpScreen} />
     </Stack.Navigator>
   );
 };

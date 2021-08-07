@@ -44,20 +44,10 @@ const navigateToCreateNewPassword = (props) => {
   props.navigation.push("CreateNewPassword");
 };
 
-/**
- * Navigates to VerifyOtpScreen
- *
- * @param props: props from source screen
- */
-const navigateToVerifyScreen = (props) => {
-  return props.navigation.push("VerifyOtp");
-};
-
 export {
   navigateToSignUp,
   navigateToSignUpTwo,
   navigateToLogin,
   navigateToResetPassword,
   navigateToCreateNewPassword,
-  navigateToVerifyScreen,
 };
