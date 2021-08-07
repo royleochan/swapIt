@@ -71,7 +71,7 @@ const CreateNewPasswordScreen = (props) => {
               <TextInput
                 style={styles.textInputHidden}
                 value={value}
-                autoCapitalize={false}
+                autoCapitalize="none"
                 secureTextEntry={isHidden ? true : false}
                 placeholder="New Password"
                 onChangeText={(value) => {
@@ -118,7 +118,7 @@ const CreateNewPasswordScreen = (props) => {
             <TextInput
               style={styles.textInput}
               value={value}
-              autoCapitalize={false}
+              autoCapitalize="none"
               secureTextEntry={isHidden ? true : false}
               placeholder="Confirm New Password"
               onChangeText={(value) => {
