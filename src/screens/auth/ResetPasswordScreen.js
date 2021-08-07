@@ -1,5 +1,5 @@
 // React Imports //
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, TextInput, Text } from "react-native";
 
 // React Hook Form Imports //
@@ -8,6 +8,10 @@ import { useForm, Controller } from "react-hook-form";
 // Navigation Imports //
 import { navigateToCreateNewPassword } from "navigation/navigate/auth/index";
 
+// Utils Imports //
+import request from "utils/request";
+import showAlert from "utils/showAlert";
+
 // Colors Import //
 import Colors from "constants/Colors";
 
@@ -15,22 +19,36 @@ import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import IconButton from "components/IconButton";
 import MainButton from "components/MainButton";
+import Loader from "components/Loader";
 
 // Main Component //
 const ResetPasswordScreen = (props) => {
   // Init //
+  const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, errors } = useForm();
 
   // Functions //
   const submitHandler = async (data) => {
     const { email } = data;
-    console.log(email);
-    navigateToCreateNewPassword(props);
+    await sendOtp(email);
+  };
+
+  // Functions //
+  const sendOtp = async (email) => {
+    setIsLoading(true);
+    try {
+      const response = await request.post("/api/otp/generate/", { email });
+      setIsLoading(false);
+      navigateToCreateNewPassword(props, email, response.data.userId);
+    } catch (err) {
+      showAlert("Failed", err.response.data.message, () => setIsLoading(false));
+    }
   };
 
   // Render //
   return (
     <View style={styles.screen}>
+      {isLoading && <Loader isLoading={true} />}
       <IconButton
         style={styles.arrow}
         size={23}

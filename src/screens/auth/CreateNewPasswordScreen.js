@@ -20,10 +20,13 @@ import Colors from "constants/Colors";
 // Components Imports //
 import DefaultText from "components/DefaultText";
 import MainButton from "components/MainButton";
+import Loader from "components/Loader";
 
 // Main Component //
-const CreateNewPasswordScreen = () => {
+const CreateNewPasswordScreen = (props) => {
   // Init //
+  const { email, userId } = props.route.params;
+  const [isLoading, setIsLoading] = useState(false);
   const [isHidden, setIsHidden] = useState(true);
   const { control, handleSubmit, errors, watch } = useForm();
   const password = useRef({});
@@ -39,6 +42,7 @@ const CreateNewPasswordScreen = () => {
   // Render //
   return (
     <View style={styles.screen}>
+      {isLoading && <Loader isLoading={true} />}
       <DefaultText style={styles.headerText}>Create New Password</DefaultText>
       <DefaultText style={styles.descriptionText}>
         Your new password must be at least 8 characters.

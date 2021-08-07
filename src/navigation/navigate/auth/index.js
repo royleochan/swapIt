@@ -39,9 +39,11 @@ const navigateToResetPassword = (props) => {
  * Navigates to CreateNewPasswordScreen
  *
  * @param props: props from source screen
+ * @param email: email of user to create new password
+ * @param userId: id of user to create new password
  */
-const navigateToCreateNewPassword = (props) => {
-  props.navigation.push("CreateNewPassword");
+const navigateToCreateNewPassword = (props, email, userId) => {
+  props.navigation.push("CreateNewPassword", { email, userId });
 };
 
 export {
