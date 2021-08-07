@@ -81,7 +81,7 @@ const ResetPasswordScreen = (props) => {
               <TextInput
                 style={styles.textInput}
                 value={value}
-                autoCapitalize={false}
+                autoCapitalize="none"
                 placeholder="Email"
                 onChangeText={(value) => {
                   onChange(value);
