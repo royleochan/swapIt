@@ -55,7 +55,7 @@ const VerifyOtpScreen = (props) => {
   const sendOtp = async () => {
     setIsLoading(true);
     try {
-      await request.get(`/api/otp/generate/${loggedInUserId}`);
+      await request.post("/api/otp/generate/", { email: loggedInUserEmail });
     } catch (err) {
       showAlert("Failed", err.response.data.message, null);
     } finally {
