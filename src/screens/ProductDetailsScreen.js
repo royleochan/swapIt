@@ -49,7 +49,9 @@ const DetailsComponent = (props) => {
 
   // Functions //
   const showActionSheet = () => {
-    const options = ["Delete Listing", "Edit Listing", "Cancel"];
+    const options = !product.isSwapped
+      ? ["Delete Listing", "Edit Listing", "Cancel"]
+      : ["Delete Listing", "Cancel"];
     const destructiveButtonIndex = 0;
     const cancelButtonIndex = 2;
 
@@ -67,7 +69,7 @@ const DetailsComponent = (props) => {
             index: 0,
             routes: [{ name: "Profile" }],
           });
-        } else if (buttonIndex === 1) {
+        } else if (buttonIndex === 1 && !product.isSwapped) {
           props.navigation.push("EditProduct", product);
         }
       }
