@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -17,6 +17,10 @@ import {
 
 // React Hook Form Imports //
 import { useForm, Controller } from "react-hook-form";
+
+// Utils Imports //
+import request from "utils/request";
+import showAlert from "utils/showAlert";
 
 // Icon Imports //
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -50,10 +54,33 @@ const CreateNewPasswordScreen = (props) => {
   password.current = watch("newPassword", "");
 
   // Functions //
+  const sendOtp = async () => {
+    setIsLoading(true);
+    try {
+      await request.post("/api/otp/generate/", { email });
+      setIsLoading(false);
+    } catch (err) {
+      showAlert("Failed", err.response.data.message, () => setIsLoading(false));
+    }
+  };
+
   const submitHandler = async (data) => {
     const { newPassword, newPasswordConfirm } = data;
-    console.log(newPassword);
-    console.log(newPasswordConfirm);
+    try {
+      setIsLoading(true);
+      await request.post("/api/otp/verify/password", {
+        uid: userId,
+        otpValue: value,
+        newPassword,
+        newPasswordConfirm,
+      });
+      showAlert("Success", "Password has been successfully changed.", () => {
+        setIsLoading(false);
+        props.navigation.popToTop();
+      });
+    } catch (err) {
+      showAlert("Failed", err.response.data.message, () => setIsLoading(false));
+    }
   };
 
   // Render //
@@ -87,7 +114,7 @@ const CreateNewPasswordScreen = (props) => {
           )}
         />
       </SafeAreaView>
-      <TouchableOpacity onPress={() => {}}>
+      <TouchableOpacity onPress={sendOtp}>
         <DefaultText style={styles.resendEmailText}>Resend email</DefaultText>
       </TouchableOpacity>
 
