@@ -37,7 +37,10 @@ const ResetPasswordScreen = (props) => {
   const sendOtp = async (email) => {
     setIsLoading(true);
     try {
-      const response = await request.post("/api/otp/generate/", { email });
+      const response = await request.post("/api/otp/generate/", {
+        email,
+        type: "password",
+      });
       setIsLoading(false);
       navigateToCreateNewPassword(props, email, response.data.userId);
     } catch (err) {

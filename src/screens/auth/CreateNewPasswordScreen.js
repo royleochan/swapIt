@@ -57,7 +57,7 @@ const CreateNewPasswordScreen = (props) => {
   const sendOtp = async () => {
     setIsLoading(true);
     try {
-      await request.post("/api/otp/generate/", { email });
+      await request.post("/api/otp/generate/", { email, type: "password" });
       setIsLoading(false);
     } catch (err) {
       showAlert("Failed", err.response.data.message, () => setIsLoading(false));
