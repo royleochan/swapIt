@@ -32,7 +32,7 @@ const ReportScreen = (props) => {
   const { control, handleSubmit, errors, reset } = useForm();
 
   const loggedInUser = useSelector((state) => state.auth.user);
-  const { email } = loggedInUser;
+  const { email, name, username } = loggedInUser;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,6 +50,8 @@ const ReportScreen = (props) => {
         subject,
         email,
         description,
+        name,
+        username,
       });
 
       showAlert(
