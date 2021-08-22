@@ -1,5 +1,5 @@
 // React Imports //
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -43,6 +43,7 @@ import ErrorSplash from "components/ErrorSplash";
 // Details Component //
 const DetailsComponent = (props) => {
   // Init //
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const { product, loggedInUserId, jwtToken } = props;
   const { showActionSheetWithOptions } = useActionSheet();
   const windowHeight = Dimensions.get("window").height;
@@ -64,7 +65,10 @@ const DetailsComponent = (props) => {
       },
       async (buttonIndex) => {
         if (buttonIndex === 0) {
+          setIsDeleteLoading(true);
           await request.delete(`/api/products/${product._id}`, jwtToken);
+          setIsDeleteLoading(false);
+
           props.navigation.reset({
             index: 0,
             routes: [{ name: "Profile" }],
@@ -79,6 +83,7 @@ const DetailsComponent = (props) => {
   // Render //
   return (
     <View>
+      {isDeleteLoading && <Loader isLoading={isDeleteLoading} />}
       <IconButton
         style={styles.arrow}
         size={23}
@@ -173,6 +178,13 @@ const ProductDetailsScreen = (props) => {
     return <Loader isLoading={isLoading} />;
   } else {
     const product = isError ? null : data.product;
+    const { isDeleted } = product;
+
+    if (isDeleted) {
+      return (
+        <ErrorSplash message="Oops, item has been deleted and is no longer here." />
+      );
+    }
 
     return (
       <FlatList

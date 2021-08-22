@@ -306,7 +306,7 @@ const UploadScreen = (props) => {
               rules={{
                 required: {
                   value: true,
-                  message: "Minimum price range cannot be empty.",
+                  message: "Maximum price range cannot be empty.",
                 },
               }}
               control={control}
