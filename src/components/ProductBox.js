@@ -53,7 +53,6 @@ const ProductBox = (props) => {
           name="clockcircleo"
           size={14}
           color={Colors.primary}
-          style={styles.clock}
         />
         <DefaultText style={styles.timeText}>
           {parseTimeAgo(item.createdAt)}

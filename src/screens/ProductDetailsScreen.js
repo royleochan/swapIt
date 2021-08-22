@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 
 // Navigation Imports //
 import {
+  navigateToProductDetails,
   navigateToCategory,
   navigateToProfileNavigator,
 } from "navigation/navigate/common/index";
@@ -170,8 +171,13 @@ const ProductDetailsScreen = (props) => {
   const jwtToken = useSelector((state) => state.auth.jwtToken);
 
   // Side Effects //
-  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => request.get(`/api/products/${productId}`));
+  const {
+    data,
+    isError,
+    isRefreshing,
+    isLoading,
+    setIsRefreshing,
+  } = useFlatListRequest(() => request.get(`/api/products/${productId}`));
 
   // Render //
   if (isLoading) {
@@ -227,6 +233,9 @@ const ProductDetailsScreen = (props) => {
                 ownProduct={product.id}
                 product={itemData.item.product}
                 match={itemData.item.match}
+                navigateToProductDetails={() => {
+                  navigateToProductDetails(props, itemData.item.product.id);
+                }}
                 navigateToCreateReview={() =>
                   navigateToCreateReview(
                     props,
