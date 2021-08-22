@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-elements";
 
 import Colors from "constants/Colors";
@@ -10,6 +10,7 @@ import MatchButton from "components/MatchButton";
 const MatchRow = (props) => {
   const {
     match,
+    navigateToProductDetails,
     navigateToCreateReview,
     navigateToReviews,
     ownProduct,
@@ -18,23 +19,27 @@ const MatchRow = (props) => {
 
   return (
     <View style={styles.rowContainer}>
-      <View style={styles.avatarInfoContainer}>
-        <Avatar
-          rounded
-          size={66}
-          source={{
-            uri: imageUrl,
-          }}
-        />
-        <View style={styles.infoContainer}>
-          <DefaultText style={styles.title}>{title}</DefaultText>
-          <DefaultText style={styles.price}>
-            S$ {minPrice} - {maxPrice}
-          </DefaultText>
+      <TouchableOpacity onPress={() => navigateToProductDetails()}>
+        <View style={styles.avatarInfoContainer}>
+          <Avatar
+            rounded
+            size={66}
+            source={{
+              uri: imageUrl,
+            }}
+          />
+          <View style={styles.infoContainer}>
+            <DefaultText style={styles.title}>{title}</DefaultText>
+            <DefaultText style={styles.price}>
+              S$ {minPrice} - {maxPrice}
+            </DefaultText>
 
-          <DefaultText style={styles.username}>@{creator.username}</DefaultText>
+            <DefaultText style={styles.username}>
+              @{creator.username}
+            </DefaultText>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
       <View style={styles.buttonsContainer}>
         <IconButton
           style={styles.messageIcon}
