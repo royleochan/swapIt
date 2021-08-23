@@ -1,10 +1,11 @@
 // React Imports //
-import React from "react";
-import { useDispatch } from "react-redux";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 
 // RNE imports //
-import { Avatar } from "react-native-elements";
+import { Avatar, Button } from "react-native-elements";
 
 // Navigation Imports //
 import {
@@ -14,7 +15,13 @@ import {
 } from "navigation/navigate/common/index";
 
 // Redux Action Imports //
-import { dismissNotification } from "store/actions/notifications";
+import {
+  dismissNotification,
+  setActiveNotification,
+} from "store/actions/notifications";
+
+// Custom Hook Imports //
+import useDidMountEffect from "hooks/useDidMountEffect";
 
 // Utils Imports //
 import { parseTimeAgo } from "utils/date";
@@ -24,11 +31,31 @@ import Colors from "constants/Colors";
 
 // Components Imports //
 import DefaultText from "components/DefaultText";
-import IconButton from "components/IconButton";
+
+// Other Components //
+const renderDeleteButton = (onPress) => {
+  return (
+    <Button
+      onPress={onPress}
+      title="Delete"
+      icon={{ name: "delete", color: "white" }}
+      titleStyle={{ fontSize: 14, fontFamily: "latoBold" }}
+      containerStyle={{ borderRadius: 0 }}
+      buttonStyle={{
+        borderRadius: 0,
+        minWidth: 80,
+        minHeight: "100%",
+        backgroundColor: Colors.delete,
+        flexDirection: "column",
+      }}
+    />
+  );
+};
 
 // Main Component //
 const AlertRow = (props) => {
   // Init //
+  const swipeableRef = useRef();
   const {
     _id,
     creator, // object of shape {_id: "", imageUrl: ""}
@@ -41,11 +68,18 @@ const AlertRow = (props) => {
     createdAt,
   } = props.notification;
 
+  const activeNotification = useSelector(
+    (state) => state.notifications.activeNotification
+  );
   const dispatch = useDispatch();
 
   // Functions //
   const closeNotification = (notificationId) => {
     dispatch(dismissNotification(notificationId));
+  };
+
+  const setActiveNotificationBeingSlided = (notificationId) => {
+    dispatch(setActiveNotification(notificationId));
   };
 
   const navigate = (alertType) => {
@@ -65,49 +99,59 @@ const AlertRow = (props) => {
     }
   };
 
+  // Side Effects //
+  useDidMountEffect(() => {
+    if (activeNotification !== _id) {
+      swipeableRef.current.close();
+    }
+  }, [activeNotification]);
+
   // Render //
   return (
-    <TouchableOpacity
-      onPress={() => navigate(type)}
-      style={{
-        ...styles.alertContainer,
-        ...{ backgroundColor: !isRead ? Colors.gray : Colors.background },
-      }}
+    <Swipeable
+      ref={swipeableRef}
+      friction={2}
+      onSwipeableRightWillOpen={() => setActiveNotificationBeingSlided(_id)}
+      renderRightActions={() =>
+        renderDeleteButton(() => closeNotification(_id))
+      }
     >
-      <View style={styles.imageTextContainer}>
-        <Avatar
-          rounded
-          size={66}
-          source={{
-            uri:
-              type === "MATCH" || type === "REQUEST" || type === "SWAP"
-                ? productId.imageUrl
-                : creator.profilePic,
+      <TouchableWithoutFeedback onPress={() => navigate(type)}>
+        <View
+          style={{
+            ...styles.alertContainer,
+            ...{ backgroundColor: !isRead ? Colors.gray : Colors.background },
           }}
-        />
-        <View style={styles.textContainer}>
-          <DefaultText style={styles.subtitle}>NEW {type}</DefaultText>
-          <DefaultText>{description}</DefaultText>
-          <DefaultText>{parseTimeAgo(createdAt)}</DefaultText>
+        >
+          <View style={styles.imageTextContainer}>
+            <Avatar
+              rounded
+              size={66}
+              source={{
+                uri:
+                  type === "MATCH" || type === "REQUEST" || type === "SWAP"
+                    ? productId.imageUrl
+                    : creator.profilePic,
+              }}
+            />
+            <View style={styles.textContainer}>
+              <DefaultText style={styles.subtitle}>NEW {type}</DefaultText>
+              <DefaultText>{description}</DefaultText>
+              <DefaultText>{parseTimeAgo(createdAt)}</DefaultText>
+            </View>
+          </View>
+          {(type === "MATCH" || type === "REQUEST" || type === "SWAP") && (
+            <Avatar
+              rounded
+              size={66}
+              source={{
+                uri: matchedProductId.imageUrl,
+              }}
+            />
+          )}
         </View>
-      </View>
-      {(type === "MATCH" || type === "REQUEST" || type === "SWAP") && (
-        <Avatar
-          rounded
-          size={66}
-          source={{
-            uri: matchedProductId.imageUrl,
-          }}
-        />
-      )}
-      <IconButton
-        name="close"
-        style={styles.closeButton}
-        size={22}
-        onPress={() => closeNotification(_id)}
-        color={Colors.primary}
-      />
-    </TouchableOpacity>
+      </TouchableWithoutFeedback>
+    </Swipeable>
   );
 };
 
@@ -123,7 +167,7 @@ const styles = StyleSheet.create({
   },
   imageTextContainer: {
     flexDirection: "row",
-    width: "70%",
+    width: "80%",
   },
   textContainer: {
     marginLeft: 10,
@@ -132,8 +176,5 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontFamily: "latoBold",
-  },
-  closeButton: {
-    marginRight: 8,
   },
 });

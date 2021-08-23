@@ -1,6 +1,7 @@
 export const FETCH_NOTIFICATIONS = "FETCH_NOTIFICATIONS";
 export const MARK_ALL_NOTIFICATIONS = "MARK_ALL_NOTIFICATIONS";
 export const DISMISS_NOTIFICATION = "DISMISS_NOTIFICATION";
+export const SET_ACTIVE_NOTIFICATION = "SET_ACTIVE_NOTIFICATION";
 
 import throwApiError from "utils/apiError";
 import request from "utils/request";
@@ -67,5 +68,14 @@ export const dismissNotification = (notificationId) => {
     } catch (err) {
       throwApiError(err);
     }
+  };
+};
+
+export const setActiveNotification = (notificationId) => {
+  return (dispatch) => {
+    dispatch({
+      type: SET_ACTIVE_NOTIFICATION,
+      notificationId,
+    });
   };
 };
