@@ -187,13 +187,13 @@ const SignupScreen = (props) => {
           <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
         )}
       </KeyboardAvoidingView>
-      <View style={styles.emailContainer}>
+      {/* <View style={styles.emailContainer}>
         <DefaultText style={styles.emailText}>Signup using gmail: </DefaultText>
         <Image
           style={styles.gmailLogo}
           source={require("assets/logo/gmail-logo.png")}
         />
-      </View>
+      </View> */}
       <View style={styles.buttonContainer}>
         <MainButton onPress={handleSubmit(signupHandler)}>Register</MainButton>
       </View>
@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingTop: 15,
+    marginTop: 15,
   },
   signInContainer: {
     paddingTop: 10,

@@ -103,13 +103,13 @@ const LoginScreen = (props) => {
           <Text style={styles.errorText}>Required field cannot be empty.</Text>
         )}
       </View>
-      <View style={styles.emailContainer}>
+      {/* <View style={styles.emailContainer}>
         <DefaultText style={styles.emailText}>Login using gmail: </DefaultText>
         <Image
           style={styles.gmailLogo}
           source={require("assets/logo/gmail-logo.png")}
         />
-      </View>
+      </View> */}
       <View style={styles.buttonContainer}>
         <MainButton style={styles.button} onPress={handleSubmit(loginHandler)}>
           Login
@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingTop: 15,
+    marginTop: 15,
     alignItems: "center",
   },
   button: {
