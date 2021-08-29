@@ -15,12 +15,12 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "bundleIdentifier": "com.swapIt.swapIt",
+      "bundleIdentifier": "com.swapItSg.swapIt",
       "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "android": {
-      "package": "com.swapIt.swapIt",
+      "package": "com.swapItSg.swapIt",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
