@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigationState } from "@react-navigation/native";
@@ -85,6 +85,15 @@ const ProfileScreen = (props) => {
   } else {
     const userData = isError ? null : data.user;
 
+    // FlatList Renderers //
+    const renderFlatListItem = (itemData) => (
+      <ProductBox
+        productCreator={userData}
+        item={itemData.item}
+        navigate={() => navigateToProductDetails(props, itemData.item._id)}
+      />
+    );
+
     return (
       <View style={styles.screenContainer}>
         <FlatList
@@ -128,15 +137,7 @@ const ProfileScreen = (props) => {
           horizontal={false}
           numColumns={2}
           keyExtractor={(item) => item._id}
-          renderItem={(itemData) => (
-            <ProductBox
-              productCreator={userData}
-              item={itemData.item}
-              navigate={() =>
-                navigateToProductDetails(props, itemData.item._id)
-              }
-            />
-          )}
+          renderItem={renderFlatListItem}
         />
       </View>
     );

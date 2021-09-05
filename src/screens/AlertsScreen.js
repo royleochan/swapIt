@@ -57,6 +57,13 @@ const AlertsScreen = (props) => {
     }, [])
   );
 
+  // FlatList Renderers //
+  const renderFlatListItem = useCallback((itemData) => {
+    return (
+      <AlertRow notification={itemData.item} navigation={props.navigation} />
+    );
+  }, []);
+
   // Render //
   return (
     <View style={styles.screenContainer}>
@@ -81,14 +88,7 @@ const AlertsScreen = (props) => {
           data={notifications}
           horizontal={false}
           keyExtractor={(item) => item._id}
-          renderItem={(itemData) => {
-            return (
-              <AlertRow
-                notification={itemData.item}
-                navigation={props.navigation}
-              />
-            );
-          }}
+          renderItem={renderFlatListItem}
         ></FlatList>
       )}
     </View>

@@ -1,5 +1,5 @@
 // React Imports //
-import React from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, View, FlatList } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -33,6 +33,18 @@ const LikedProductsScreen = (props) => {
       request.get(`/api/products/likedProducts/${loggedInUserId}`)
     );
 
+  // FlatList Renderers //
+  const renderFlatListItem = useCallback(
+    (itemData) => (
+      <ProductBox
+        productCreator={itemData.item.creator}
+        item={itemData.item}
+        navigate={() => navigateToProductDetails(props, itemData.item._id)}
+      />
+    ),
+    []
+  );
+
   // Render //
   const likedProductsInfo = isError || isLoading ? [] : data.data;
 
@@ -62,15 +74,7 @@ const LikedProductsScreen = (props) => {
           horizontal={false}
           numColumns={2}
           keyExtractor={(item) => item._id}
-          renderItem={(itemData) => (
-            <ProductBox
-              productCreator={itemData.item.creator}
-              item={itemData.item}
-              navigate={() =>
-                navigateToProductDetails(props, itemData.item._id)
-              }
-            />
-          )}
+          renderItem={renderFlatListItem}
         />
       )}
     </View>

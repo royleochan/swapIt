@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -59,6 +59,17 @@ const CategoryScreen = (props) => {
     dispatch(applyFilterAndSortProducts(sort([...allProducts], sortState)));
   }, [sortState]);
 
+  // FlatList Renderers //
+  const renderFlatListItem = useCallback((itemData) => {
+    return (
+      <ProductBox
+        item={itemData.item}
+        productCreator={itemData.item.creator}
+        navigate={() => navigateToProductDetails(props, itemData.item._id)}
+      />
+    );
+  }, []);
+
   // Render //
   return (
     <View style={styles.screenContainer}>
@@ -89,17 +100,7 @@ const CategoryScreen = (props) => {
           horizontal={false}
           numColumns={2}
           keyExtractor={(item) => item.id}
-          renderItem={(itemData) => {
-            return (
-              <ProductBox
-                item={itemData.item}
-                productCreator={itemData.item.creator}
-                navigate={() =>
-                  navigateToProductDetails(props, itemData.item._id)
-                }
-              />
-            );
-          }}
+          renderItem={renderFlatListItem}
         ></FlatList>
       )}
     </View>

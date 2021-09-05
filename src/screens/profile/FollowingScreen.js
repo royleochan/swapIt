@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useLayoutEffect, useContext } from "react";
+import React, { useLayoutEffect, useContext, useCallback } from "react";
 import { StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -36,6 +36,34 @@ const FollowingScreen = (props) => {
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const following = useSelector((state) => state.followInfo.following);
   const isLoggedInUser = loggedInUserId === selectedUserId;
+
+  // FlatList Renderers //
+  const renderFlatListItem = useCallback((itemData) => {
+    const user = itemData.item;
+    return (
+      <View style={styles.rowContainer}>
+        <TouchableOpacity
+          style={styles.avatarUsernameContainer}
+          onPress={() => navigateToProfile(props, user.id)}
+        >
+          <Avatar
+            rounded
+            size={64}
+            source={{
+              uri: user.profilePic,
+            }}
+          />
+          <View style={styles.textContainer}>
+            <DefaultText style={styles.username}>@{user.username}</DefaultText>
+            <DefaultText style={styles.name}>{user.name}</DefaultText>
+          </View>
+        </TouchableOpacity>
+        {loggedInUserId !== user.id && (
+          <FollowButton selectedUserId={user.id} />
+        )}
+      </View>
+    );
+  }, []);
 
   // Side Effects //
   const { isError, isRefreshing, isLoading, setIsRefreshing } =
@@ -77,34 +105,7 @@ const FollowingScreen = (props) => {
         horizontal={false}
         numColumns={1}
         keyExtractor={(item) => item.id}
-        renderItem={(itemData) => {
-          const user = itemData.item;
-          return (
-            <View style={styles.rowContainer}>
-              <TouchableOpacity
-                style={styles.avatarUsernameContainer}
-                onPress={() => navigateToProfile(props, user.id)}
-              >
-                <Avatar
-                  rounded
-                  size={64}
-                  source={{
-                    uri: user.profilePic,
-                  }}
-                />
-                <View style={styles.textContainer}>
-                  <DefaultText style={styles.username}>
-                    @{user.username}
-                  </DefaultText>
-                  <DefaultText style={styles.name}>{user.name}</DefaultText>
-                </View>
-              </TouchableOpacity>
-              {loggedInUserId !== user.id && (
-                <FollowButton selectedUserId={user.id} />
-              )}
-            </View>
-          );
-        }}
+        renderItem={renderFlatListItem}
       />
     </View>
   );

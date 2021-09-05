@@ -171,13 +171,8 @@ const ProductDetailsScreen = (props) => {
   const jwtToken = useSelector((state) => state.auth.jwtToken);
 
   // Side Effects //
-  const {
-    data,
-    isError,
-    isRefreshing,
-    isLoading,
-    setIsRefreshing,
-  } = useFlatListRequest(() => request.get(`/api/products/${productId}`));
+  const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
+    useFlatListRequest(() => request.get(`/api/products/${productId}`));
 
   // Render //
   if (isLoading) {
@@ -191,6 +186,36 @@ const ProductDetailsScreen = (props) => {
         <ErrorSplash message="Oops, item has been deleted and is no longer here." />
       );
     }
+
+    // FlatList Renderers //
+    const renderFlatListItem = (itemData) => {
+      if (loggedInUserId === product.creator.id) {
+        return (
+          <MatchRow
+            ownProduct={product.id}
+            product={itemData.item.product}
+            match={itemData.item.match}
+            navigateToProductDetails={() => {
+              navigateToProductDetails(props, itemData.item.product.id);
+            }}
+            navigateToCreateReview={() =>
+              navigateToCreateReview(
+                props,
+                productId,
+                itemData.item.match.id,
+                itemData.item.product.creator.id,
+                itemData.item.product.creator.username
+              )
+            }
+            navigateToReviews={() =>
+              navigateToReviews(props, itemData.item.product.creator.id)
+            }
+          />
+        );
+      } else {
+        return <View></View>;
+      }
+    };
 
     return (
       <FlatList
@@ -226,34 +251,7 @@ const ProductDetailsScreen = (props) => {
         numColumns={1}
         keyExtractor={(item) => item.id}
         scrollIndicatorInsets={{ right: 1 }}
-        renderItem={(itemData) => {
-          if (loggedInUserId === product.creator.id) {
-            return (
-              <MatchRow
-                ownProduct={product.id}
-                product={itemData.item.product}
-                match={itemData.item.match}
-                navigateToProductDetails={() => {
-                  navigateToProductDetails(props, itemData.item.product.id);
-                }}
-                navigateToCreateReview={() =>
-                  navigateToCreateReview(
-                    props,
-                    productId,
-                    itemData.item.match.id,
-                    itemData.item.product.creator.id,
-                    itemData.item.product.creator.username
-                  )
-                }
-                navigateToReviews={() =>
-                  navigateToReviews(props, itemData.item.product.creator.id)
-                }
-              />
-            );
-          } else {
-            return <View></View>;
-          }
-        }}
+        renderItem={renderFlatListItem}
       />
     );
   }

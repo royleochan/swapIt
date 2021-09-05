@@ -205,6 +205,18 @@ const HomeScreen = (props) => {
     props.navigation.navigate("Alerts");
   };
 
+  // FlatList Renderers //
+  const renderFlatListItem = useCallback((itemData) => {
+    return (
+      <ProductBox
+        item={itemData.item}
+        productCreator={itemData.item.creator}
+        loggedInUser={user}
+        navigate={() => navigateToProductDetails(props, itemData.item._id)}
+      />
+    );
+  }, []);
+
   // Side effects //
   useEffect(() => {
     if (Constants.isDevice) {
@@ -270,18 +282,7 @@ const HomeScreen = (props) => {
           horizontal={false}
           numColumns={2}
           keyExtractor={(item) => item.id}
-          renderItem={(itemData) => {
-            return (
-              <ProductBox
-                item={itemData.item}
-                productCreator={itemData.item.creator}
-                loggedInUser={user}
-                navigate={() =>
-                  navigateToProductDetails(props, itemData.item._id)
-                }
-              />
-            );
-          }}
+          renderItem={renderFlatListItem}
         ></FlatList>
       )}
     </View>

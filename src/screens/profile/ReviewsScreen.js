@@ -1,5 +1,5 @@
 // React Imports //
-import React from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -57,6 +57,12 @@ const ReviewsScreen = (props) => {
   const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
     useFlatListRequest(() => request.get(`/api/reviews/${selectedUserId}`));
 
+  // FlatList Renderers //
+  const renderFlatListItem = useCallback(
+    (itemData) => <ReviewRow review={itemData.item} />,
+    []
+  );
+
   // Render //
   const reviewsInfo = isLoading ? null : data;
   return (
@@ -92,7 +98,7 @@ const ReviewsScreen = (props) => {
           data={isError ? [] : reviewsInfo.reviews}
           horizontal={false}
           keyExtractor={(item) => item._id}
-          renderItem={(itemData) => <ReviewRow review={itemData.item} />}
+          renderItem={renderFlatListItem}
         />
       )}
     </View>

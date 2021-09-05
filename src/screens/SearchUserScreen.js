@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   FlatList,
@@ -49,17 +49,38 @@ const SearchUserScreen = (props) => {
     setQuery(text);
   };
 
+  // FlatList Renderers //
+  const renderFlatListItem = useCallback((itemData) => {
+    const user = itemData.item;
+
+    return (
+      <TouchableHighlight
+        key={user.username}
+        activeOpacity={0.9}
+        underlayColor={"#F6F4F4"}
+        onPress={() => navigateToProfileNavigator(props, user._id)}
+      >
+        <View style={styles.userRow}>
+          <View style={styles.avatarTextContainer}>
+            <Avatar
+              rounded
+              size={64}
+              source={{
+                uri: user.profilePic,
+              }}
+            />
+            <DefaultText style={styles.username}>{user.username}</DefaultText>
+          </View>
+        </View>
+      </TouchableHighlight>
+    );
+  }, []);
+
   // Side Effects //
-  const {
-    data,
-    isError,
-    isLoading,
-    setIsLoading,
-    setIsSendRequest,
-    setData,
-  } = useDidMountFlatListRequest(() =>
-    request.get(`/api/users/search/${loggedInUserId}/?query=${query}`)
-  );
+  const { data, isError, isLoading, setIsLoading, setIsSendRequest, setData } =
+    useDidMountFlatListRequest(() =>
+      request.get(`/api/users/search/${loggedInUserId}/?query=${query}`)
+    );
 
   useDidMountEffect(() => {
     setData([]);
@@ -105,33 +126,7 @@ const SearchUserScreen = (props) => {
           }
           data={isError ? [] : data.users}
           keyExtractor={(item) => item.id}
-          renderItem={(itemData) => {
-            const user = itemData.item;
-
-            return (
-              <TouchableHighlight
-                key={user.username}
-                activeOpacity={0.9}
-                underlayColor={"#F6F4F4"}
-                onPress={() => navigateToProfileNavigator(props, user._id)}
-              >
-                <View style={styles.userRow}>
-                  <View style={styles.avatarTextContainer}>
-                    <Avatar
-                      rounded
-                      size={64}
-                      source={{
-                        uri: user.profilePic,
-                      }}
-                    />
-                    <DefaultText style={styles.username}>
-                      {user.username}
-                    </DefaultText>
-                  </View>
-                </View>
-              </TouchableHighlight>
-            );
-          }}
+          renderItem={renderFlatListItem}
         ></FlatList>
       </View>
     </View>

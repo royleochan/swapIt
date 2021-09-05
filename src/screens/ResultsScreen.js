@@ -1,5 +1,5 @@
 // React Imports //
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -43,6 +43,17 @@ const ResultsScreen = (props) => {
   const filteredSortedProducts = useSelector(
     (state) => state.products.filteredSortedProducts
   );
+
+  // FlatList Renderers //
+  const renderFlatListItem = useCallback((itemData) => {
+    return (
+      <ProductBox
+        item={itemData.item}
+        productCreator={itemData.item.creator}
+        navigate={() => navigateToProductDetails(props, itemData.item._id)}
+      />
+    );
+  }, []);
 
   // Side Effects //
   const { isRefreshing, isError, isLoading, setIsRefreshing } =
@@ -96,17 +107,7 @@ const ResultsScreen = (props) => {
           horizontal={false}
           numColumns={2}
           keyExtractor={(item) => item.id}
-          renderItem={(itemData) => {
-            return (
-              <ProductBox
-                item={itemData.item}
-                productCreator={itemData.item.creator}
-                navigate={() =>
-                  navigateToProductDetails(props, itemData.item._id)
-                }
-              />
-            );
-          }}
+          renderItem={renderFlatListItem}
         ></FlatList>
       )}
     </View>
