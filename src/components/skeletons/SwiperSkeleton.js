@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
