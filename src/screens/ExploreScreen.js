@@ -9,6 +9,7 @@ import IconButton from "components/IconButton";
 import DefaultText from "components/DefaultText";
 import OverlayLabel from "components/OverlayLabel";
 import SwipeProduct from "components/SwipeProduct";
+import SwiperSkeleton from "components/skeletons/SwiperSkeleton";
 import showAlert from "utils/showAlert";
 
 const ExploreScreen = (props) => {
@@ -50,6 +51,7 @@ const ExploreScreen = (props) => {
       <View style={styles.headerContainer}>
         <DefaultText style={styles.header}>Explore</DefaultText>
       </View>
+      {isLoading && <SwiperSkeleton />}
       {!isLoading && (
         <>
           {products.length > 0 && (
@@ -127,6 +129,7 @@ const ExploreScreen = (props) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: Colors.background,
   },
   headerContainer: {
