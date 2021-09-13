@@ -5,8 +5,8 @@ import { DefaultNavOptions } from "navigation/options/DefaultNavOptions";
 import UserProfileNavigator from "navigation/UserProfileNavigator";
 import HomeScreen from "screens/HomeScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
-import MessagesScreen from "screens/MessagesScreen";
-import ChatScreen from "screens/ChatScreen";
+import ChatsScreenRevised from "screens/ChatsScreenRevised";
+import ChatRoomScreenRevised from "screens/ChatRoomScreenRevised";
 import CategoryScreen from "screens/CategoryScreen";
 import ResultsScreen from "screens/ResultsScreen";
 import SearchUserScreen from "screens/SearchUserScreen";
@@ -28,12 +28,12 @@ const HomeNavigator = () => {
       />
       <Stack.Screen
         name="Messages"
-        component={MessagesScreen}
+        component={ChatsScreenRevised}
         options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Chat"
-        component={ChatScreen}
+        component={ChatRoomScreenRevised}
         options={{ headerShown: false }}
       />
       <Stack.Screen

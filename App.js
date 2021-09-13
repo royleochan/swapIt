@@ -18,6 +18,8 @@ import authReducer from "store/reducers/auth";
 import productsReducer from "store/reducers/products";
 import notificationsReducer from "store/reducers/notifications";
 import followInfoReducer from "store/reducers/followInfo";
+import chatScreenReducer from "store/reducers/chatscreen";
+import chatRoomReducer from "store/reducers/chatroom";
 
 // Set settings for foreground notifications //
 Notifications.setNotificationHandler({
@@ -42,6 +44,8 @@ const rootReducer = combineReducers({
   products: productsReducer,
   notifications: notificationsReducer,
   followInfo: followInfoReducer,
+  chatScreen: chatScreenReducer,
+  chatRoom: chatRoomReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
