@@ -14,17 +14,17 @@ export default (state = initialState, action) => {
         case FETCH_CHATS:
             return {
                 ...state,
-                activeChats: [ ...action.activeChats ],
+                activeChats: [...action.activeChats],
             };
         case FETCH_SEARCH:
             return {
                 ...state,
-                searchedChats: [ ...action.searchedChats ],
+                searchedChats: [...action.searchedChats],
             };
         case FIND_ROOM:
             return {
                 ...state,
-                activeChats: [ ...state.activeChats, action.chatRoom ],
+                activeChats: [...state.activeChats, action.chatRoom],
             };
         default:
             return state;

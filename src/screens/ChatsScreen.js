@@ -18,7 +18,7 @@ import CustomSearchBar from "components/CustomSearchBar";
 import IconButton from "components/IconButton";
 import uuid from "react-native-uuid";
 
-const MessagesScreen = (props) => {
+const ChatsScreen = (props) => {
   const [socket] = useState(
     io(`${REACT_APP_BACKEND_URL}/chatSocket`, {
       autoConnect: false,
@@ -207,7 +207,7 @@ const MessagesScreen = (props) => {
   );
 };
 
-export default MessagesScreen;
+export default ChatsScreen;
 
 const styles = StyleSheet.create({
   screenContainer: {

@@ -9,65 +9,69 @@ import {
 } from "store/actions/chatroom";
 
 const initialState = {
-    init: false,
     user: {},
     opposingUser: {},
     messages: [],
 };
 
 export default (state = initialState, action) => {
+    console.log(action);
     let msg;
     switch (action.type) {
         case LEAVE_ROOM:
             return {
                 ...state,
-                init: action.init,
             };
         case FETCH_ROOM:
             return {
                 ...state,
-                init: action.init,
-                messages: [...action.messages],
+                user: action.user,
+                opposingUser: action.opposingUser,
+                messages: [...action.messages].reverse(),
             };
         case SEND_MESSAGE:
             msg = action.message;
             msg.user = {
                 _id: state.user._id,
+                name: state.user.username,
                 avatar: state.user.profilePic,
             };
             return {
                 ...state,
-                messages: [...state.messages, msg],
+                messages: [msg, ...state.messages],
             };
         case SEND_IMAGE:
             msg = action.message;
             msg.user = {
                 _id: state.user._id,
+                name: state.user.username,
                 avatar: state.user.profilePic,
             };
             return {
                 ...state,
-                messages: [...state.messages, msg],
+                messages: [msg, ...state.messages],
             };
         case RECEIVE_MESSAGE:
             msg = action.message;
             msg.user = {
                 _id: state.opposingUser._id,
+                name: state.opposingUser.username,
                 avatar: state.opposingUser.profilePic,
             };
             return {
                 ...state,
-                messages: [...state.messages, msg],
+                messages: [msg, ...state.messages],
             };
         case RECEIVE_IMAGE:
             msg = action.message;
             msg.user = {
                 _id: state.opposingUser._id,
+                name: state.opposingUser.username,
                 avatar: state.opposingUser.profilePic,
             };
             return {
                 ...state,
-                messages: [...state.messages, msg],
+                messages: [msg, ...state.messages],
             };
         default:
             return state;

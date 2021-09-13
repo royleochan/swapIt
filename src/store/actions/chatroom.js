@@ -14,7 +14,6 @@ export const leaveRoom = () => {
     return (dispatch) => {
         dispatch({
             type: LEAVE_ROOM,
-            init: false,
         });
     };
 };
@@ -45,6 +44,7 @@ export const fetchRoom = (selectedRoomId, userId) => {
                     //received: message.seen,
                     user: {
                         _id: message.creator._id,
+                        name: message.creator.username,
                         avatar: message.creator.profilePic,
                     },
                 };
@@ -52,7 +52,6 @@ export const fetchRoom = (selectedRoomId, userId) => {
 
             dispatch({
                 type: FETCH_ROOM,
-                init: true,
                 user: user,
                 opposingUser: opposingUser,
                 messages: messages,
@@ -69,7 +68,7 @@ export const sendMessage = (messageContent) => {
             _id: uuid.v4(),
             text: messageContent,
             image: "",
-            createdAt: new Date.now(),
+            createdAt: Date.now(),
             //sent: true,
             //received: false,
         };
@@ -86,7 +85,7 @@ export const sendImage = (imageUrl) => {
             _id: uuid.v4(),
             text: "",
             image: imageUrl,
-            createdAt: new Date.now(),
+            createdAt: Date.now(),
             //sent: true,
             //received: false,
         };

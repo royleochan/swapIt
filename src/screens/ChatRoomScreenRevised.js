@@ -4,7 +4,7 @@ import {
 
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Actions, GiftedChat } from "react-native-gifted-chat";
-import { useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { Icon } from "react-native-elements";
 
 import Colors from "constants/Colors";
@@ -29,7 +29,6 @@ const ChatRoomScreenRevised = (props) => {
   let chatId = props.route.params.chatId;
   const userId = props.route.params.user._id;
   const loggedInUserId = useSelector((state) => state.auth.user.id);
-  const init = useSelector((state) => state.chatRoom.init);
   const opposingUser = useSelector((state) => state.chatRoom.opposingUser);
   const messages = useSelector((state) => state.chatRoom.messages);
 
@@ -40,6 +39,7 @@ const ChatRoomScreenRevised = (props) => {
         autoConnect: false,
       })
   );
+  const dispatch = useDispatch();
   const [lastSentMessage, setLastSentMessage] = useState("");
   const [lastSentImageUrl, setLastSentImageUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -85,6 +85,7 @@ const ChatRoomScreenRevised = (props) => {
   const setValidImageUrl = (inputUrl) => {
     if (isValidString(inputUrl)) {
       setLastSentImageUrl(inputUrl);
+      setIsUploading(false);
     } else {
       setIsUploading(false);
       //TODO: Provide proper system message for user to handle
@@ -98,37 +99,47 @@ const ChatRoomScreenRevised = (props) => {
 
   //Initial entry to the chat room, get the room info
   useEffect(() => {
-    fetchRoom(chatId, loggedInUserId);
+    dispatch(fetchRoom(chatId, loggedInUserId));
   }, []);
+
+  useEffect(() => {
+    console.log("Opposing User:", opposingUser);
+  }, [opposingUser]);
 
   //After messages have been fetched, connect to socket
   useEffect(() => {
     //TODO: Future enhancement to mark messages as seen. Consider Socket.io Acknowledgements for sent
     console.log('Start connection to socket')
     socket.connect();
-    console.log('Connected, chatId:', {chatId});
     socket.emit("join", { chatId });
     socket.on("joined", () => {
       console.log('joined');
       setIsLoading(false);
     });
     socket.on("receive message", (messageObject) => {
-      receiveMessage(messageObject);
+      console.log("receive message");
+      dispatch(receiveMessage(messageObject));
       // setMessages((previousMessages) =>
       //     GiftedChat.append(previousMessages, newMessage)
       // );
     });
     socket.on("receive image", (messageObject) => {
-      receiveImage(messageObject);
+      console.log("receive image");
+      dispatch(receiveImage(messageObject));
     });
     return () => {
       socket.disconnect();
-      leaveRoom();
+      console.log("Disconnect from socket")
+      dispatch(leaveRoom());
     };
-  }, [init]);
+  }, []);
 
   useEffect(() => {
-    sendMessage(lastSentMessage)
+    if (lastSentMessage === "") {
+      return
+    }
+    console.log("Sending new message:", lastSentMessage);
+    dispatch(sendMessage(lastSentMessage));
     socket.emit("new message", {
       chatId: chatId,
       userId: loggedInUserId,
@@ -137,7 +148,11 @@ const ChatRoomScreenRevised = (props) => {
   }, [lastSentMessage]);
 
   useEffect(() => {
-    sendImage(lastSentImageUrl)
+    if (lastSentImageUrl === "") {
+      return
+    }
+    console.log("Sending new image:", lastSentImageUrl);
+    dispatch(sendImage(lastSentImageUrl));
     socket.emit("new image", {
       chatId: chatId,
       userId: loggedInUserId,
