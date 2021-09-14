@@ -1,3 +1,4 @@
+// React Imports //
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -5,37 +6,46 @@ import {
   TouchableHighlight,
   ActivityIndicator,
 } from "react-native";
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
+// RNE Imports //
 import { Avatar } from "react-native-elements";
 
-import {
-  fetchChats,
-  fetchSearch,
-  findRoom,
-} from "store/actions/chatscreen";
+// Redux Action Imports //
+import { fetchChats, fetchSearch, findRoom } from "store/actions/chatscreen";
 
+// Constants Imports //
 import Colors from "constants/Colors";
+
+// Custom Hook Imports //
 import useDidMountEffect from "hooks/useDidMountEffect";
+
+// Local Component Imports //
 import DefaultText from "components/DefaultText";
 import CustomSearchBar from "components/CustomSearchBar";
 import IconButton from "components/IconButton";
-import showAlert from "../utils/showAlert";
 
+// Utils Imports //
+import showAlert from "utils/showAlert";
+
+// Main Component //
 const ChatsScreenRevised = (props) => {
-
+  // Init //
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const activeChats = useSelector((state) => state.chatScreen.activeChats);
   const searchedChats = useSelector((state) => state.chatScreen.searchedChats);
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const dispatch = useDispatch();
 
+  // Functions //
   const handleSearch = (text) => {
     setQuery(text);
   };
 
   const pressSearchedUserHandler = async (opposingId) => {
-    console.log('press searched user')
+    console.log("press searched user");
     setIsLoading(true);
     try {
       const chat = await dispatch(findRoom(loggedInUserId, opposingId));
@@ -44,7 +54,7 @@ const ChatsScreenRevised = (props) => {
       props.navigation.push("Chat", chat);
     } catch (err) {
       setIsLoading(false);
-      showAlert('Request failed', 'Please try again');
+      showAlert("Request failed", "Please try again");
     }
   };
 
@@ -54,6 +64,7 @@ const ChatsScreenRevised = (props) => {
     setIsLoading(false);
   };
 
+  // Side Effects //
   useEffect(() => {
     dispatch(fetchChats(loggedInUserId));
   }, []);
@@ -68,6 +79,7 @@ const ChatsScreenRevised = (props) => {
     }
   }, [query]);
 
+  // Render //
   return (
     <View style={styles.screenContainer}>
       <View style={styles.header}>
