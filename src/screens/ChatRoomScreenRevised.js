@@ -241,7 +241,7 @@ const ChatRoomScreenRevised = (props) => {
           ["Cancel"]: handleCancel,
         }}
         icon={() => (
-          <Icon name={"attachment"} size={23} color={Colors.primary} />
+          <Icon name={"attachment"} size={20} color={Colors.primary} />
         )}
       />
     );
