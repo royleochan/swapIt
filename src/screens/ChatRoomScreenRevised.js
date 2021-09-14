@@ -102,10 +102,6 @@ const ChatRoomScreenRevised = (props) => {
     dispatch(fetchRoom(chatId, loggedInUserId));
   }, []);
 
-  useEffect(() => {
-    console.log("Opposing User:", opposingUser);
-  }, [opposingUser]);
-
   //After messages have been fetched, connect to socket
   useEffect(() => {
     //TODO: Future enhancement to mark messages as seen. Consider Socket.io Acknowledgements for sent

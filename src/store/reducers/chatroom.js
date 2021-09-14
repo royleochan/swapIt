@@ -15,7 +15,6 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
-    console.log(action);
     let msg;
     switch (action.type) {
         case LEAVE_ROOM:

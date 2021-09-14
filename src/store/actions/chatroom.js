@@ -34,6 +34,10 @@ export const fetchRoom = (selectedRoomId, userId) => {
                 opposingUser = roomUsers[0];
             }
 
+            const usersDict = {}
+            usersDict[userId] = user;
+            usersDict[opposingUser._id] = opposingUser;
+
             const messages = response.data.room.messages.map(message => {
                 return {
                     _id: message._id,
@@ -43,9 +47,9 @@ export const fetchRoom = (selectedRoomId, userId) => {
                     //sent: true,
                     //received: message.seen,
                     user: {
-                        _id: message.creator._id,
-                        name: message.creator.username,
-                        avatar: message.creator.profilePic,
+                        _id: message.creator,
+                        name: usersDict[message.creator].username,
+                        avatar: usersDict[message.creator].profilePic,
                     },
                 };
             });
