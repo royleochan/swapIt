@@ -2,6 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { DefaultNavOptions } from "navigation/options/DefaultNavOptions";
+import { ChatRoomOptions } from "navigation/options/ChatRoomOptions";
 import UserProfileNavigator from "navigation/UserProfileNavigator";
 import HomeScreen from "screens/HomeScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
@@ -34,7 +35,7 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="Chat"
         component={ChatRoomScreenRevised}
-        options={{ headerShown: false }}
+        options={ChatRoomOptions}
       />
       <Stack.Screen
         name="Category"

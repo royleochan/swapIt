@@ -1,20 +1,26 @@
-import {
-  REACT_APP_BACKEND_URL
-} from "@env"
+// React Imports //
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useLayoutEffect,
+} from "react";
+import { View, StyleSheet } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
-import React, { useCallback, useEffect, useState, useRef } from "react";
+// ENV Imports //
+import { REACT_APP_BACKEND_URL } from "@env";
+
+// Gifted Chat Imports //
 import { Actions, GiftedChat } from "react-native-gifted-chat";
-import {useDispatch, useSelector} from "react-redux";
-import { Icon } from "react-native-elements";
 
-import Colors from "constants/Colors";
-import Loader from "components/Loader";
-import {
-  takeImage,
-  chooseFromLibrary,
-  uploadImageHandler,
-} from "utils/imagePicker";
+// Socket IO imports //
+import { io } from "socket.io-client";
 
+// RNE Imports //
+import { Avatar, Icon } from "react-native-elements";
+
+// Redux Action Imports //
 import {
   leaveRoom,
   fetchRoom,
@@ -22,30 +28,44 @@ import {
   sendImage,
   receiveMessage,
   receiveImage,
-} from "../store/actions/chatroom";
-import {io} from "socket.io-client";
+} from "store/actions/chatroom";
 
+// Constants Imports //
+import Colors from "constants/Colors";
+
+// Local Component Imports //
+import DefaultText from "components/DefaultText";
+import IconButton from "components/IconButton";
+import Loader from "components/Loader";
+
+// Utils Imports //
+import {
+  takeImage,
+  chooseFromLibrary,
+  uploadImageHandler,
+} from "utils/imagePicker";
+
+// Main Component //
 const ChatRoomScreenRevised = (props) => {
-  let chatId = props.route.params.chatId;
-  const userId = props.route.params.user._id;
-  const loggedInUserId = useSelector((state) => state.auth.user.id);
-  const opposingUser = useSelector((state) => state.chatRoom.opposingUser);
-  const messages = useSelector((state) => state.chatRoom.messages);
-
-  const opposingProfilePic = props.route.params.user.profilePic;
+  // Init //
+  const { user, chatId } = props.route.params;
+  const { name, username, profilePic } = user;
 
   const [socket] = useState(
-      io(`${REACT_APP_BACKEND_URL}/chatSocketRevised`, {
-        autoConnect: false,
-      })
+    io(`${REACT_APP_BACKEND_URL}/chatSocketRevised`, {
+      autoConnect: false,
+    })
   );
-  const dispatch = useDispatch();
   const [lastSentMessage, setLastSentMessage] = useState("");
   const [lastSentImageUrl, setLastSentImageUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
 
-  //Validation Checks
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
+  const messages = useSelector((state) => state.chatRoom.messages);
+  const dispatch = useDispatch();
+
+  // Validations //
   const isValidString = (inputString) => {
     return inputString !== "" && inputString !== undefined;
   };
@@ -54,15 +74,15 @@ const ChatRoomScreenRevised = (props) => {
     return img !== undefined;
   };
 
-  //Handlers
+  // Handlers //
   const imageHandler = async (inputType) => {
     try {
       let img;
       switch (inputType) {
-        case ("camera"):
+        case "camera":
           img = await takeImage();
           break;
-        case ("library"):
+        case "library":
           img = await chooseFromLibrary();
           break;
       }
@@ -73,7 +93,7 @@ const ChatRoomScreenRevised = (props) => {
       } else {
         setIsUploading(false);
         //TODO: Provide proper system message for user to handle
-        console.log("Image upload failed. Please try again.")
+        console.log("Image upload failed. Please try again.");
       }
     } catch (e) {
       console.error(e);
@@ -89,7 +109,7 @@ const ChatRoomScreenRevised = (props) => {
     } else {
       setIsUploading(false);
       //TODO: Provide proper system message for user to handle
-      console.log("Image Url is invalid, please try again.")
+      console.log("Image Url is invalid, please try again.");
     }
   };
 
@@ -97,27 +117,26 @@ const ChatRoomScreenRevised = (props) => {
     setLastSentMessage(newMessage[0].text);
   }, []);
 
-  //Initial entry to the chat room, get the room info
+  // Side Effects //
+
+  // Initial entry to the chat room, get the room info
   useEffect(() => {
     dispatch(fetchRoom(chatId, loggedInUserId));
   }, []);
 
-  //After messages have been fetched, connect to socket
+  // After messages have been fetched, connect to socket
   useEffect(() => {
     //TODO: Future enhancement to mark messages as seen. Consider Socket.io Acknowledgements for sent
-    console.log('Start connection to socket')
+    console.log("Start connection to socket");
     socket.connect();
     socket.emit("join", { chatId });
     socket.on("joined", () => {
-      console.log('joined');
+      console.log("joined");
       setIsLoading(false);
     });
     socket.on("receive message", (messageObject) => {
       console.log("receive message");
       dispatch(receiveMessage(messageObject));
-      // setMessages((previousMessages) =>
-      //     GiftedChat.append(previousMessages, newMessage)
-      // );
     });
     socket.on("receive image", (messageObject) => {
       console.log("receive image");
@@ -125,27 +144,27 @@ const ChatRoomScreenRevised = (props) => {
     });
     return () => {
       socket.disconnect();
-      console.log("Disconnect from socket")
+      console.log("Disconnect from socket");
       dispatch(leaveRoom());
     };
   }, []);
 
   useEffect(() => {
     if (lastSentMessage === "") {
-      return
+      return;
     }
     console.log("Sending new message:", lastSentMessage);
     dispatch(sendMessage(lastSentMessage));
     socket.emit("new message", {
       chatId: chatId,
       userId: loggedInUserId,
-      content: lastSentMessage
+      content: lastSentMessage,
     });
   }, [lastSentMessage]);
 
   useEffect(() => {
     if (lastSentImageUrl === "") {
-      return
+      return;
     }
     console.log("Sending new image:", lastSentImageUrl);
     dispatch(sendImage(lastSentImageUrl));
@@ -156,19 +175,52 @@ const ChatRoomScreenRevised = (props) => {
     });
   }, [lastSentImageUrl]);
 
+  useLayoutEffect(() => {
+    props.navigation.setOptions({
+      title: "",
+      headerLeft: () => (
+        <View style={styles.headerLeftContainer}>
+          <IconButton
+            size={23}
+            color={Colors.primary}
+            name="arrowleft"
+            onPress={() => props.navigation.goBack()}
+          />
+          <View style={styles.avatarContainer}>
+            <Avatar rounded size={35} source={{ uri: profilePic }} />
+          </View>
+          <View style={styles.namesContainer}>
+            <DefaultText style={styles.username}>{`@${username}`}</DefaultText>
+            <DefaultText style={styles.name}>{name}</DefaultText>
+          </View>
+        </View>
+      ),
+      headerRight: () => (
+        <IconButton
+          style={styles.buttonRight}
+          size={23}
+          color={Colors.primary}
+          name="ellipsis1"
+          onPress={() => console.log("chat options")}
+        />
+      ),
+    });
+  }, [props.navigation, username]);
+
+  // Renderers //
   const renderActions = (props) => {
     return (
-        <Actions
-            {...props}
-            options={{
-              ["Use Camera"]: () => imageHandler("camera"),
-              ["Choose Image"]: () => imageHandler("library"),
-              ["Cancel"]: handleCancel,
-            }}
-            icon={() => (
-                <Icon name={"attachment"} size={23} color={Colors.primary} />
-            )}
-        />
+      <Actions
+        {...props}
+        options={{
+          ["Use Camera"]: () => imageHandler("camera"),
+          ["Choose Image"]: () => imageHandler("library"),
+          ["Cancel"]: handleCancel,
+        }}
+        icon={() => (
+          <Icon name={"attachment"} size={23} color={Colors.primary} />
+        )}
+      />
     );
   };
 
@@ -177,21 +229,43 @@ const ChatRoomScreenRevised = (props) => {
       return <Loader isLoading={true} />;
     }
     return null;
-  }
+  };
 
-  return (
-      isLoading ? <Loader isLoading={true} /> :
-      <GiftedChat
-          messages={messages}
-          onSend={(messages) => onSend(messages)}
-          user={{
-            _id: loggedInUserId,
-          }}
-          renderActions={renderActions}
-          renderFooter={renderFooter}
-          infiniteScroll
-      />
+  // Render //
+  return isLoading ? (
+    <Loader isLoading={true} />
+  ) : (
+    <GiftedChat
+      messages={messages}
+      onSend={(messages) => onSend(messages)}
+      user={{
+        _id: loggedInUserId,
+      }}
+      renderActions={renderActions}
+      renderFooter={renderFooter}
+      infiniteScroll
+    />
   );
 };
 
 export default ChatRoomScreenRevised;
+
+const styles = StyleSheet.create({
+  headerLeftContainer: {
+    flexDirection: "row",
+    marginLeft: 10,
+  },
+  avatarContainer: {
+    marginLeft: 6,
+  },
+  namesContainer: {
+    marginLeft: 10,
+  },
+  username: {
+    fontFamily: "latoBold",
+    fontSize: 14,
+  },
+  buttonRight: {
+    marginRight: 10,
+  },
+});
