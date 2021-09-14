@@ -59,7 +59,8 @@ export const findRoom = (userId, opposingId) => {
                 `/api/chats/${userId}/${opposingId}`
             );
             const chatRoom = response.data.room;
-            chatRoom.users = chatRoom.users.find((usr) => usr.id !== userId);
+            chatRoom.user = chatRoom.users.find((usr) => usr.id !== userId);
+            chatRoom.chatId = chatRoom._id;
             dispatch({
                 type: FIND_ROOM,
                 chatRoom: chatRoom,

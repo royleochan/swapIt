@@ -2,7 +2,7 @@ import {
   REACT_APP_BACKEND_URL
 } from "@env"
 
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Actions, GiftedChat } from "react-native-gifted-chat";
 import {useDispatch, useSelector} from "react-redux";
 import { Icon } from "react-native-elements";
@@ -27,12 +27,9 @@ import {io} from "socket.io-client";
 
 const ChatRoomScreenRevised = (props) => {
   let chatId = props.route.params.chatId;
-  const userId = props.route.params.user._id;
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const opposingUser = useSelector((state) => state.chatRoom.opposingUser);
   const messages = useSelector((state) => state.chatRoom.messages);
-
-  const opposingProfilePic = props.route.params.user.profilePic;
 
   const [socket] = useState(
       io(`${REACT_APP_BACKEND_URL}/chatSocketRevised`, {
@@ -115,9 +112,6 @@ const ChatRoomScreenRevised = (props) => {
     socket.on("receive message", (messageObject) => {
       console.log("receive message");
       dispatch(receiveMessage(messageObject));
-      // setMessages((previousMessages) =>
-      //     GiftedChat.append(previousMessages, newMessage)
-      // );
     });
     socket.on("receive image", (messageObject) => {
       console.log("receive image");

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -19,6 +19,7 @@ import useDidMountEffect from "hooks/useDidMountEffect";
 import DefaultText from "components/DefaultText";
 import CustomSearchBar from "components/CustomSearchBar";
 import IconButton from "components/IconButton";
+import showAlert from "../utils/showAlert";
 
 const ChatsScreenRevised = (props) => {
 
@@ -33,10 +34,18 @@ const ChatsScreenRevised = (props) => {
     setQuery(text);
   };
 
-  const pressSearchedUserHandler = (opposingId) => {
+  const pressSearchedUserHandler = async (opposingId) => {
     console.log('press searched user')
-    const chat = dispatch(findRoom(loggedInUserId, opposingId));
-    props.navigation.push("Chat", chat);
+    setIsLoading(true);
+    try {
+      const chat = await dispatch(findRoom(loggedInUserId, opposingId));
+      setIsLoading(false);
+      console.log("PRESSED:", chat);
+      props.navigation.push("Chat", chat);
+    } catch (err) {
+      setIsLoading(false);
+      showAlert('Request failed', 'Please try again');
+    }
   };
 
   const searchHandler = async () => {
