@@ -7,12 +7,13 @@ import React, {
 } from "react";
 import { View, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ENV Imports //
 import { REACT_APP_BACKEND_URL } from "@env";
 
 // Gifted Chat Imports //
-import { Actions, GiftedChat } from "react-native-gifted-chat";
+import { Actions, GiftedChat, Bubble } from "react-native-gifted-chat";
 
 // Socket IO imports //
 import { io } from "socket.io-client";
@@ -48,6 +49,7 @@ import {
 // Main Component //
 const ChatRoomScreenRevised = (props) => {
   // Init //
+  const insets = useSafeAreaInsets();
   const { user, chatId } = props.route.params;
   const { name, username, profilePic } = user;
 
@@ -208,6 +210,27 @@ const ChatRoomScreenRevised = (props) => {
   }, [props.navigation, username]);
 
   // Renderers //
+  const renderBubble = (props) => {
+    return (
+      <Bubble
+        {...props}
+        textStyle={{
+          right: {
+            color: "white",
+          },
+        }}
+        wrapperStyle={{
+          left: {
+            backgroundColor: Colors.textInput,
+          },
+          right: {
+            backgroundColor: Colors.primary,
+          },
+        }}
+      />
+    );
+  };
+
   const renderActions = (props) => {
     return (
       <Actions
@@ -244,6 +267,8 @@ const ChatRoomScreenRevised = (props) => {
       renderActions={renderActions}
       renderFooter={renderFooter}
       infiniteScroll
+      renderBubble={renderBubble}
+      bottomOffset={insets.bottom + 48} // removes extra vertical spacing in keyboard
     />
   );
 };
