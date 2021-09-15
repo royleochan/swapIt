@@ -22,6 +22,10 @@ export default (state = initialState, action) => {
                 searchedChats: [...action.searchedChats],
             };
         case FIND_ROOM:
+            const isChatRoomPresent = state.activeChats.find((chat) => chat.chatId === action.chatRoom._id);
+            if (isChatRoomPresent) {
+                return state;
+            }
             return {
                 ...state,
                 activeChats: [...state.activeChats, action.chatRoom],
