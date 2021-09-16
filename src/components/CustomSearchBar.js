@@ -17,6 +17,7 @@ const CustomSearchBar = (props) => {
 
   return (
     <SearchBar
+      autoCapitalize="none"
       placeholder={placeholder}
       onChangeText={(queryText) => handleSearch(queryText)}
       value={query}
