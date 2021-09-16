@@ -40,12 +40,22 @@ const navigateToResults = (props, searchQuery) => {
 };
 
 /**
- * Navigates to MessagesScreen
+ * Navigates to ChatsScreen
  *
  * @param props: props from source screen
  */
-const navigateToMessagesScreen = (props) => {
-  props.navigation.push("Messages");
+const navigateToChats = (props) => {
+  props.navigation.push("Chats");
+};
+
+/**
+ * Navigates to ChatRoomScreen
+ *
+ * @param props: props from source screen
+ * @param chat: object representing chat
+ */
+const navigateToChatRoom = (props, chat) => {
+  props.navigation.push("ChatRoom", chat);
 };
 
 /**
@@ -98,7 +108,8 @@ export {
   navigateToCategory,
   navigateToSearchUser,
   navigateToResults,
-  navigateToMessagesScreen,
+  navigateToChats,
+  navigateToChatRoom,
   navigateToProfileNavigator,
   navigateToReviewThroughProfileNavigator,
   navigateToProductDetailsThroughProfileNavigator,

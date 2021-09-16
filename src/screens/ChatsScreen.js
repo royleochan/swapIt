@@ -10,6 +10,9 @@ import { Avatar } from "react-native-elements";
 // Redux Action Imports //
 import { fetchChats, filterChats } from "store/actions/chatscreen";
 
+// Navigation Imports //
+import { navigateToChatRoom } from "navigation/navigate/common/index";
+
 // Constants Imports //
 import Colors from "constants/Colors";
 
@@ -60,8 +63,6 @@ const ChatsScreenRevised = (props) => {
   const dispatch = useDispatch();
 
   // Functions //
-  const navigateToChat = (chat) => props.navigation.push("Chat", chat);
-
   const handleSearch = (text) => {
     setIsLoading(true);
     setQuery(text);
@@ -84,7 +85,7 @@ const ChatsScreenRevised = (props) => {
     return (
       <ChatRow
         chat={itemData.item}
-        onPress={() => navigateToChat(itemData.item)}
+        onPress={() => navigateToChatRoom(props, itemData.item)}
       />
     );
   }, []);

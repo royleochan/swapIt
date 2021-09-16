@@ -25,7 +25,7 @@ import {
   navigateToSearchUser,
   navigateToCategory,
   navigateToResults,
-  navigateToMessagesScreen,
+  navigateToChats,
 } from "navigation/navigate/common/index";
 
 // Redux Action Imports //
@@ -254,7 +254,7 @@ const HomeScreen = (props) => {
           size={23}
           color={Colors.primary}
           name="message1"
-          onPress={() => navigateToMessagesScreen(props)}
+          onPress={() => navigateToChats(props)}
         />
       </View>
       {isFocusSearch && (

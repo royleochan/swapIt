@@ -28,12 +28,12 @@ const HomeNavigator = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Messages"
+        name="Chats"
         component={ChatsScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Chat"
+        name="ChatRoom"
         component={ChatRoomScreen}
         options={ChatRoomOptions}
       />
