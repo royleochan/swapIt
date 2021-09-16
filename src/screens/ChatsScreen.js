@@ -52,10 +52,10 @@ const ChatRow = ({ chat, onPress }) => (
 );
 
 // Main Component //
-const ChatsScreenRevised = (props) => {
+const ChatsScreen = (props) => {
   // Init //
   const [query, setQuery] = useState("");
-  const [debouncedQuery] = useDebounce(query, 500);
+  const [debouncedQuery] = useDebounce(query, 300);
 
   const activeChats = useSelector((state) => state.chatScreen.activeChats);
   const filteredChats = useSelector((state) => state.chatScreen.filteredChats);
@@ -67,6 +67,8 @@ const ChatsScreenRevised = (props) => {
     setIsLoading(true);
     setQuery(text);
   };
+
+ 
 
   // Side Effects //
   const { isRefreshing, isError, isLoading, setIsRefreshing, setIsLoading } =
@@ -131,7 +133,7 @@ const ChatsScreenRevised = (props) => {
   );
 };
 
-export default ChatsScreenRevised;
+export default ChatsScreen;
 
 const styles = StyleSheet.create({
   screenContainer: {

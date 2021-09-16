@@ -40,7 +40,7 @@ import SearchUserSkeleton from "components/skeletons/SearchUserSkeleton";
 const SearchUserScreen = (props) => {
   // Init //
   const [query, setQuery] = useState("");
-  const [debouncedQuery] = useDebounce(query, 500);
+  const [debouncedQuery] = useDebounce(query, 300);
 
   const loggedInUserId = useSelector((state) => state.auth.user.id);
 
@@ -107,7 +107,6 @@ const SearchUserScreen = (props) => {
         <CustomSearchBar
           placeholder="Search by username"
           query={query}
-          debouncedQuery={debouncedQuery}
           handleSearch={handleSearch}
           style={styles.searchBar}
           onSubmit={() => handleSearch(query)}

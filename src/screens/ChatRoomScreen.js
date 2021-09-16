@@ -47,7 +47,7 @@ import {
 } from "utils/imagePicker";
 
 // Main Component //
-const ChatRoomScreenRevised = (props) => {
+const ChatRoomScreen = (props) => {
   // Init //
   const insets = useSafeAreaInsets();
   const { user, chatId } = props.route.params;
@@ -273,7 +273,7 @@ const ChatRoomScreenRevised = (props) => {
   );
 };
 
-export default ChatRoomScreenRevised;
+export default ChatRoomScreen;
 
 const styles = StyleSheet.create({
   headerLeftContainer: {
