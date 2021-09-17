@@ -68,8 +68,6 @@ const ChatsScreen = (props) => {
     setQuery(text);
   };
 
- 
-
   // Side Effects //
   const { isRefreshing, isError, isLoading, setIsRefreshing, setIsLoading } =
     useFlatListRequest(() => dispatch(fetchChats(loggedInUserId)));
@@ -125,7 +123,7 @@ const ChatsScreen = (props) => {
           refreshing={isRefreshing}
           data={query === "" ? activeChats : filteredChats}
           horizontal={false}
-          keyExtractor={(item) => item._id}
+          keyExtractor={(item) => item.chatId}
           renderItem={renderFlatListItem}
         ></FlatList>
       )}
