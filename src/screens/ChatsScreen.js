@@ -55,6 +55,7 @@ const ChatRow = ({ chat, onPress }) => (
 const ChatsScreen = (props) => {
   // Init //
   const [query, setQuery] = useState("");
+  const [toggleRender, setToggleRender] = useState(false); // needed for cancel bug
   const [debouncedQuery] = useDebounce(query, 300);
 
   const activeChats = useSelector((state) => state.chatScreen.activeChats);
@@ -78,7 +79,7 @@ const ChatsScreen = (props) => {
       setIsLoading(false);
     };
     queryChats();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, toggleRender]);
 
   // FlatList Renderers //
   const renderFlatListItem = useCallback((itemData) => {
@@ -104,6 +105,7 @@ const ChatsScreen = (props) => {
           query={query}
           handleSearch={handleSearch}
           style={styles.searchBar}
+          handleBlur={() => setToggleRender(!toggleRender)}
         />
       </View>
       {isLoading ? (
