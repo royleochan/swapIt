@@ -99,10 +99,18 @@ expo r -c
 
 ## Deployment
 
-### Development 
+### Generate Build 
 
-TBC
+IOS:
+```
+expo build:ios
+```
 
-### Production
+Android:
+```
+expo build:android -t app-bundle
+```
 
-TBC
+1. Download build file from expo
+2. Upload build file to testflight / google play console
+3. Make release
