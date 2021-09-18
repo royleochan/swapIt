@@ -7,15 +7,23 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+
+// RNE Imports //
 import { Image } from "react-native-elements";
+
+// Expo Action Sheet Imports //
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { useSelector } from "react-redux";
+
+// Redux Action Imports //
+import { findRoom } from "store/actions/chatscreen";
 
 // Navigation Imports //
 import {
   navigateToProductDetails,
   navigateToCategory,
   navigateToProfileNavigator,
+  navigateToChatRoom,
 } from "navigation/navigate/common/index";
 import {
   navigateToCreateReview,
@@ -27,6 +35,7 @@ import useFlatListRequest from "hooks/useFlatListRequest";
 
 // Utils Imports //
 import { parseTimeAgo } from "utils/date";
+import showAlert from "utils/showAlert";
 import request from "utils/request";
 
 // Colors Imports //
@@ -45,11 +54,13 @@ import MainButton from "components/MainButton";
 // Details Component //
 const DetailsComponent = (props) => {
   // Init //
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { product, loggedInUserId, jwtToken } = props;
   const { showActionSheetWithOptions } = useActionSheet();
   const windowHeight = Dimensions.get("window").height;
   const isCreator = loggedInUserId === product.creator.id;
+
+  const dispatch = useDispatch();
 
   // Functions //
   const showActionSheet = () => {
@@ -68,9 +79,9 @@ const DetailsComponent = (props) => {
       },
       async (buttonIndex) => {
         if (buttonIndex === 0) {
-          setIsDeleteLoading(true);
+          setIsLoading(true);
           await request.delete(`/api/products/${product._id}`, jwtToken);
-          setIsDeleteLoading(false);
+          setIsLoading(false);
 
           props.navigation.reset({
             index: 0,
@@ -83,10 +94,26 @@ const DetailsComponent = (props) => {
     );
   };
 
+  const onPressChatHandler = async () => {
+    try {
+      setIsLoading(true);
+      const chat = await dispatch(
+        findRoom(product._id, loggedInUserId, product.creator.id)
+      );
+      setIsLoading(false);
+      navigateToChatRoom(props, chat);
+    } catch (err) {
+      console.log(err);
+      showAlert("Failed to create chat", "Please try again", () =>
+        setIsLoading(false)
+      );
+    }
+  };
+
   // Render //
   return (
     <View>
-      {isDeleteLoading && <Loader isLoading={isDeleteLoading} />}
+      {isLoading && <Loader isLoading={isLoading} />}
       <IconButton
         style={styles.arrow}
         size={23}
@@ -156,10 +183,7 @@ const DetailsComponent = (props) => {
           <DefaultText>{product.description}</DefaultText>
         </View>
         {!isCreator && (
-          <MainButton
-            style={styles.chatButton}
-            onPress={() => console.log("Navigate to Chat")}
-          >
+          <MainButton style={styles.chatButton} onPress={onPressChatHandler}>
             Chat
           </MainButton>
         )}
@@ -232,6 +256,7 @@ const ProductDetailsScreen = (props) => {
         ListHeaderComponent={
           !isError && (
             <DetailsComponent
+              props
               navigation={props.navigation}
               product={product}
               loggedInUserId={loggedInUserId}
@@ -314,7 +339,7 @@ const styles = StyleSheet.create({
     width: 140,
     height: 40,
     marginTop: 16,
-  },  
+  },
   matchesTitle: {
     marginTop: 20,
     marginBottom: 20,

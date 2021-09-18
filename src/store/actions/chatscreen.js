@@ -36,10 +36,12 @@ export const filterChats = (query) => {
   };
 };
 
-export const findRoom = (userId, opposingId) => {
+export const findRoom = (productId, userId, opposingId) => {
   return async (dispatch) => {
     try {
-      const response = await request.get(`/api/chats/${userId}/${opposingId}`);
+      const response = await request.get(
+        `/api/chats/${productId}/${userId}/${opposingId}`
+      );
       const chatRoom = response.data.room;
       chatRoom.user = chatRoom.users.find((usr) => usr.id !== userId);
       chatRoom.chatId = chatRoom._id;
