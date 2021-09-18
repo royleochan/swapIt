@@ -103,7 +103,6 @@ const DetailsComponent = (props) => {
       setIsLoading(false);
       navigateToChatRoom(props, chat);
     } catch (err) {
-      console.log(err);
       showAlert("Failed to create chat", "Please try again", () =>
         setIsLoading(false)
       );
@@ -201,8 +200,11 @@ const DetailsComponent = (props) => {
 const ProductDetailsScreen = (props) => {
   // Init //
   const { productId } = props.route.params;
+  const [isChatLoading, setIsChatLoading] = useState(false);
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const jwtToken = useSelector((state) => state.auth.jwtToken);
+
+  const dispatch = useDispatch();
 
   // Side Effects //
   const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
@@ -227,11 +229,22 @@ const ProductDetailsScreen = (props) => {
         return (
           <MatchRow
             ownProduct={product.id}
+            setIsChatLoading={setIsChatLoading}
             product={itemData.item.product}
             match={itemData.item.match}
-            navigateToProductDetails={() => {
-              navigateToProductDetails(props, itemData.item.product.id);
-            }}
+            findChatHandler={async () =>
+              await dispatch(
+                findRoom(
+                  itemData.item.product.id,
+                  loggedInUserId,
+                  itemData.item.product.creator.id
+                )
+              )
+            }
+            navigateToChatRoom={(chat) => navigateToChatRoom(props, chat)}
+            navigateToProductDetails={() =>
+              navigateToProductDetails(props, itemData.item.product.id)
+            }
             navigateToCreateReview={() =>
               navigateToCreateReview(
                 props,
@@ -252,42 +265,45 @@ const ProductDetailsScreen = (props) => {
     };
 
     return (
-      <FlatList
-        ListHeaderComponent={
-          !isError && (
-            <DetailsComponent
-              props
-              navigation={props.navigation}
-              product={product}
-              loggedInUserId={loggedInUserId}
-              jwtToken={jwtToken}
-            />
-          )
-        }
-        onRefresh={() => setIsRefreshing(true)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={
-          loggedInUserId === product.creator.id ? (
-            isError ? (
-              <ErrorSplash />
-            ) : (
-              <Empty
-                message="No matches found"
-                width={100}
-                height={100}
-                fontSize={12}
+      <>
+        {isChatLoading && <Loader isLoading={isChatLoading} />}
+        <FlatList
+          ListHeaderComponent={
+            !isError && (
+              <DetailsComponent
+                props
+                navigation={props.navigation}
+                product={product}
+                loggedInUserId={loggedInUserId}
+                jwtToken={jwtToken}
               />
             )
-          ) : null
-        }
-        refreshing={isRefreshing}
-        data={isError ? [] : product.matches}
-        horizontal={false}
-        numColumns={1}
-        keyExtractor={(item) => item.id}
-        scrollIndicatorInsets={{ right: 1 }}
-        renderItem={renderFlatListItem}
-      />
+          }
+          onRefresh={() => setIsRefreshing(true)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={
+            loggedInUserId === product.creator.id ? (
+              isError ? (
+                <ErrorSplash />
+              ) : (
+                <Empty
+                  message="No matches found"
+                  width={100}
+                  height={100}
+                  fontSize={12}
+                />
+              )
+            ) : null
+          }
+          refreshing={isRefreshing}
+          data={isError ? [] : product.matches}
+          horizontal={false}
+          numColumns={1}
+          keyExtractor={(item) => item.id}
+          scrollIndicatorInsets={{ right: 1 }}
+          renderItem={renderFlatListItem}
+        />
+      </>
     );
   }
 };
