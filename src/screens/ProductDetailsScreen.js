@@ -40,6 +40,7 @@ import Loader from "components/Loader";
 import MatchRow from "components/MatchRow";
 import Empty from "components/Empty";
 import ErrorSplash from "components/ErrorSplash";
+import MainButton from "components/MainButton";
 
 // Details Component //
 const DetailsComponent = (props) => {
@@ -48,6 +49,7 @@ const DetailsComponent = (props) => {
   const { product, loggedInUserId, jwtToken } = props;
   const { showActionSheetWithOptions } = useActionSheet();
   const windowHeight = Dimensions.get("window").height;
+  const isCreator = loggedInUserId === product.creator.id;
 
   // Functions //
   const showActionSheet = () => {
@@ -92,7 +94,7 @@ const DetailsComponent = (props) => {
         name="arrowleft"
         onPress={() => props.navigation.goBack()}
       />
-      {loggedInUserId === product.creator.id && (
+      {isCreator && (
         <IconButton
           style={styles.ellipsis}
           size={23}
@@ -153,7 +155,15 @@ const DetailsComponent = (props) => {
         <View style={styles.textContainer}>
           <DefaultText>{product.description}</DefaultText>
         </View>
-        {loggedInUserId === product.creator.id && (
+        {!isCreator && (
+          <MainButton
+            style={styles.chatButton}
+            onPress={() => console.log("Navigate to Chat")}
+          >
+            Chat
+          </MainButton>
+        )}
+        {isCreator && (
           <View style={styles.matchesTitle}>
             <DefaultText style={styles.title}>Matches</DefaultText>
           </View>
@@ -300,6 +310,11 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginVertical: 5,
   },
+  chatButton: {
+    width: 140,
+    height: 40,
+    marginTop: 16,
+  },  
   matchesTitle: {
     marginTop: 20,
     marginBottom: 20,
