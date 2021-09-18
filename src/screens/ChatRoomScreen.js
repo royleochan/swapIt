@@ -9,6 +9,9 @@ import { View, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+// Expo Action Sheet Import //
+import { useActionSheet } from "@expo/react-native-action-sheet";
+
 // ENV Imports //
 import { REACT_APP_BACKEND_URL } from "@env";
 
@@ -66,6 +69,29 @@ const ChatRoomScreen = (props) => {
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const messages = useSelector((state) => state.chatRoom.messages);
   const dispatch = useDispatch();
+
+  const { showActionSheetWithOptions } = useActionSheet();
+
+  // Functions //
+  const showActionSheet = () => {
+    const options = ["Delete Chat", "Cancel"];
+    const destructiveButtonIndex = 0;
+    const cancelButtonIndex = 1;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        destructiveButtonIndex,
+        cancelButtonIndex,
+        tintColor: Colors.primary,
+      },
+      async (buttonIndex) => {
+        if (buttonIndex === 0) {
+          console.log("Delete Chat");
+        }
+      }
+    );
+  };
 
   // Validations //
   const isValidString = (inputString) => {
@@ -203,7 +229,7 @@ const ChatRoomScreen = (props) => {
           size={23}
           color={Colors.primary}
           name="ellipsis1"
-          onPress={() => console.log("chat options")}
+          onPress={showActionSheet}
         />
       ),
     });
