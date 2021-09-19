@@ -112,7 +112,18 @@ const BottomTabNavigator = (props) => {
       nextAppState === "active"
     ) {
       console.log("App has come to the foreground!");
+      // TODO:connect socket
+
+      // TODO:handle events emitted by backend socket (aka receiving messages)
       dispatch(fetchNotifications());
+    }
+
+    if (
+      appState.current === "active" &&
+      nextAppState.match(/inactive|background/)
+    ) {
+      console.log("App has left the foreground!");
+      // TODO:disconnect socket
     }
 
     appState.current = nextAppState;
