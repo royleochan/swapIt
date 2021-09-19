@@ -49,11 +49,33 @@ import {
   uploadImageHandler,
 } from "utils/imagePicker";
 
+// Other Components //
+const ProductHeader = ({ product }) => {
+  const { category, imageUrl, title, minPrice, maxPrice } = product;
+
+  return (
+    <View style={styles.productHeaderContainer}>
+      <Avatar
+        avatarStyle={{ borderRadius: 10 }}
+        size={44}
+        source={{
+          uri: imageUrl,
+        }}
+      />
+      <View style={styles.productTextContainer}>
+        <DefaultText>{title}</DefaultText>
+        <DefaultText>{category}</DefaultText>
+        <DefaultText>{`$${minPrice} - ${maxPrice}`}</DefaultText>
+      </View>
+    </View>
+  );
+};
+
 // Main Component //
 const ChatRoomScreen = (props) => {
   // Init //
   const insets = useSafeAreaInsets();
-  const { user, chatId } = props.route.params;
+  const { user, chatId, product } = props.route.params;
   const { name, username, profilePic } = user;
 
   const [socket] = useState(
@@ -284,18 +306,21 @@ const ChatRoomScreen = (props) => {
   return isLoading ? (
     <Loader isLoading={true} />
   ) : (
-    <GiftedChat
-      messages={messages}
-      onSend={(messages) => onSend(messages)}
-      user={{
-        _id: loggedInUserId,
-      }}
-      renderActions={renderActions}
-      renderFooter={renderFooter}
-      infiniteScroll
-      renderBubble={renderBubble}
-      bottomOffset={insets.bottom + 48} // removes extra vertical spacing in keyboard
-    />
+    <View style={{ flex: 1 }}>
+      <ProductHeader product={product} />
+      <GiftedChat
+        messages={messages}
+        onSend={(messages) => onSend(messages)}
+        user={{
+          _id: loggedInUserId,
+        }}
+        renderActions={renderActions}
+        renderFooter={renderFooter}
+        infiniteScroll
+        renderBubble={renderBubble}
+        bottomOffset={insets.bottom + 48} // removes extra vertical spacing in keyboard
+      />
+    </View>
   );
 };
 
@@ -318,5 +343,13 @@ const styles = StyleSheet.create({
   },
   buttonRight: {
     marginRight: 10,
+  },
+  productHeaderContainer: {
+    flexDirection: "row",
+    backgroundColor: Colors.white,
+    padding: 14,
+  },
+  productTextContainer: {
+    marginLeft: 14,
   },
 });

@@ -9,17 +9,11 @@ export const fetchChats = (userId) => {
   return async (dispatch) => {
     try {
       const response = await request.get(`/api/chats/rooms/${userId}`);
-      const chats = response.data.rooms.chats;
-      const activeChats = chats.map((chat) => {
-        return {
-          user: chat.users.find((usr) => usr.id !== userId),
-          chatId: chat.id,
-        };
-      });
+      const chats = response.data.chats;
 
       dispatch({
         type: FETCH_CHATS,
-        activeChats: activeChats,
+        activeChats: chats,
       });
     } catch (err) {
       throwApiError(err);
