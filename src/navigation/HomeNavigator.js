@@ -2,11 +2,12 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { DefaultNavOptions } from "navigation/options/DefaultNavOptions";
+import { ChatRoomOptions } from "navigation/options/ChatRoomOptions";
 import UserProfileNavigator from "navigation/UserProfileNavigator";
 import HomeScreen from "screens/HomeScreen";
 import ProductDetailsScreen from "screens/ProductDetailsScreen";
-import MessagesScreen from "screens/MessagesScreen";
-import ChatScreen from "screens/ChatScreen";
+import ChatsScreen from "screens/ChatsScreen";
+import ChatRoomScreen from "screens/ChatRoomScreen";
 import CategoryScreen from "screens/CategoryScreen";
 import ResultsScreen from "screens/ResultsScreen";
 import SearchUserScreen from "screens/SearchUserScreen";
@@ -27,14 +28,14 @@ const HomeNavigator = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Messages"
-        component={MessagesScreen}
+        name="Chats"
+        component={ChatsScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Chat"
-        component={ChatScreen}
-        options={{ headerShown: false }}
+        name="ChatRoom"
+        component={ChatRoomScreen}
+        options={ChatRoomOptions}
       />
       <Stack.Screen
         name="Category"

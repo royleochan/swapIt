@@ -7,15 +7,23 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+
+// RNE Imports //
 import { Image } from "react-native-elements";
+
+// Expo Action Sheet Imports //
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { useSelector } from "react-redux";
+
+// Redux Action Imports //
+import { findRoom } from "store/actions/chatscreen";
 
 // Navigation Imports //
 import {
   navigateToProductDetails,
   navigateToCategory,
   navigateToProfileNavigator,
+  navigateToChatRoom,
 } from "navigation/navigate/common/index";
 import {
   navigateToCreateReview,
@@ -27,6 +35,7 @@ import useFlatListRequest from "hooks/useFlatListRequest";
 
 // Utils Imports //
 import { parseTimeAgo } from "utils/date";
+import showAlert from "utils/showAlert";
 import request from "utils/request";
 
 // Colors Imports //
@@ -40,14 +49,18 @@ import Loader from "components/Loader";
 import MatchRow from "components/MatchRow";
 import Empty from "components/Empty";
 import ErrorSplash from "components/ErrorSplash";
+import MainButton from "components/MainButton";
 
 // Details Component //
 const DetailsComponent = (props) => {
   // Init //
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { product, loggedInUserId, jwtToken } = props;
   const { showActionSheetWithOptions } = useActionSheet();
   const windowHeight = Dimensions.get("window").height;
+  const isCreator = loggedInUserId === product.creator.id;
+
+  const dispatch = useDispatch();
 
   // Functions //
   const showActionSheet = () => {
@@ -66,9 +79,9 @@ const DetailsComponent = (props) => {
       },
       async (buttonIndex) => {
         if (buttonIndex === 0) {
-          setIsDeleteLoading(true);
+          setIsLoading(true);
           await request.delete(`/api/products/${product._id}`, jwtToken);
-          setIsDeleteLoading(false);
+          setIsLoading(false);
 
           props.navigation.reset({
             index: 0,
@@ -81,10 +94,25 @@ const DetailsComponent = (props) => {
     );
   };
 
+  const onPressChatHandler = async () => {
+    try {
+      setIsLoading(true);
+      const chat = await dispatch(
+        findRoom(product._id, loggedInUserId, product.creator.id)
+      );
+      setIsLoading(false);
+      navigateToChatRoom(props, chat);
+    } catch (err) {
+      showAlert("Failed to create chat", "Please try again", () =>
+        setIsLoading(false)
+      );
+    }
+  };
+
   // Render //
   return (
     <View>
-      {isDeleteLoading && <Loader isLoading={isDeleteLoading} />}
+      {isLoading && <Loader isLoading={isLoading} />}
       <IconButton
         style={styles.arrow}
         size={23}
@@ -92,7 +120,7 @@ const DetailsComponent = (props) => {
         name="arrowleft"
         onPress={() => props.navigation.goBack()}
       />
-      {loggedInUserId === product.creator.id && (
+      {isCreator && (
         <IconButton
           style={styles.ellipsis}
           size={23}
@@ -153,7 +181,12 @@ const DetailsComponent = (props) => {
         <View style={styles.textContainer}>
           <DefaultText>{product.description}</DefaultText>
         </View>
-        {loggedInUserId === product.creator.id && (
+        {!isCreator && (
+          <MainButton style={styles.chatButton} onPress={onPressChatHandler}>
+            Chat
+          </MainButton>
+        )}
+        {isCreator && (
           <View style={styles.matchesTitle}>
             <DefaultText style={styles.title}>Matches</DefaultText>
           </View>
@@ -167,8 +200,11 @@ const DetailsComponent = (props) => {
 const ProductDetailsScreen = (props) => {
   // Init //
   const { productId } = props.route.params;
+  const [isChatLoading, setIsChatLoading] = useState(false);
   const loggedInUserId = useSelector((state) => state.auth.user.id);
   const jwtToken = useSelector((state) => state.auth.jwtToken);
+
+  const dispatch = useDispatch();
 
   // Side Effects //
   const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
@@ -193,11 +229,22 @@ const ProductDetailsScreen = (props) => {
         return (
           <MatchRow
             ownProduct={product.id}
+            setIsChatLoading={setIsChatLoading}
             product={itemData.item.product}
             match={itemData.item.match}
-            navigateToProductDetails={() => {
-              navigateToProductDetails(props, itemData.item.product.id);
-            }}
+            findChatHandler={async () =>
+              await dispatch(
+                findRoom(
+                  itemData.item.product.id,
+                  loggedInUserId,
+                  itemData.item.product.creator.id
+                )
+              )
+            }
+            navigateToChatRoom={(chat) => navigateToChatRoom(props, chat)}
+            navigateToProductDetails={() =>
+              navigateToProductDetails(props, itemData.item.product.id)
+            }
             navigateToCreateReview={() =>
               navigateToCreateReview(
                 props,
@@ -218,41 +265,45 @@ const ProductDetailsScreen = (props) => {
     };
 
     return (
-      <FlatList
-        ListHeaderComponent={
-          !isError && (
-            <DetailsComponent
-              navigation={props.navigation}
-              product={product}
-              loggedInUserId={loggedInUserId}
-              jwtToken={jwtToken}
-            />
-          )
-        }
-        onRefresh={() => setIsRefreshing(true)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={
-          loggedInUserId === product.creator.id ? (
-            isError ? (
-              <ErrorSplash />
-            ) : (
-              <Empty
-                message="No matches found"
-                width={100}
-                height={100}
-                fontSize={12}
+      <>
+        {isChatLoading && <Loader isLoading={isChatLoading} />}
+        <FlatList
+          ListHeaderComponent={
+            !isError && (
+              <DetailsComponent
+                props
+                navigation={props.navigation}
+                product={product}
+                loggedInUserId={loggedInUserId}
+                jwtToken={jwtToken}
               />
             )
-          ) : null
-        }
-        refreshing={isRefreshing}
-        data={isError ? [] : product.matches}
-        horizontal={false}
-        numColumns={1}
-        keyExtractor={(item) => item.id}
-        scrollIndicatorInsets={{ right: 1 }}
-        renderItem={renderFlatListItem}
-      />
+          }
+          onRefresh={() => setIsRefreshing(true)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={
+            loggedInUserId === product.creator.id ? (
+              isError ? (
+                <ErrorSplash />
+              ) : (
+                <Empty
+                  message="No matches found"
+                  width={100}
+                  height={100}
+                  fontSize={12}
+                />
+              )
+            ) : null
+          }
+          refreshing={isRefreshing}
+          data={isError ? [] : product.matches}
+          horizontal={false}
+          numColumns={1}
+          keyExtractor={(item) => item.id}
+          scrollIndicatorInsets={{ right: 1 }}
+          renderItem={renderFlatListItem}
+        />
+      </>
     );
   }
 };
@@ -299,6 +350,11 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     alignSelf: "flex-start",
     marginVertical: 5,
+  },
+  chatButton: {
+    width: 140,
+    height: 40,
+    marginTop: 16,
   },
   matchesTitle: {
     marginTop: 20,

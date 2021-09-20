@@ -2,6 +2,8 @@ import React from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-elements";
 
+import showAlert from "utils/showAlert";
+
 import Colors from "constants/Colors";
 import DefaultText from "components/DefaultText";
 import IconButton from "components/IconButton";
@@ -10,12 +12,28 @@ import MatchButton from "components/MatchButton";
 const MatchRow = (props) => {
   const {
     match,
+    setIsChatLoading,
+    findChatHandler,
+    navigateToChatRoom,
     navigateToProductDetails,
     navigateToCreateReview,
     navigateToReviews,
     ownProduct,
   } = props;
   const { title, minPrice, maxPrice, imageUrl, creator } = props.product;
+
+  const onPressChatHandler = async () => {
+    try {
+      setIsChatLoading(true);
+      const chat = await findChatHandler();
+      setIsChatLoading(false);
+      navigateToChatRoom(props, chat);
+    } catch (err) {
+      showAlert("Failed to create chat", "Please try again", () =>
+        setIsChatLoading(false)
+      );
+    }
+  };
 
   return (
     <View style={styles.rowContainer}>
@@ -40,22 +58,20 @@ const MatchRow = (props) => {
           </View>
         </View>
       </TouchableOpacity>
-      <View style={styles.buttonsContainer}>
-        <IconButton
-          style={styles.messageIcon}
-          size={23}
-          color={Colors.primary}
-          name="message1"
-          onPress={() => console.log("navigate")}
-        />
-        <MatchButton
-          match={match}
-          navigateToCreateReview={navigateToCreateReview}
-          navigateToReviews={navigateToReviews}
-          ownProduct={ownProduct}
-          reviewed={creator.id}
-        />
-      </View>
+      <IconButton
+        style={styles.messageIcon}
+        size={23}
+        color={Colors.primary}
+        name="message1"
+        onPress={onPressChatHandler}
+      />
+      <MatchButton
+        match={match}
+        navigateToCreateReview={navigateToCreateReview}
+        navigateToReviews={navigateToReviews}
+        ownProduct={ownProduct}
+        reviewed={creator.id}
+      />
     </View>
   );
 };

@@ -28,7 +28,14 @@ const useFlatListRequest = (request) => {
     }
   }, [isRefreshing]);
 
-  return { data, isError, isRefreshing, isLoading, setIsRefreshing };
+  return {
+    data,
+    isError,
+    isRefreshing,
+    isLoading,
+    setIsRefreshing,
+    setIsLoading,
+  };
 };
 
 export default useFlatListRequest;

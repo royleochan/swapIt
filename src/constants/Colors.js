@@ -9,4 +9,5 @@ export default {
   lightGray: "#F8F8F8",
   darkPink: "#B18197",
   delete: "#B00000",
+  white: "#FFFFFF",
 };

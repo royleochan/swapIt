@@ -12,6 +12,7 @@ const initialState = {
   isAuth: false, // boolean
   user: null, // object representing user schema with products populated
   jwtToken: null, // string
+  socket: null, //TODO:
 };
 
 export default (state = initialState, action) => {
