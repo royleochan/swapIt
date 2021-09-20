@@ -79,7 +79,7 @@ const ChatRoomScreen = (props) => {
   const { name, username, profilePic } = user;
 
   const [socket] = useState(
-    io(`${REACT_APP_BACKEND_URL}/chatSocketRevised`, {
+    io(`${REACT_APP_BACKEND_URL}/chatSocket`, {
       autoConnect: false,
     })
   );
