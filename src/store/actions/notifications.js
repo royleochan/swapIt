@@ -52,7 +52,6 @@ export const markAllNotificationsAsRead = (notificationIds) => {
 export const dismissNotification = (notificationId) => {
   return async (dispatch, getState) => {
     const { auth } = getState();
-    const userId = auth.user.id;
     const jwtToken = auth.jwtToken;
 
     try {
@@ -62,7 +61,7 @@ export const dismissNotification = (notificationId) => {
       });
 
       const response = await request.delete(
-        `/api/notifications/${userId}/${notificationId}`,
+        `/api/notifications/${notificationId}`,
         jwtToken
       );
     } catch (err) {
