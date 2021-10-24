@@ -73,7 +73,7 @@ const UserHeader = (props) => {
             startingValue={selectedUser.reviewRating}
           />
           <DefaultText style={styles.rating}>
-            ({selectedUser.reviews.length})
+            ({selectedUser.numReviews})
           </DefaultText>
         </TouchableOpacity>
       </View>
