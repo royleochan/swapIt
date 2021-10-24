@@ -178,9 +178,11 @@ const HomeScreen = (props) => {
   const loadProducts = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const response = await request.get(`/api/products/all/${user.id}`);
-      const resData = response.data.products;
-      setTrendingProducts(resData);
+      const response = await request.get(
+        `/api/recommender/products/${user.id}`
+      );
+      const resData = response.data;
+      setTrendingProducts([]); //TODO
     } catch (err) {
       setIsRefreshing(false);
       setTrendingProducts([]);
@@ -192,9 +194,9 @@ const HomeScreen = (props) => {
   // Need to change to recommended users
   const loadRecommendedUsers = useCallback(async () => {
     try {
-      const response = await request.get(`/api/users/${user.id}`);
+      const response = await request.get(`/api/recommender/users/${user.id}`);
       const resData = response.data;
-      setRecommendedUsers([resData.user]);
+      setRecommendedUsers([]); //TODO
     } catch (err) {
       throw new Error(err);
     }

@@ -27,9 +27,11 @@ const ExploreScreen = (props) => {
   const loadProducts = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await request.get(`/api/products/all/${user.id}`);
+      const response = await request.get(
+        `/api/recommender/products/${user.id}`
+      );
       const resData = response.data.products;
-      setProducts(resData);
+      setProducts([]); //TODO
       setIsLoading(false);
     } catch (err) {
       showAlert("Request failed", err.response.data.message, () =>
