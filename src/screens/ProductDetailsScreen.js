@@ -208,7 +208,9 @@ const ProductDetailsScreen = (props) => {
 
   // Side Effects //
   const { data, isError, isRefreshing, isLoading, setIsRefreshing } =
-    useFlatListRequest(() => request.get(`/api/products/${productId}`));
+    useFlatListRequest(() =>
+      request.get(`/api/products/${productId}/${loggedInUserId}`)
+    );
 
   // Render //
   if (isLoading) {
