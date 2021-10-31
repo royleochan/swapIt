@@ -8,6 +8,11 @@ import * as Notifications from "expo-notifications";
 
 // Redux Action Imports //
 import { fetchNotifications } from "store/actions/notifications";
+import {
+  fetchChats,
+  receivedMessage,
+  receivedImage
+} from "store/actions/chatscreen";
 
 // Navigator Imports //
 import AlertsNavigator from "navigation/AlertsNavigator";
@@ -23,6 +28,7 @@ import DefaultText from "components/DefaultText";
 
 // Screen Imports //
 import ExploreScreen from "screens/ExploreScreen";
+import {fetchRoom, receiveImage, receiveMessage} from "../store/actions/chatroom";
 
 // Icons for the bottom tab navigator //
 const DefaultIcon = (props) => {
@@ -85,6 +91,8 @@ const BottomTab = createBottomTabNavigator();
 // Main Component //
 const BottomTabNavigator = (props) => {
   // Init //
+  const socket = useSelector((state) => state.auth.socket);
+  const loggedInUserId = useSelector((state) => state.auth.user.id);
   const dispatch = useDispatch();
   const appState = useRef(AppState.currentState);
   const unreadNotifications = useSelector(
@@ -105,6 +113,10 @@ const BottomTabNavigator = (props) => {
   }, []);
 
   // Functions //
+  const fetchChatsHandler = async () => {
+    return await dispatch(fetchChats(loggedInUserId));
+  };
+
   // Fetches notifications if app state transitions into active
   const _handleAppStateChange = (nextAppState) => {
     if (
@@ -113,7 +125,24 @@ const BottomTabNavigator = (props) => {
     ) {
       console.log("App has come to the foreground!");
       // TODO:connect socket
-
+      fetchChatsHandler().then((chats) => {
+        console.log(chats);
+        const chatIdList = chats.map((chat) => chat.chatId);
+        socket.connect();
+        console.log("Connecting to chats");
+        socket.emit("join", { chatIdList });
+        socket.on("joined", ({ chatIdList }) => {
+          console.log("joined", chatIdList);
+        });
+      });
+      socket.on("receive message", ({ chatId, msg }) => {
+        console.log("receive message");
+        dispatch(receivedMessage(chatId, msg));
+      });
+      socket.on("receive image", ({ chatId, msg }) => {
+        console.log("receive image");
+        dispatch(receivedImage(chatId, msg));
+      });
       // TODO:handle events emitted by backend socket (aka receiving messages)
       dispatch(fetchNotifications());
     }
@@ -124,6 +153,8 @@ const BottomTabNavigator = (props) => {
     ) {
       console.log("App has left the foreground!");
       // TODO:disconnect socket
+      socket.disconnect();
+      console.log("Disconnected from socket");
     }
 
     appState.current = nextAppState;

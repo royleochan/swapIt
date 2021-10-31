@@ -26,13 +26,9 @@ import { Avatar, Icon } from "react-native-elements";
 
 // Redux Action Imports //
 import {
-  leaveRoom,
-  fetchRoom,
-  sendMessage,
-  sendImage,
-  receiveMessage,
-  receiveImage,
-} from "store/actions/chatroom";
+  sentMessage,
+  sentImage,
+} from "store/actions/chatscreen";
 
 // Constants Imports //
 import Colors from "constants/Colors";
@@ -75,21 +71,20 @@ const ProductHeader = ({ product }) => {
 const ChatRoomScreen = (props) => {
   // Init //
   const insets = useSafeAreaInsets();
-  const { user, chatId, product } = props.route.params;
-  const { name, username, profilePic } = user;
+  const { opposingUser, chatId, product } = props.route.params;
+  const { name, username, profilePic } = opposingUser;
 
-  const [socket] = useState(
-    io(`${REACT_APP_BACKEND_URL}/chatSocketRevised`, {
-      autoConnect: false,
-    })
-  );
+  const socket = useSelector((state) => state.auth.socket);
+
   const [lastSentMessage, setLastSentMessage] = useState("");
   const [lastSentImageUrl, setLastSentImageUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
   const loggedInUserId = useSelector((state) => state.auth.user.id);
-  const messages = useSelector((state) => state.chatRoom.messages);
+  // const messages = useSelector((state) => state.chatRoom.messages);
+  const currentChat = useSelector((state) => state.chatScreen.activeChats[chatId]);
+  const messages = currentChat.messages;
   const dispatch = useDispatch();
 
   const { showActionSheetWithOptions } = useActionSheet();
@@ -152,6 +147,10 @@ const ChatRoomScreen = (props) => {
 
   const handleCancel = () => {};
 
+  // const fetchRoomHandler = async () => {
+  //   await dispatch(fetchRoom(chatId, loggedInUserId));
+  // };
+
   const setValidImageUrl = (inputUrl) => {
     if (isValidString(inputUrl)) {
       setLastSentImageUrl(inputUrl);
@@ -170,41 +169,42 @@ const ChatRoomScreen = (props) => {
   // Side Effects //
 
   // Initial entry to the chat room, get the room info
-  useEffect(() => {
-    dispatch(fetchRoom(chatId, loggedInUserId));
-  }, []);
+  // useEffect(() => {
+  //   dispatch(fetchRoom(chatId, loggedInUserId));
+  // }, []);
 
   // After messages have been fetched, connect to socket
-  useEffect(() => {
-    //TODO: Future enhancement to mark messages as seen. Consider Socket.io Acknowledgements for sent
-    console.log("Start connection to socket");
-    socket.connect();
-    socket.emit("join", { chatId });
-    socket.on("joined", () => {
-      console.log("joined");
-      setIsLoading(false);
-    });
-    socket.on("receive message", (messageObject) => {
-      console.log("receive message");
-      dispatch(receiveMessage(messageObject));
-    });
-    socket.on("receive image", (messageObject) => {
-      console.log("receive image");
-      dispatch(receiveImage(messageObject));
-    });
-    return () => {
-      socket.disconnect();
-      console.log("Disconnect from socket");
-      dispatch(leaveRoom());
-    };
-  }, []);
+  // useEffect(() => {
+  //   //TODO: Future enhancement to mark messages as seen. Consider Socket.io Acknowledgements for sent
+  //   fetchRoomHandler();
+  //   console.log("Start connection to socket");
+  //   socket.connect();
+  //   socket.emit("join", { chatId: "123" });
+  //   socket.on("joined", () => {
+  //     console.log("joined");
+  //     setIsLoading(false);
+  //   });
+  //   socket.on("receive message", (messageObject) => {
+  //     console.log("receive message");
+  //     dispatch(receiveMessage(messageObject));
+  //   });
+  //   socket.on("receive image", (messageObject) => {
+  //     console.log("receive image");
+  //     dispatch(receiveImage(messageObject));
+  //   });
+  //   return () => {
+  //     socket.disconnect();
+  //     console.log("Disconnect from socket");
+  //     dispatch(leaveRoom());
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (lastSentMessage === "") {
       return;
     }
-    console.log("Sending new message:", lastSentMessage);
-    dispatch(sendMessage(lastSentMessage));
+    console.log("Sending new message:", lastSentMessage, "to", chatId);
+    dispatch(sentMessage(chatId, lastSentMessage));
     socket.emit("new message", {
       chatId: chatId,
       userId: loggedInUserId,
@@ -217,7 +217,7 @@ const ChatRoomScreen = (props) => {
       return;
     }
     console.log("Sending new image:", lastSentImageUrl);
-    dispatch(sendImage(lastSentImageUrl));
+    dispatch(sentImage(chatId, lastSentImageUrl));
     socket.emit("new image", {
       chatId: chatId,
       userId: loggedInUserId,

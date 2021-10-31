@@ -8,11 +8,18 @@ import {
   UNLIKE_PRODUCT,
 } from "store/actions/auth";
 
+import {
+  REACT_APP_BACKEND_URL
+} from "@env";
+
+import {io} from "socket.io-client";
+
+
 const initialState = {
   isAuth: false, // boolean
   user: null, // object representing user schema with products populated
   jwtToken: null, // string
-  socket: null, //TODO:
+  socket: io(`${REACT_APP_BACKEND_URL}/chatSocket`, { autoConnect: false }),
 };
 
 export default (state = initialState, action) => {

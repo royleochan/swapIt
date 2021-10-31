@@ -40,11 +40,11 @@ import IconButton from "components/IconButton";
 // Other Components //
 const ChatRow = ({ chat, onPress }) => {
   const { width } = useWindowDimensions();
-  const { chatId, product, user, latestMessage, updatedAt } = chat;
+  const { _id, product, opposingUser, latestMessage, updatedAt } = chat;
 
   return (
     <TouchableHighlight
-      key={chatId}
+      key={_id}
       activeOpacity={0.9}
       underlayColor={"#F6F4F4"}
       onPress={onPress}
@@ -55,7 +55,7 @@ const ChatRow = ({ chat, onPress }) => {
             rounded
             size={64}
             source={{
-              uri: user.profilePic,
+              uri: opposingUser.profilePic,
             }}
           />
           <View style={styles.chatDetailsContainer}>
@@ -64,7 +64,7 @@ const ChatRow = ({ chat, onPress }) => {
             </DefaultText>
             <DefaultText
               style={styles.username}
-            >{`@${user.username}`}</DefaultText>
+            >{`@${opposingUser.username}`}</DefaultText>
             <DefaultText style={{ ...styles.message, width: width * 0.5 }}>
               {latestMessage}
             </DefaultText>
@@ -157,11 +157,11 @@ const ChatsScreen = (props) => {
           }
           style={styles.list}
           refreshing={isRefreshing}
-          data={query === "" ? activeChats : filteredChats}
+          data={query === "" ? Object.values(activeChats) : filteredChats}
           horizontal={false}
           keyExtractor={(item) => item.chatId}
           renderItem={renderFlatListItem}
-        ></FlatList>
+        />
       )}
     </View>
   );
