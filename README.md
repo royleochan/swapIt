@@ -1,7 +1,7 @@
 
 # SwapIt Frontend
 
-[Backend Code] (https://github.com/royleochan/swapIt-backend)
+[Backend Code](https://github.com/royleochan/swapIt-backend)
 
 This repository contains the code for the frontend of SwapIt. It is built using the cross platform react native tool together with the [expo managed workflow](https://docs.expo.io/introduction/managed-vs-bare/#managed-workflow) so that we can use the various features that expo provides.
 
